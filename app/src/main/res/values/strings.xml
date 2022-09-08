@@ -1,0 +1,21 @@
+<resources>
+<!--    troche do pizdy te moje nazwy, no ale moge potem zmienic-->
+    <string name="app_name">Counter</string>
+    <string name="occurency_name_tip">Type name of the occurency you want to śledzić below</string>
+    <string name="occurency_example">for example: Caffeine intake</string>
+    <string name="auto_start_timer">Start counting after occurence was added</string>
+    <string name="manual_start_timer">No worries, I\'ll start to count manually</string>
+    <string name="category_text">Choose category:</string>
+    <string name="add_btn_text">Add new occurency</string>
+    <string name="new_occurency">New occurency: %s %s</string>
+
+<!--    tu nazwy z-->
+<!--    <string name="app_name">Tip Time</string>-->
+<!--    <string name="cost_of_service">Cost of Service</string>-->
+<!--    <string name="how_was_the_service">How was the service?</string>-->
+<!--    <string name="amazing_service">Amazing (20%)</string>-->
+<!--    <string name="good_service">Good (18%)</string>-->
+<!--    <string name="ok_service">Okay (15%)</string>-->
+<!--    <string name="round_up_tip">Round up tip?</string>-->
+<!-- BUTTON tak sie nazywa   <string name="calculate">Calculate</string>-->
+</resources>
