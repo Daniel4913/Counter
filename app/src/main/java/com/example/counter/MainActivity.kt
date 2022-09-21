@@ -22,7 +22,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun addOccurency(){
-        val getOccurenceName: String = binding.occurenceName.text.toString()
+        val getOccurenceName: String = binding.occurenceNameEditText.text.toString()
         val occurencyCountOption: String = when (binding.startCounterOptions.checkedRadioButtonId){
             R.id.automatic_start -> " // Counting from DATE."
             else -> "// Waiting for start to count."
