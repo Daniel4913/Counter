@@ -8,14 +8,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
-//import androidx.navigation.fragment.navArgs
+import androidx.navigation.fragment.navArgs
 import com.example.counter.databinding.FragmentNewBinding
 //import kotlin.reflect.KProperty
 
 
 class NewFragment : Fragment() {
 
-//    private val navigationArgs: OccurenceFragmentArgs by navArgs()
+    private val navigationArgs: OccurenceFragmentArgs by navArgs()
 
     private var _binding: FragmentNewBinding? =null
     private val binding get() = _binding!!
