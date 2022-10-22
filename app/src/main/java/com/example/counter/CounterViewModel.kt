@@ -7,11 +7,17 @@ import com.example.counter.data.Occurence
 import com.example.counter.data.OccurenceDao
 import kotlinx.coroutines.launch
 
-class HomeViewModel(private val occurenceDao: OccurenceDao) : ViewModel() {
+class CounterViewModel(private val occurenceDao: OccurenceDao) : ViewModel() {
+//    To interact with the database off the main thread, start a coroutine and call the DAO method within it
     private fun insertOccurence(occurence: Occurence) {
-        viewModelScope.launch { occurenceDao.insert(occurence) }
+        viewModelScope.launch {
+            occurenceDao.insert(occurence) }
     }
 
+
+
+
+//  function that takes in strings and boolean and returns an Occurence instance.
     private fun getNewOccurenceEntry(
         occurenceName: String,
         occurenceDate: String,
@@ -22,7 +28,9 @@ class HomeViewModel(private val occurenceDao: OccurenceDao) : ViewModel() {
             name = occurenceName,
             createDate = occurenceDate,
             occurMore = occurMore,
+//            occurMore = occurMore.toString(), = drze pape ze type mismatch, chyba pojebalem strony co do czego XD
             category = category
+//        occurenceName = name, = Cannot find a parameter with this name: occurenceName . Czyli dobre strony jednak
         )
     }
 
@@ -35,16 +43,24 @@ class HomeViewModel(private val occurenceDao: OccurenceDao) : ViewModel() {
         val newOccurence = getNewOccurenceEntry(occurenceName, occurenceDate, occurMore, category)
         insertOccurence(newOccurence)
     }
+    fun isEntryValid(occurenceName: String, occurenceDate: String, category: String): Boolean {
+        if (occurenceName.isBlank() || occurenceDate.isBlank() || category.isBlank()) {
+            return false
+        }
+        return true
+    }
 }
+
+
 
 /**
  * Factory class to instantiate the [ViewModel] instance.
  */
-class HomeViewModelFactory(private val occurenceDao: OccurenceDao) : ViewModelProvider.Factory {
+class CounterViewModelFactory(private val occurenceDao: OccurenceDao) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(HomeViewModel::class.java)) {
+        if (modelClass.isAssignableFrom(CounterViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")
-            return HomeViewModel(occurenceDao) as T
+            return CounterViewModel(occurenceDao) as T
         }
         throw IllegalArgumentException("Unknown View Model class")
     }
