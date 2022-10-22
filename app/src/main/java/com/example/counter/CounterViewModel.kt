@@ -9,6 +9,10 @@ class CounterViewModel(private val occurenceDao: OccurenceDao) : ViewModel() {
 
     val allOccurences: LiveData<List<Occurence>> = occurenceDao.getOccurencies().asLiveData()
 
+    fun retrieveOccurence(id: Int): LiveData<Occurence>{
+        return occurenceDao.getOccurence(id).asLiveData()
+    }
+
 //    To interact with the database off the main thread, start a coroutine and call the DAO method within it
     private fun insertOccurence(occurence: Occurence) {
         viewModelScope.launch {

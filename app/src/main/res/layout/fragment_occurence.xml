@@ -9,7 +9,7 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
         android:layout_margin="@dimen/margin"
         tools:context=".OccurenceFragment">
 
@@ -23,6 +23,22 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Caffeine" />
+        <TextView
+            android:id="@+id/occurency_category"
+            style="@style/Widget.Counter.TextView"
+            android:layout_width="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Category" />
+
+        <TextView
+            android:id="@+id/occurency_create_date"
+            style="@style/Widget.Counter.TextView"
+            android:layout_width="wrap_content"
+            android:layout_marginTop="@dimen/margin"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/occurency_name"
+            tools:text="@string/time_from" />
 
         <TextView
             android:id="@+id/occurency_time_from"
@@ -30,7 +46,7 @@
             android:layout_width="wrap_content"
             android:layout_marginTop="@dimen/margin"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/occurency_name"
+            app:layout_constraintTop_toBottomOf="@+id/occurency_create_date"
             tools:text="@string/time_from" />
 
         <TextView
