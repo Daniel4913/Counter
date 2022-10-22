@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:descendantFocusability="blocksDescendants">
-
+<!--todo kategoria wyswietlana jako np pasek koloru - kazda kategoria ma swoj kolor-->
     <TextView
         android:id="@+id/occurence_name"
         style="@style/Widget.Counter.ListItemTextView"

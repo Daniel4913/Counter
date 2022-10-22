@@ -10,7 +10,7 @@ data class Occurence(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
     @ColumnInfo(name = "name")
-    val name: String,
+    val occurenceName: String,
     @ColumnInfo(name = "date")
     val createDate: String,
     @ColumnInfo(name ="occur")

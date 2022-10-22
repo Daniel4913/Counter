@@ -1,21 +1,19 @@
 package com.example.counter
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.example.counter.data.Occurence
 import com.example.counter.data.OccurenceDao
 import kotlinx.coroutines.launch
 
 class CounterViewModel(private val occurenceDao: OccurenceDao) : ViewModel() {
+
+    val allOccurences: LiveData<List<Occurence>> = occurenceDao.getOccurencies().asLiveData()
+
 //    To interact with the database off the main thread, start a coroutine and call the DAO method within it
     private fun insertOccurence(occurence: Occurence) {
         viewModelScope.launch {
             occurenceDao.insert(occurence) }
     }
-
-
-
 
 //  function that takes in strings and boolean and returns an Occurence instance.
     private fun getNewOccurenceEntry(
@@ -25,7 +23,7 @@ class CounterViewModel(private val occurenceDao: OccurenceDao) : ViewModel() {
         category: String
     ): Occurence {
         return Occurence(
-            name = occurenceName,
+            occurenceName = occurenceName,
             createDate = occurenceDate,
             occurMore = occurMore,
 //            occurMore = occurMore.toString(), = drze pape ze type mismatch, chyba pojebalem strony co do czego XD
