@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    app:startDestination="@id/counterHomeFragment">
+
+    <fragment
+        android:id="@+id/newFragment"
+        android:name="com.example.counter.NewFragment"
+        android:label="NewFragment"
+        tools:layout="@layout/fragment_new">
+
+        <action
+            android:id="@+id/action_newFragment_to_counterHomeFragment"
+            app:destination="@id/counterHomeFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/occurenceFragment"
+        android:name="com.example.counter.OccurenceFragment"
+        android:label="OccurenceFragment"
+        tools:layout="@layout/fragment_occurence">
+        <action
+            android:id="@+id/action_occurenceFragment_to_newFragment"
+            app:destination="@id/newFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/counterHomeFragment"
+        android:name="com.example.counter.CounterHomeFragment"
+        android:label="CounterHomeFragment" >
+        <action
+            android:id="@+id/action_counterHomeFragment_to_newFragment"
+            app:destination="@id/newFragment" />
+        <action
+            android:id="@+id/action_counterHomeFragment_to_occurenceFragment"
+            app:destination="@id/occurenceFragment" />
+    </fragment>
+</navigation>
