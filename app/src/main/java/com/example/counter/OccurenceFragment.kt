@@ -29,7 +29,6 @@ class OccurenceFragment : Fragment() {
             occurencyCreateDate.text = occurence.createDate
             occurencyCategory.text = occurence.category
         }
-
     }
 
     lateinit var occurence: Occurence
