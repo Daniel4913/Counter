@@ -2,17 +2,24 @@ package com.example.counter
 
 //import android.content.Context
 import android.content.Context.INPUT_METHOD_SERVICE
+
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import android.widget.TextView
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.counter.data.Occurence
 //import androidx.navigation.fragment.navArgs
 import com.example.counter.databinding.FragmentNewBinding
+import java.text.SimpleDateFormat
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.util.Calendar
 
 //import kotlin.reflect.KProperty
 
@@ -21,12 +28,13 @@ class NewFragment : Fragment() {
 
 //    private val navigationArgs: OccurenceFragmentArgs by navArgs()
 
-    private val viewModel: CounterViewModel by activityViewModels {
-        CounterViewModelFactory(
-            (activity?.application as CounterApplication).database
-                .occurenceDao()
+    private val viewModel: CounterViewModel by viewModels {
+        DateTimeViewModelFactory(
+            (activity?.application as CounterApplication).database.occurenceDao(),
+            (activity?.application as CounterApplication).database.dateTimeDao()
         )
     }
+
     lateinit var occurence: Occurence
 
     private var _binding: FragmentNewBinding? = null
@@ -38,6 +46,17 @@ class NewFragment : Fragment() {
     ): View? {
         _binding = FragmentNewBinding.inflate(inflater, container, false)
         return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        binding.addBtn.setOnClickListener {
+            addNewOccurence()
+        }
+        binding.currentDateTime.text = getDate()
+        binding.currentDateTime.setOnClickListener {
+            binding.occurenceDate.setText(getDate(), TextView.BufferType.EDITABLE)
+        }
     }
 
     private fun addNewOccurence() {
@@ -62,12 +81,25 @@ class NewFragment : Fragment() {
         )
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        binding.addBtn.setOnClickListener {
-            addNewOccurence()
-        }
+
+    private fun getDate(): String{
+        val calendar = Calendar.getInstance()
+        val currentTime = LocalDateTime.of(
+            calendar.get(Calendar.YEAR),
+            calendar.get(Calendar.MONTH),
+            calendar.get(Calendar.DAY_OF_MONTH),
+            calendar.get(Calendar.HOUR_OF_DAY),
+            calendar.get(Calendar.MINUTE),
+            calendar.get(Calendar.SECOND)
+        )
+        return currentTime.toString()
     }
+
+    private fun startTimer(){
+
+    }
+
+
 
     override fun onDestroyView() {
         super.onDestroyView()

@@ -17,4 +17,5 @@
     <string name="delete_question">Are you sure?</string>
     <string name="no">No</string>
     <string name="yes">Yup</string>
+    <string name="date_hint">pobierz date z dolu kliukajaca</string>
 </resources>

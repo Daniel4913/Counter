@@ -1,22 +1,30 @@
 package com.example.counter
 
 import androidx.lifecycle.*
+import com.example.counter.data.DateTime
+import com.example.counter.data.DateTimeDao
 import com.example.counter.data.Occurence
 import com.example.counter.data.OccurenceDao
 import kotlinx.coroutines.launch
 
-class CounterViewModel(private val occurenceDao: OccurenceDao) : ViewModel() {
+class CounterViewModel(private val occurenceDao: OccurenceDao, private val dateTimeDao: DateTimeDao) : ViewModel() {
+
+//    val currentVisitedOccurence = !!!!!!!!!!!!!!!!!!!
 
     val allOccurences: LiveData<List<Occurence>> = occurenceDao.getOccurencies().asLiveData()
+    val allDatesTimes: LiveData<List<DateTime>> = dateTimeDao.getOccurenceWithDatesTimes().asLiveData()
+// skad sie dowiedziec ktore occurency klilknal user??????????????????????????????????????   ^
+    //ta informacja jest w home fragment
 
     fun retrieveOccurence(id: Int): LiveData<Occurence>{
         return occurenceDao.getOccurence(id).asLiveData()
     }
 
+
 //    To interact with the database off the main thread, start a coroutine and call the DAO method within it
     private fun insertOccurence(occurence: Occurence) {
         viewModelScope.launch {
-            occurenceDao.insert(occurence) }
+            occurenceDao.insertOccurence(occurence) }
     }
 
 //  function that takes in strings and boolean and returns an Occurence instance.
@@ -36,6 +44,7 @@ class CounterViewModel(private val occurenceDao: OccurenceDao) : ViewModel() {
         )
     }
 
+    // fn to acquire data from fragment
     fun addNewOccurence(
         occurenceName: String,
         occurenceDate: String,
@@ -51,19 +60,55 @@ class CounterViewModel(private val occurenceDao: OccurenceDao) : ViewModel() {
         }
         return true
     }
+
+    private fun insertDateTime(dateTime: DateTime) {
+        viewModelScope.launch {
+            dateTimeDao.insertDateTime(dateTime)
+        }
+    }
+    private fun getNewDateTimeEntry(
+        occurenceOwnerId: Int,
+        fullDate: String,
+        timeStart: String,
+        timeStop: String,
+        totalTime: String,
+
+        ): DateTime {
+        return DateTime(
+            occurenceOwnerId = occurenceOwnerId,
+            fullDate = fullDate,
+            timeStart = timeStart,
+            timeStop = timeStop,
+            totalTime = totalTime
+        )
+    }
+
+    fun addNewDateTime(
+        occurenceOwnerId: Int,
+        fullDate: String,
+        timeStart: String,
+        timeStop: String,
+        totalTime: String,
+    ) {
+        val newDateTime = getNewDateTimeEntry(
+            occurenceOwnerId, fullDate, timeStart,
+            timeStop,
+            totalTime
+        )
+        insertDateTime(newDateTime)
+    }
 }
-
-
 
 /**
  * Factory class to instantiate the [ViewModel] instance.
  */
-class CounterViewModelFactory(private val occurenceDao: OccurenceDao) : ViewModelProvider.Factory {
+
+class DateTimeViewModelFactory(private val occurenceDao: OccurenceDao, private val dateTimeDao: DateTimeDao) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(CounterViewModel::class.java)) {
+        if(modelClass.isAssignableFrom(CounterViewModel::class.java)){
             @Suppress("UNCHECKED_CAST")
-            return CounterViewModel(occurenceDao) as T
+            return CounterViewModel(occurenceDao, dateTimeDao) as T
         }
-        throw IllegalArgumentException("Unknown View Model class")
+        throw IllegalArgumentException("Unknow view model classs////////////")
     }
 }

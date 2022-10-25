@@ -6,14 +6,14 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.counter.data.Occurence
-import com.example.counter.databinding.OccurenceItemBinding
+import com.example.counter.databinding.OccurenceHomeItemBinding
 
 class OccurenceListAdapter(private val onItemClicked: (Occurence) -> Unit):
     ListAdapter<Occurence, OccurenceListAdapter.OccurenceViewHolder>(DiffCallback) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): OccurenceViewHolder {
         return OccurenceViewHolder(
-            OccurenceItemBinding.inflate(LayoutInflater.from(
+            OccurenceHomeItemBinding.inflate(LayoutInflater.from(
                 parent.context))
         )
     }
@@ -24,17 +24,18 @@ class OccurenceListAdapter(private val onItemClicked: (Occurence) -> Unit):
             onItemClicked(current)
         }
         holder.bind(current)
+
     }
 
-    class OccurenceViewHolder(private var binding: OccurenceItemBinding) :
+    class OccurenceViewHolder(private var binding: OccurenceHomeItemBinding) :
         RecyclerView.ViewHolder(binding.root){
-            fun bind(occurence: Occurence){
-                binding.apply {
-                    occurenceName.text = occurence.occurenceName
-                    timeFromLast.text = occurence.createDate
-                    timeToNext.text = occurence.createDate
-                }
+        fun bind(occurence: Occurence){
+            binding.apply {
+                occurenceName.text = occurence.occurenceName
+                timeFromLast.text = occurence.createDate
+                timeToNext.text = occurence.createDate
             }
+        }
     }
 
     companion object {

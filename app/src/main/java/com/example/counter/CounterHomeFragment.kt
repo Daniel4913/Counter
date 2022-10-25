@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.counter.databinding.FragmentCounterHomeBinding
@@ -14,11 +15,12 @@ class CounterHomeFragment : Fragment() {
 
 
 
-    private val viewModel: CounterViewModel by activityViewModels{
-                 CounterViewModelFactory(
-                     (activity?.application as CounterApplication).database.occurenceDao()
-                 )
-             }
+    private val viewModel: CounterViewModel by viewModels {
+        DateTimeViewModelFactory(
+            (activity?.application as CounterApplication).database.occurenceDao(),
+            (activity?.application as CounterApplication).database.dateTimeDao()
+        )
+    }
 
     private var _binding: FragmentCounterHomeBinding? = null
     private val binding get() = _binding!!
@@ -34,7 +36,7 @@ class CounterHomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val adapter = OccurenceListAdapter{
-            val action = CounterHomeFragmentDirections.actionCounterHomeFragmentToOccurenceFragment(it.id)
+            val action = CounterHomeFragmentDirections.actionCounterHomeFragmentToOccurenceFragment(it.occurenceId)
             this.findNavController().navigate(action)
         }
         binding.occurenciesRecyclerView.adapter = adapter

@@ -5,20 +5,27 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 
-@Database(entities = [Occurence::class], version = 1, exportSchema = false)
-abstract class OccurencyRoomDatabase: RoomDatabase() {
+@Database(
+    entities = [
+        Occurence::class,
+        DateTime::class],
+    version = 2,
+    exportSchema = false
+)
+abstract class CounterRoomDatabase : RoomDatabase() {
     abstract fun occurenceDao(): OccurenceDao
+    abstract fun dateTimeDao(): DateTimeDao
 
     companion object {
         @Volatile
-        private var INSTANCE: OccurencyRoomDatabase? = null
+        private var INSTANCE: CounterRoomDatabase? = null
 
-        fun getDatabase(context: Context): OccurencyRoomDatabase {
-            return INSTANCE ?: synchronized(this){
+        fun getDatabase(context: Context): CounterRoomDatabase {
+            return INSTANCE ?: synchronized(this) {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
-                    OccurencyRoomDatabase::class.java,
-                    "occurence_database"
+                    CounterRoomDatabase::class.java,
+                    "counter_database"
                 )
                     .fallbackToDestructiveMigration()
                     .build()

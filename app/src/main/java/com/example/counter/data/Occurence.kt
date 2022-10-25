@@ -8,14 +8,25 @@ import androidx.room.PrimaryKey
 @Entity
 data class Occurence(
     @PrimaryKey(autoGenerate = true)
-    val id: Int = 0,
-    @ColumnInfo(name = "name")
+    @ColumnInfo(name="occurence_id")
+    val occurenceId: Int = 0,
+
+    @ColumnInfo(name = "occurence_name")
     val occurenceName: String,
-    @ColumnInfo(name = "date")
+
+    @ColumnInfo(name = "create_date")
     val createDate: String,
-    @ColumnInfo(name ="occur")
+
+    @ColumnInfo(name ="occur_more")
     val occurMore: Boolean,
+
     @ColumnInfo(name = "category")
     val category: String,
-) {
+
+    ) {
+    fun shouldMakeActionToOccurMore(){
+        var daysToAction = 0
+        var daysAfterNotAction = 5
+        return // days after not aciton
+    }
 }
