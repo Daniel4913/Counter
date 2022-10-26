@@ -85,6 +85,7 @@ class OccurenceFragment : Fragment() {
 //            datesTimes = selectedOccurence
                 selectedOccurence.let{
                     adapter.submitList(it as MutableList<DateTime>?)
+                    // nie wierze ze dziala XDDDDDDDDDDD kurwa ale gamon
                 }
         }
 
