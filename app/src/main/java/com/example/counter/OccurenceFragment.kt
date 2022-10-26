@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.LiveData
@@ -15,11 +16,10 @@ import com.example.counter.adapters.DatesTimesListAdapter
 import com.example.counter.data.DateTime
 import com.example.counter.data.Occurence
 import com.example.counter.databinding.DatesTimesItemBinding
-//import androidx.navigation.fragment.navArgs
 import com.example.counter.databinding.FragmentOccurenceBinding
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import java.time.LocalDate
 import java.time.LocalDateTime
-import java.time.LocalTime
 import java.util.*
 
 class OccurenceFragment : Fragment() {
@@ -52,15 +52,6 @@ class OccurenceFragment : Fragment() {
         }
     }
 
-        private fun bindDatesTimes(dateTime: DateTime){
-        bindingDatesTimes.apply {
-            dateFull.text = dateTime.fullDate
-            totalTime.text = dateTime.timeStart
-            occurenceOwner.text = dateTime.occurenceOwnerId.toString()
-        }
-    }
-
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -73,17 +64,17 @@ class OccurenceFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        // get occurence
         val id = navigationArgs.id
-
         viewModel.retrieveOccurence(id).observe(this.viewLifecycleOwner) { selectedOccurence ->
             occurence = selectedOccurence
             bind(occurence)
         }
 
+
         datesTimes = viewModel.getCurrentOccurence()
         val adapter = DatesTimesListAdapter {
             Log.d("Occurence Fragment", "onClick z adaptera zamiast przejscia na inny fragment xD")
-
         }
         bindingOccurence.occurenceDetailRecyclerView.adapter = adapter
         viewModel.retrieveDatesTimes(id).observe(this.viewLifecycleOwner) { selectedOccurence ->
@@ -94,10 +85,18 @@ class OccurenceFragment : Fragment() {
         }
         bindingOccurence.occurenceDetailRecyclerView.layoutManager =
             LinearLayoutManager(this.context)
-        bindingOccurence.startActivity.setOnClickListener { addNewDateTime() }
+
+        //set totalTimes
+        fun  setTotalTimes() {
+            bindingOccurence.totalTimes.text = adapter.itemCount.toString() // pokazuje 0 :')
+            totalTimes = adapter.itemCount.toString()
+        }
+        
+        //Set button
+        bindingOccurence.startActivity.setOnClickListener { addNewDateTime();setTotalTimes()  }
     }
 
-
+    lateinit var totalTimes: String
 
 
     /**
@@ -123,30 +122,16 @@ class OccurenceFragment : Fragment() {
             getHour(),
             getHour(),
             "Ilestam:')"
-        )  // ?????????????
+        )
+
     }
 
     private fun getDate(): String {
-        val calendar = Calendar.getInstance()
-        val currentDateTime = LocalDateTime.of(
-            calendar.get(Calendar.YEAR),
-            calendar.get(Calendar.MONTH),
-            calendar.get(Calendar.DAY_OF_MONTH),
-            calendar.get(Calendar.HOUR_OF_DAY),
-            calendar.get(Calendar.MINUTE),
-            calendar.get(Calendar.SECOND)
-        )
-        return currentDateTime.toString()
+        return viewModel.getDate()
     }
 
     private fun getHour(): String {
-        val calendar = Calendar.getInstance()
-        val currentTime = LocalTime.of(
-            calendar.get(Calendar.HOUR_OF_DAY),
-            calendar.get(Calendar.MINUTE),
-            calendar.get(Calendar.SECOND)
-        )
-        return currentTime.toString()
+        return viewModel.getHour()
     }
 
     /**

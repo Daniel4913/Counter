@@ -6,6 +6,7 @@ import com.example.counter.data.DateTimeDao
 import com.example.counter.data.Occurence
 import com.example.counter.data.OccurenceDao
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 import java.time.LocalTime
 import java.util.*
 
@@ -111,17 +112,29 @@ class CounterViewModel(private val occurenceDao: OccurenceDao, private val dateT
         )
         insertDateTime(newDateTime)
     }
+
+    fun getDate(): String {
+        val calendar = Calendar.getInstance()
+        val currentDate = LocalDate.of(
+            calendar.get(Calendar.YEAR),
+            calendar.get(Calendar.MONTH),
+            calendar.get(Calendar.DAY_OF_MONTH),
+        )
+        return currentDate.toString()
+    }
+
+    fun getHour(): String{
+        val calendar = Calendar.getInstance()
+        val currentTime = LocalTime.of(
+            calendar.get(Calendar.HOUR_OF_DAY),
+            calendar.get(Calendar.MINUTE),
+            calendar.get(Calendar.SECOND)
+        )
+        return currentTime.toString()
+    }
 }
 
-fun getHour(): String{
-    val calendar = Calendar.getInstance()
-    val currentTime = LocalTime.of(
-        calendar.get(Calendar.HOUR_OF_DAY),
-        calendar.get(Calendar.MINUTE),
-        calendar.get(Calendar.SECOND)
-    )
-    return currentTime.toString()
-}
+
 
 /**
  * Factory class to instantiate the [ViewModel] instance.
