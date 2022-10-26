@@ -10,15 +10,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
-import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.counter.data.Occurence
 //import androidx.navigation.fragment.navArgs
 import com.example.counter.databinding.FragmentNewBinding
-import java.text.SimpleDateFormat
 import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
+import java.time.LocalTime
 import java.util.Calendar
 
 //import kotlin.reflect.KProperty
@@ -84,7 +82,7 @@ class NewFragment : Fragment() {
 
     private fun getDate(): String{
         val calendar = Calendar.getInstance()
-        val currentTime = LocalDateTime.of(
+        val currentDate = LocalDateTime.of(
             calendar.get(Calendar.YEAR),
             calendar.get(Calendar.MONTH),
             calendar.get(Calendar.DAY_OF_MONTH),
@@ -92,8 +90,10 @@ class NewFragment : Fragment() {
             calendar.get(Calendar.MINUTE),
             calendar.get(Calendar.SECOND)
         )
-        return currentTime.toString()
+        return currentDate.toString()
     }
+
+
 
     private fun startTimer(){
 

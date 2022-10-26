@@ -6,8 +6,11 @@ import com.example.counter.data.DateTimeDao
 import com.example.counter.data.Occurence
 import com.example.counter.data.OccurenceDao
 import kotlinx.coroutines.launch
+import java.time.LocalTime
+import java.util.*
 
-class CounterViewModel(private val occurenceDao: OccurenceDao, private val dateTimeDao: DateTimeDao) : ViewModel() {
+class CounterViewModel(private val occurenceDao: OccurenceDao, private val dateTimeDao: DateTimeDao)
+    : ViewModel() {
 
 
     val allOccurences: LiveData<List<Occurence>> = occurenceDao.getOccurencies().asLiveData()
@@ -24,12 +27,6 @@ class CounterViewModel(private val occurenceDao: OccurenceDao, private val dateT
         return allDatesTimes
     }
 
-
-
-// skad sie dowiedziec ktore occurency klilknal user??????????????????????????????????????   ^
-    //ta informacja jest w home fragment
-
-
     fun retrieveOccurence(id: Int): LiveData<Occurence>{
         return occurenceDao.getOccurence(id).asLiveData()
     }
@@ -37,7 +34,6 @@ class CounterViewModel(private val occurenceDao: OccurenceDao, private val dateT
     fun retrieveDatesTimes(id: Int): LiveData<List<DateTime>>{
         return dateTimeDao.getOccurenceWithDatesTimes(id).asLiveData()
     }
-
 
 //    To interact with the database off the main thread, start a coroutine and call the DAO method within it
     private fun insertOccurence(occurence: Occurence) {
@@ -115,6 +111,16 @@ class CounterViewModel(private val occurenceDao: OccurenceDao, private val dateT
         )
         insertDateTime(newDateTime)
     }
+}
+
+fun getHour(): String{
+    val calendar = Calendar.getInstance()
+    val currentTime = LocalTime.of(
+        calendar.get(Calendar.HOUR_OF_DAY),
+        calendar.get(Calendar.MINUTE),
+        calendar.get(Calendar.SECOND)
+    )
+    return currentTime.toString()
 }
 
 /**

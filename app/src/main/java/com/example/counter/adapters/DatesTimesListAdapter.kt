@@ -2,7 +2,6 @@ package com.example.counter.adapters
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -31,15 +30,10 @@ class DatesTimesListAdapter(private val onItemClicked: (DateTime) -> Unit):
         fun bind(dateTime: DateTime){
             binding.apply {
                 dateFull.text = dateTime.fullDate
-                totalTime.text = dateTime.totalTime
+                totalTime.text = dateTime.timeStart
                 occurenceOwner.text = dateTime.occurenceOwnerId.toString()
             }
         }
-    }
-
-    override fun submitList(list: MutableList<DateTime>?) {
-        super.submitList(list)
-//        LiveData
     }
 
     companion object {

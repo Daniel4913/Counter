@@ -9,7 +9,7 @@ import androidx.room.RoomDatabase
     entities = [
         Occurence::class,
         DateTime::class],
-    version = 2,
+    version = 3,
     exportSchema = false
 )
 abstract class CounterRoomDatabase : RoomDatabase() {
