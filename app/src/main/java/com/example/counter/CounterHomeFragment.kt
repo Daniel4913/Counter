@@ -52,5 +52,4 @@ class CounterHomeFragment : Fragment() {
             this.findNavController().navigate(action)
         }
     }
-
 }

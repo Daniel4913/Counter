@@ -8,11 +8,14 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.asLiveData
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.counter.adapters.DatesTimesListAdapter
 import com.example.counter.data.DateTime
+import com.example.counter.data.DateTimeDao
 import com.example.counter.data.Occurence
 //import androidx.navigation.fragment.navArgs
 import com.example.counter.databinding.FragmentOccurenceBinding
@@ -24,6 +27,7 @@ class OccurenceFragment : Fragment() {
 
     private val navigationArgs: OccurenceFragmentArgs by navArgs()
 
+//    lateinit var dateTimeDao: DateTimeDao kotlin.UninitializedPropertyAccessException: lateinit property dateTimeDao has not been initialized
 
     private val viewModel: CounterViewModel by viewModels {
         DateTimeViewModelFactory(
@@ -47,6 +51,7 @@ class OccurenceFragment : Fragment() {
     }
 
     lateinit var occurence: Occurence
+    lateinit var datesTimes: LiveData<List<DateTime>>
 
     private var _binding: FragmentOccurenceBinding? = null
     private val binding get() = _binding!!
@@ -55,6 +60,8 @@ class OccurenceFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        viewModel.currentOccurence = navigationArgs.id
+        viewModel.getCurrentOccurence()
         _binding= FragmentOccurenceBinding.inflate(inflater,container,false)
         return binding.root
     }
@@ -67,18 +74,31 @@ class OccurenceFragment : Fragment() {
             occurence = selectedOccurence
             bind(occurence)
         }
-
-        // do datetime:
+        datesTimes = viewModel.getCurrentOccurence()
         val adapter = DatesTimesListAdapter{
             Log.d("Occurence Fragment","onClick z adaptera zamiast przejscia na inny fragment xD")
+            //moze tu przerobic to live data list na zwykle list???
+
         }
         binding.occurenceDetailRecyclerView.adapter = adapter
-
-        viewModel.allDatesTimes.observe(this.viewLifecycleOwner){ items ->
-            items.let{
-                adapter.submitList(it)
-            }
+        viewModel.retrieveDatesTimes(id).observe(this.viewLifecycleOwner) {selectedOccurence ->
+//            datesTimes = selectedOccurence
+                selectedOccurence.let{
+                    adapter.submitList(it as MutableList<DateTime>?)
+                }
         }
+
+
+
+
+//        binding.occurenceDetailRecyclerView.adapter = adapter
+
+//        var currentOcc = viewModel.currentOccurence
+//        viewModel.retrieveOccurence(currentOcc).observe(this.viewLifecycleOwner){ items ->
+//            items.let(){
+//                adapter.submitList(datesTimes)
+//            }
+//        }
         binding.occurenceDetailRecyclerView.layoutManager = LinearLayoutManager(this.context)
         binding.startActivity.setOnClickListener { addNewDateTime() }
     }

@@ -2,6 +2,7 @@ package com.example.counter.adapters
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -34,6 +35,11 @@ class DatesTimesListAdapter(private val onItemClicked: (DateTime) -> Unit):
                 occurenceOwner.text = dateTime.occurenceOwnerId.toString()
             }
         }
+    }
+
+    override fun submitList(list: MutableList<DateTime>?) {
+        super.submitList(list)
+//        LiveData
     }
 
     companion object {

@@ -9,15 +9,33 @@ import kotlinx.coroutines.launch
 
 class CounterViewModel(private val occurenceDao: OccurenceDao, private val dateTimeDao: DateTimeDao) : ViewModel() {
 
-//    val currentVisitedOccurence = !!!!!!!!!!!!!!!!!!!
 
     val allOccurences: LiveData<List<Occurence>> = occurenceDao.getOccurencies().asLiveData()
-    val allDatesTimes: LiveData<List<DateTime>> = dateTimeDao.getOccurenceWithDatesTimes().asLiveData()
+
+     var currentOccurence = 0
+
+    fun getCurrentOccurence(): LiveData<List<DateTime>> {
+        lateinit var allDatesTimes: LiveData<List<DateTime>>
+        if (currentOccurence!=0){
+            var gettedOccurence = 0
+            var getAllDatesTimes: LiveData<List<DateTime>> = dateTimeDao.getOccurenceWithDatesTimes(gettedOccurence).asLiveData()
+            allDatesTimes = getAllDatesTimes
+        }
+        return allDatesTimes
+    }
+
+
+
 // skad sie dowiedziec ktore occurency klilknal user??????????????????????????????????????   ^
     //ta informacja jest w home fragment
 
+
     fun retrieveOccurence(id: Int): LiveData<Occurence>{
         return occurenceDao.getOccurence(id).asLiveData()
+    }
+
+    fun retrieveDatesTimes(id: Int): LiveData<List<DateTime>>{
+        return dateTimeDao.getOccurenceWithDatesTimes(id).asLiveData()
     }
 
 
