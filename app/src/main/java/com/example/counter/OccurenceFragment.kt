@@ -1,6 +1,11 @@
 package com.example.counter
 
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.os.Bundle
+import android.text.format.DateUtils
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -17,10 +22,13 @@ import com.example.counter.data.DateTime
 import com.example.counter.data.Occurence
 import com.example.counter.databinding.DatesTimesItemBinding
 import com.example.counter.databinding.FragmentOccurenceBinding
+import com.example.counter.services.TimerService
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.*
+import kotlin.math.roundToInt
+import kotlin.properties.Delegates
 
 class OccurenceFragment : Fragment() {
 
@@ -42,6 +50,10 @@ class OccurenceFragment : Fragment() {
         )
     }
 
+    private var timerStarted = false
+    private lateinit var serviceIntent: Intent
+    private var time = 0.0
+
     private fun bind(occurence: Occurence) {
         bindingOccurence.apply {
             occurencyName.text = occurence.occurenceName
@@ -52,6 +64,8 @@ class OccurenceFragment : Fragment() {
         }
     }
 
+
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -59,7 +73,12 @@ class OccurenceFragment : Fragment() {
         viewModel.currentOccurence = navigationArgs.id
         viewModel.getCurrentOccurence()
         _bindingOccurence = FragmentOccurenceBinding.inflate(inflater, container, false)
+
+
+
         return bindingOccurence.root
+
+
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -94,9 +113,71 @@ class OccurenceFragment : Fragment() {
         
         //Set button
         bindingOccurence.startActivity.setOnClickListener { addNewDateTime();setTotalTimes()  }
+
+        // start stop timer
+        bindingOccurence.timerCounter.setOnClickListener { startStopTimer()  }
+        bindingOccurence.resetTimer.setOnClickListener { resetTimer()  }
+        serviceIntent = Intent(context?.applicationContext, TimerService::class.java )
+        context?.registerReciever(updateTime, IntentFilter(TimerService.TIMER_UPDATED))
     }
 
+    //TODO https://www.youtube.com/watch?v=LPjhP9D3pm8
+    private fun resetTimer() {
+        stopTimer()
+        time = 0.0
+        bindingOccurence.timerCounter.text = getTimeStringFromDouble(time)
+    }
+
+    private fun startStopTimer() {
+        if(timerStarted)
+            stopTimer()
+        else
+            startTimer()
+    }
+
+    private fun startTimer() {
+        serviceIntent.putExtra(TimerService.TIME_EXTRA, time)
+        startService(serviceIntent)
+        bindingOccurence.startTimer.text = "stop"
+        timerStarted=true
+
+    }
+
+    private fun stopTimer() {
+        stopService(serviceIntent)
+
+
+        bindingOccurence.startTimer.text = "start"
+        timerStarted=false
+    }
+
+
+    private val updateTime: BroadcastReceiver = object: BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent) {
+            time = intent.getDoubleExtra(TimerService.TIME_EXTRA, 0.0)
+            bindingOccurence.timerCounter.text = getTimeStringFromDouble(time)
+        }
+    }
+
+    private fun getTimeStringFromDouble(time: Double): String {
+        val resultInt = time.roundToInt()
+        val hrs = resultInt % 86400 / 3600
+        val mins = resultInt % 86400 % 3600 / 60
+        val sec = resultInt % 86400 % 3600 % 60
+
+        return  makeTimeString(hrs,mins,sec)
+    }
+
+    private fun makeTimeString(hrs: Int, mins: Int, sec: Int): String = String.format("%02d:%02d:%02d", hrs, mins,sec) {
+
+    }
+
+
+
+
+
     lateinit var totalTimes: String
+
 
 
     /**
@@ -123,8 +204,8 @@ class OccurenceFragment : Fragment() {
             getHour(),
             "Ilestam:')"
         )
-
     }
+
 
     private fun getDate(): String {
         return viewModel.getDate()
@@ -149,3 +230,4 @@ class OccurenceFragment : Fragment() {
         _bindingOccurence = null
     }
 }
+

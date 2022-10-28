@@ -30,6 +30,15 @@
             tools:text="Category" />
 
         <TextView
+            android:id="@+id/timer_counter"
+            style="@style/Widget.Counter.TextView"
+            android:layout_width="wrap_content"
+            android:layout_marginTop="48dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/occurency_category"
+            android:text="00:00:00" />
+
+        <TextView
             android:id="@+id/occurency_create_date"
             style="@style/Widget.Counter.TextView"
             android:layout_width="wrap_content"
@@ -82,7 +91,8 @@
             android:layout_marginEnd="@dimen/margin"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/divider"
-            android:text="6" />
+            app:layout_constraintStart_toStartOf="parent"
+            android:text="will calculate when new added" />
 
         <!--        <com.google.android.material.switchmaterial.SwitchMaterial-->
         <!--            android:id="@+id/timer_switch"-->
@@ -100,9 +110,29 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="24dp"
-            android:text="Start/ start with timer"
+            android:text="add"
             app:layout_constraintTop_toBottomOf="@id/total_times"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/start_timer"
+            />
+        <Button
+            android:id="@+id/start_timer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp"
+            android:text="timer"
+            app:layout_constraintTop_toBottomOf="@id/total_times"
+            app:layout_constraintStart_toEndOf="@id/start_activity"
+            app:layout_constraintEnd_toStartOf="@id/reset_timer"
+            />
+        <Button
+            android:id="@+id/reset_timer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp"
+            android:text="reset"
+            app:layout_constraintTop_toBottomOf="@id/total_times"
+            app:layout_constraintStart_toEndOf="@id/start_timer"
             app:layout_constraintEnd_toEndOf="parent"
             />
         <com.google.android.material.card.MaterialCardView

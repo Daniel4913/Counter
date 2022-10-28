@@ -25,10 +25,6 @@ class DatesTimesListAdapter(private val onItemClicked: (DateTime) -> Unit):
         holder.bind(current)
     }
 
-    override fun getItemCount(): Int {
-        return super.getItemCount()
-    }
-
     class DatesTimesViewHolder(private var binding: DatesTimesItemBinding) :
         RecyclerView.ViewHolder(binding.root){
         fun bind(dateTime: DateTime){
