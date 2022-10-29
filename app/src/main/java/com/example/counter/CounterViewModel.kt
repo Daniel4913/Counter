@@ -42,6 +42,12 @@ class CounterViewModel(private val occurenceDao: OccurenceDao, private val dateT
             occurenceDao.insertOccurence(occurence) }
     }
 
+    private fun deleteOccurence(occurence: Occurence){
+        viewModelScope.launch {
+            occurenceDao.delete(occurence)
+        }
+    }
+
 //  function that takes in strings and boolean and returns an Occurence instance.
     private fun getNewOccurenceEntry(
         occurenceName: String,
@@ -75,12 +81,21 @@ class CounterViewModel(private val occurenceDao: OccurenceDao, private val dateT
         }
         return true
     }
-
+// DATES TIMES BLOCK
     private fun insertDateTime(dateTime: DateTime) {
         viewModelScope.launch {
             dateTimeDao.insertDateTime(dateTime)
         }
     }
+
+    private fun deleteDatesTimes(dateTime: DateTime){
+        viewModelScope.launch{
+            dateTimeDao.delete(dateTime)
+        }
+    }
+
+    fun deleteAllDatesTimes
+
     private fun getNewDateTimeEntry(
         occurenceOwnerId: Int,
         fullDate: String,
@@ -112,6 +127,8 @@ class CounterViewModel(private val occurenceDao: OccurenceDao, private val dateT
         )
         insertDateTime(newDateTime)
     }
+
+
 
     fun getDate(): String {
         val calendar = Calendar.getInstance()

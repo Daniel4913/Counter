@@ -11,6 +11,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.content.ContextCompat.registerReceiver
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.LiveData
@@ -49,7 +50,6 @@ class OccurenceFragment : Fragment() {
             (activity?.application as CounterApplication).database.dateTimeDao()
         )
     }
-
     private var timerStarted = false
     private lateinit var serviceIntent: Intent
     private var time = 0.0
@@ -57,14 +57,11 @@ class OccurenceFragment : Fragment() {
     private fun bind(occurence: Occurence) {
         bindingOccurence.apply {
             occurencyName.text = occurence.occurenceName
-            occurencyCreateDate.text = occurence.createDate
+            occurenceCreateDate.text = occurence.createDate
             occurencyCategory.text = occurence.category
 //            totalTimes.text = (viewModel.allOccurences as kotlin.collections.MutableList<*>).size.toString()
-
         }
     }
-
-
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -73,12 +70,7 @@ class OccurenceFragment : Fragment() {
         viewModel.currentOccurence = navigationArgs.id
         viewModel.getCurrentOccurence()
         _bindingOccurence = FragmentOccurenceBinding.inflate(inflater, container, false)
-
-
-
         return bindingOccurence.root
-
-
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -90,35 +82,29 @@ class OccurenceFragment : Fragment() {
             bind(occurence)
         }
 
-
         datesTimes = viewModel.getCurrentOccurence()
         val adapter = DatesTimesListAdapter {
-            Log.d("Occurence Fragment", "onClick z adaptera zamiast przejscia na inny fragment xD")
-        }
+            Log.d("Occurence Fragment", "onClick z adaptera zamiast przejscia na inny fragment xD") }
         bindingOccurence.occurenceDetailRecyclerView.adapter = adapter
         viewModel.retrieveDatesTimes(id).observe(this.viewLifecycleOwner) { selectedOccurence ->
             selectedOccurence.let {
                 adapter.submitList(it as MutableList<DateTime>?)
-
             }
         }
         bindingOccurence.occurenceDetailRecyclerView.layoutManager =
             LinearLayoutManager(this.context)
-
         //set totalTimes
         fun  setTotalTimes() {
             bindingOccurence.totalTimes.text = adapter.itemCount.toString() // pokazuje 0 :')
             totalTimes = adapter.itemCount.toString()
         }
-        
         //Set button
         bindingOccurence.startActivity.setOnClickListener { addNewDateTime();setTotalTimes()  }
-
         // start stop timer
-        bindingOccurence.timerCounter.setOnClickListener { startStopTimer()  }
+        bindingOccurence.startTimer.setOnClickListener { startStopTimer()  }
         bindingOccurence.resetTimer.setOnClickListener { resetTimer()  }
         serviceIntent = Intent(context?.applicationContext, TimerService::class.java )
-        context?.registerReciever(updateTime, IntentFilter(TimerService.TIMER_UPDATED))
+        context?.registerReceiver(updateTime, IntentFilter(TimerService.TIMER_UPDATED))
     }
 
     //TODO https://www.youtube.com/watch?v=LPjhP9D3pm8
@@ -137,21 +123,17 @@ class OccurenceFragment : Fragment() {
 
     private fun startTimer() {
         serviceIntent.putExtra(TimerService.TIME_EXTRA, time)
-        startService(serviceIntent)
+        context?.startService(serviceIntent)
         bindingOccurence.startTimer.text = "stop"
         timerStarted=true
-
+        Log.d("startTimer", "STARTTTTTTTTTTTT")
     }
 
     private fun stopTimer() {
-        stopService(serviceIntent)
-
-
+        context?.stopService(serviceIntent)
         bindingOccurence.startTimer.text = "start"
         timerStarted=false
     }
-
-
     private val updateTime: BroadcastReceiver = object: BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent) {
             time = intent.getDoubleExtra(TimerService.TIME_EXTRA, 0.0)
@@ -162,23 +144,14 @@ class OccurenceFragment : Fragment() {
     private fun getTimeStringFromDouble(time: Double): String {
         val resultInt = time.roundToInt()
         val hrs = resultInt % 86400 / 3600
-        val mins = resultInt % 86400 % 3600 / 60
+        val min = resultInt % 86400 % 3600 / 60
         val sec = resultInt % 86400 % 3600 % 60
-
-        return  makeTimeString(hrs,mins,sec)
+        return  makeTimeString(hrs,min,sec)
     }
 
-    private fun makeTimeString(hrs: Int, mins: Int, sec: Int): String = String.format("%02d:%02d:%02d", hrs, mins,sec) {
-
-    }
-
-
-
-
+    private fun makeTimeString(hrs: Int, mins: Int, sec: Int): String = String.format("%02d:%02d:%02d", hrs, mins,sec)
 
     lateinit var totalTimes: String
-
-
 
     /**
      * Displays an alert dialog to get the user's confirmation before deleting the item.
@@ -205,7 +178,6 @@ class OccurenceFragment : Fragment() {
             "Ilestam:')"
         )
     }
-
 
     private fun getDate(): String {
         return viewModel.getDate()

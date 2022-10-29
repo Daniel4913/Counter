@@ -20,14 +20,16 @@
             android:layout_width="wrap_content"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:text="Caffeine" />
+            android:text="caffeine"
+            android:padding="10dp"/>
         <TextView
             android:id="@+id/occurency_category"
             style="@style/Widget.Counter.TextView"
             android:layout_width="wrap_content"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:text="Category" />
+            android:text="zdrowie"
+            android:padding="10dp"/>
 
         <TextView
             android:id="@+id/timer_counter"
@@ -36,16 +38,18 @@
             android:layout_marginTop="48dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/occurency_category"
-            android:text="00:00:00" />
+            android:text="00:00:00"
+            android:padding="10dp"/>
 
         <TextView
-            android:id="@+id/occurency_create_date"
-            style="@style/Widget.Counter.TextView"
+            android:id="@+id/occurence_create_date"
+            style="@style/Widget.Counter.TextViewSmall"
             android:layout_width="wrap_content"
             android:layout_marginTop="@dimen/margin"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/occurency_name"
-            tools:text="@string/time_from" />
+            android:text="date;date;date"
+            android:padding="10dp"/>
 
         <TextView
             android:id="@+id/occurency_time_from"
@@ -53,8 +57,8 @@
             android:layout_width="wrap_content"
             android:layout_marginTop="@dimen/margin"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/occurency_create_date"
-            tools:text="@string/time_from" />
+            app:layout_constraintTop_toBottomOf="@+id/occurence_create_date"
+            android:text="@string/time_from" />
 
         <TextView
             android:id="@+id/occurency_time_to"
@@ -120,7 +124,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="24dp"
-            android:text="timer"
+            android:text="startstop"
             app:layout_constraintTop_toBottomOf="@id/total_times"
             app:layout_constraintStart_toEndOf="@id/start_activity"
             app:layout_constraintEnd_toStartOf="@id/reset_timer"
@@ -159,6 +163,17 @@
             android:text="Edit"
             app:layout_constraintTop_toBottomOf="@id/occurence_detail_holder"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/delete_btn"
+            />
+        <Button
+            android:id="@+id/delete_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp"
+            android:text="delete list"
+            app:layout_constraintTop_toBottomOf="@id/occurence_detail_holder"
+            app:layout_constraintStart_toEndOf="@id/edit_btn"
+            app:layout_constraintEnd_toEndOf="parent"
             />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>
