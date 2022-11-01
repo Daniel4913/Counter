@@ -40,7 +40,9 @@ class OccurenceFragment : Fragment() {
     lateinit var dateTime: DateTime
     lateinit var timePassed: String //
     lateinit var totalTimes: String
-
+    private lateinit var serviceIntent: Intent
+    private var timerStarted = false
+    private var time = 0.0
     private var _bindingOccurence: FragmentOccurenceBinding? = null
     private val bindingOccurence get() = _bindingOccurence!!
 
@@ -54,9 +56,7 @@ class OccurenceFragment : Fragment() {
         )
     }
 
-    private var timerStarted = false
-    private lateinit var serviceIntent: Intent
-    private var time = 0.0
+
 
     private fun bind(occurence: Occurence) {
         bindingOccurence.apply {
@@ -99,16 +99,13 @@ class OccurenceFragment : Fragment() {
         }
         bindingOccurence.occurenceDetailRecyclerView.layoutManager =
             LinearLayoutManager(this.context)
-
         // set totalTimes
         fun  setTotalTimes() {
             bindingOccurence.totalTimes.text = adapter.itemCount.toString() // pokazuje 0 :')
             totalTimes = adapter.itemCount.toString()
         }
-
         // Set button
         bindingOccurence.startActivity.setOnClickListener { addNewDateTime(); setTotalTimes()  }
-
         // start stop timer
         serviceIntent = Intent(context?.applicationContext, TimerService::class.java )
         context?.registerReceiver(updateTime, IntentFilter(TimerService.TIMER_UPDATED))
@@ -191,6 +188,12 @@ class OccurenceFragment : Fragment() {
             }
             .show()
     }
+
+    /**
+     * Counting bloc to calculate how much time passed between occurences
+     */
+
+    //todo List<DatesTimes[last in recycler list]>
 
 
     /**

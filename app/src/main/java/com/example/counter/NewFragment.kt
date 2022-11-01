@@ -61,7 +61,7 @@ class NewFragment : Fragment() {
                 binding.occurenceName.text.toString(),
                 binding.occurenceDate.text.toString(),
                 binding.frequencySwitch.isChecked,
-                binding.category.text.toString()
+                binding.categoryList.selectedPosition.toString() //????
             )
         }
         val action = NewFragmentDirections.actionNewFragmentToCounterHomeFragment()
