@@ -15,9 +15,6 @@ import androidx.navigation.fragment.findNavController
 import com.example.counter.data.Occurence
 //import androidx.navigation.fragment.navArgs
 import com.example.counter.databinding.FragmentNewBinding
-import java.time.LocalDateTime
-import java.time.LocalTime
-import java.util.Calendar
 
 //import kotlin.reflect.KProperty
 
@@ -51,7 +48,7 @@ class NewFragment : Fragment() {
         binding.addBtn.setOnClickListener {
             addNewOccurence()
         }
-        binding.currentDateTime.text = getDate()
+        binding.currentDateTime.text = "pobierz date"
         binding.currentDateTime.setOnClickListener {
             binding.occurenceDate.setText(getDate(), TextView.BufferType.EDITABLE)
         }
@@ -80,26 +77,9 @@ class NewFragment : Fragment() {
     }
 
 
-    private fun getDate(): String{
-        val calendar = Calendar.getInstance()
-        val currentDate = LocalDateTime.of(
-            calendar.get(Calendar.YEAR),
-            calendar.get(Calendar.MONTH),
-            calendar.get(Calendar.DAY_OF_MONTH),
-            calendar.get(Calendar.HOUR_OF_DAY),
-            calendar.get(Calendar.MINUTE),
-            calendar.get(Calendar.SECOND)
-        )
-        return currentDate.toString()
+    private fun getDate(): String {
+        return viewModel.getDate()
     }
-
-
-
-    private fun startTimer(){
-
-    }
-
-
 
     override fun onDestroyView() {
         super.onDestroyView()

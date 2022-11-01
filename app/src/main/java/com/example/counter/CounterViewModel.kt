@@ -7,7 +7,9 @@ import com.example.counter.data.Occurence
 import com.example.counter.data.OccurenceDao
 import kotlinx.coroutines.launch
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 import java.util.*
 
 class CounterViewModel(private val occurenceDao: OccurenceDao, private val dateTimeDao: DateTimeDao)
@@ -42,7 +44,7 @@ class CounterViewModel(private val occurenceDao: OccurenceDao, private val dateT
             occurenceDao.insertOccurence(occurence) }
     }
 
-    private fun deleteOccurence(occurence: Occurence){
+    fun deleteOccurence(occurence: Occurence){
         viewModelScope.launch {
             occurenceDao.delete(occurence)
         }
@@ -59,13 +61,11 @@ class CounterViewModel(private val occurenceDao: OccurenceDao, private val dateT
             occurenceName = occurenceName,
             createDate = occurenceDate,
             occurMore = occurMore,
-//            occurMore = occurMore.toString(), = drze pape ze type mismatch, chyba pojebalem strony co do czego XD
             category = category
-//        occurenceName = name, = Cannot find a parameter with this name: occurenceName . Czyli dobre strony jednak
         )
     }
 
-    // fn to acquire data from fragment
+    // fn to acquire data from newfragment
     fun addNewOccurence(
         occurenceName: String,
         occurenceDate: String,
@@ -81,6 +81,7 @@ class CounterViewModel(private val occurenceDao: OccurenceDao, private val dateT
         }
         return true
     }
+
 // DATES TIMES BLOCK
     private fun insertDateTime(dateTime: DateTime) {
         viewModelScope.launch {
@@ -88,13 +89,11 @@ class CounterViewModel(private val occurenceDao: OccurenceDao, private val dateT
         }
     }
 
-    private fun deleteDatesTimes(dateTime: DateTime){
+    fun deleteDateTime(dateTime: DateTime){
         viewModelScope.launch{
             dateTimeDao.delete(dateTime)
         }
     }
-
-    fun deleteAllDatesTimes
 
     private fun getNewDateTimeEntry(
         occurenceOwnerId: Int,
@@ -131,23 +130,13 @@ class CounterViewModel(private val occurenceDao: OccurenceDao, private val dateT
 
 
     fun getDate(): String {
-        val calendar = Calendar.getInstance()
-        val currentDate = LocalDate.of(
-            calendar.get(Calendar.YEAR),
-            calendar.get(Calendar.MONTH),
-            calendar.get(Calendar.DAY_OF_MONTH),
-        )
-        return currentDate.toString()
+        val currentDateTime = LocalDateTime.now()
+        return currentDateTime.format(DateTimeFormatter.ofPattern("HH:mm:ss dd.MM.yyyy"))
     }
 
     fun getHour(): String{
-        val calendar = Calendar.getInstance()
-        val currentTime = LocalTime.of(
-            calendar.get(Calendar.HOUR_OF_DAY),
-            calendar.get(Calendar.MINUTE),
-            calendar.get(Calendar.SECOND)
-        )
-        return currentTime.toString()
+        val currentTime = LocalDateTime.now()
+        return currentTime.format(DateTimeFormatter.ofPattern("HH:mm:ss"))
     }
 }
 

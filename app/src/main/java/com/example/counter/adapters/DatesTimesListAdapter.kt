@@ -30,8 +30,9 @@ class DatesTimesListAdapter(private val onItemClicked: (DateTime) -> Unit):
         fun bind(dateTime: DateTime){
             binding.apply {
                 dateFull.text = dateTime.fullDate
-                totalTime.text = dateTime.timeStart
-                occurenceOwner.text = dateTime.occurenceOwnerId.toString()
+                timeFrom.text = dateTime.timeStart
+                timeLast.text = dateTime.occurenceOwnerId.toString()
+                timeSpentWithTimer.text = dateTime.totalTime
             }
         }
     }

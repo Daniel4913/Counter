@@ -32,8 +32,6 @@ class OccurenceListAdapter(private val onItemClicked: (Occurence) -> Unit):
         fun bind(occurence: Occurence){
             binding.apply {
                 occurenceName.text = occurence.occurenceName
-                timeFromLast.text = occurence.createDate
-                timeToNext.text = occurence.createDate
             }
         }
     }

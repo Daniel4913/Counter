@@ -37,6 +37,9 @@ class OccurenceFragment : Fragment() {
 
     lateinit var occurence: Occurence
     lateinit var datesTimes: LiveData<List<DateTime>>
+    lateinit var dateTime: DateTime
+    lateinit var timePassed: String //
+    lateinit var totalTimes: String
 
     private var _bindingOccurence: FragmentOccurenceBinding? = null
     private val bindingOccurence get() = _bindingOccurence!!
@@ -50,6 +53,7 @@ class OccurenceFragment : Fragment() {
             (activity?.application as CounterApplication).database.dateTimeDao()
         )
     }
+
     private var timerStarted = false
     private lateinit var serviceIntent: Intent
     private var time = 0.0
@@ -59,7 +63,9 @@ class OccurenceFragment : Fragment() {
             occurencyName.text = occurence.occurenceName
             occurenceCreateDate.text = occurence.createDate
             occurencyCategory.text = occurence.category
-//            totalTimes.text = (viewModel.allOccurences as kotlin.collections.MutableList<*>).size.toString()
+            deleteBtn.setOnClickListener { showConfirmationDialog() }
+            startTimer.setOnClickListener { startStopTimer() }
+            resetTimer.setOnClickListener { resetTimer() }
         }
     }
 
@@ -75,7 +81,6 @@ class OccurenceFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        // get occurence
         val id = navigationArgs.id
         viewModel.retrieveOccurence(id).observe(this.viewLifecycleOwner) { selectedOccurence ->
             occurence = selectedOccurence
@@ -84,7 +89,8 @@ class OccurenceFragment : Fragment() {
 
         datesTimes = viewModel.getCurrentOccurence()
         val adapter = DatesTimesListAdapter {
-            Log.d("Occurence Fragment", "onClick z adaptera zamiast przejscia na inny fragment xD") }
+            dateTime = it
+             showConfirmationDialogDateTime()}
         bindingOccurence.occurenceDetailRecyclerView.adapter = adapter
         viewModel.retrieveDatesTimes(id).observe(this.viewLifecycleOwner) { selectedOccurence ->
             selectedOccurence.let {
@@ -93,22 +99,107 @@ class OccurenceFragment : Fragment() {
         }
         bindingOccurence.occurenceDetailRecyclerView.layoutManager =
             LinearLayoutManager(this.context)
-        //set totalTimes
+
+        // set totalTimes
         fun  setTotalTimes() {
             bindingOccurence.totalTimes.text = adapter.itemCount.toString() // pokazuje 0 :')
             totalTimes = adapter.itemCount.toString()
         }
-        //Set button
-        bindingOccurence.startActivity.setOnClickListener { addNewDateTime();setTotalTimes()  }
+
+        // Set button
+        bindingOccurence.startActivity.setOnClickListener { addNewDateTime(); setTotalTimes()  }
+
         // start stop timer
-        bindingOccurence.startTimer.setOnClickListener { startStopTimer()  }
-        bindingOccurence.resetTimer.setOnClickListener { resetTimer()  }
         serviceIntent = Intent(context?.applicationContext, TimerService::class.java )
         context?.registerReceiver(updateTime, IntentFilter(TimerService.TIMER_UPDATED))
     }
 
+    private fun addNewDateTime(timerValue: String = " ") {
+        viewModel.addNewDateTime(
+            navigationArgs.id,
+            getDate(),
+            getHour(),
+            getHour(),
+            timerValue
+        )
+    }
+
+    private fun getDate(): String {
+        return viewModel.getDate()
+    }
+
+    private fun getHour(): String {
+        return viewModel.getHour()
+    }
+    /**
+     * Deletes tapped date time item on recycler view
+     */
+    private fun deleteDateTime() {
+        viewModel.deleteDateTime(dateTime)
+    }
+
+    /**
+     * Deletes the current occurence and navigates to the list fragment.
+     */
+    private fun deleteOccurence() {
+        viewModel.deleteOccurence(occurence)
+        findNavController().navigateUp()
+    }
+
+    /**
+     * Called when fragment is destroyed.
+     */
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _bindingOccurence = null
+    }
+
+    /**
+     * Displays an alert dialog to get the user's confirmation before deleting the item.
+     */
+    private fun showConfirmationDialog() {
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle(getString(android.R.string.dialog_alert_title))
+            .setMessage(getString(R.string.delete_question))
+            .setCancelable(false)
+            .setNegativeButton(getString(R.string.no)) { _, _ -> }
+            .setPositiveButton(getString(R.string.yes)) { _, _ ->
+                deleteOccurence()
+            }
+            .show()
+    }
+
+    private fun showConfirmationDialogDateTime() {
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle(getString(android.R.string.dialog_alert_title))
+            .setMessage(getString(R.string.delete_dateTime_question))
+            .setCancelable(false)
+            .setNegativeButton(getString(R.string.no)) { _, _ -> }
+            .setPositiveButton(getString(R.string.yes)) { _, _ ->
+                deleteDateTime()
+            }
+            .show()
+    }
+    private fun showSaveTimeDialog() {
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle(getString(android.R.string.dialog_alert_title))
+            .setMessage(getString(R.string.save_timer_question, timePassed))
+            .setCancelable(false)
+            .setNegativeButton(getString(R.string.no)) { _, _ -> }
+            .setPositiveButton(getString(R.string.yes)) { _, _ ->
+            addNewDateTime(timePassed)
+            }
+            .show()
+    }
+
+
+    /**
+     * Timer block for measure how long occurence was
+     */
     //TODO https://www.youtube.com/watch?v=LPjhP9D3pm8
     private fun resetTimer() {
+        timePassed =getTimeStringFromDouble(time)
+        showSaveTimeDialog()
         stopTimer()
         time = 0.0
         bindingOccurence.timerCounter.text = getTimeStringFromDouble(time)
@@ -126,8 +217,7 @@ class OccurenceFragment : Fragment() {
         context?.startService(serviceIntent)
         bindingOccurence.startTimer.text = "stop"
         timerStarted=true
-        Log.d("startTimer", "STARTTTTTTTTTTTT")
-    }
+            }
 
     private fun stopTimer() {
         context?.stopService(serviceIntent)
@@ -138,6 +228,7 @@ class OccurenceFragment : Fragment() {
         override fun onReceive(context: Context?, intent: Intent) {
             time = intent.getDoubleExtra(TimerService.TIME_EXTRA, 0.0)
             bindingOccurence.timerCounter.text = getTimeStringFromDouble(time)
+
         }
     }
 
@@ -150,56 +241,5 @@ class OccurenceFragment : Fragment() {
     }
 
     private fun makeTimeString(hrs: Int, mins: Int, sec: Int): String = String.format("%02d:%02d:%02d", hrs, mins,sec)
-
-    lateinit var totalTimes: String
-
-    /**
-     * Displays an alert dialog to get the user's confirmation before deleting the item.
-     */
-    private fun showConfirmationDialog() {
-        MaterialAlertDialogBuilder(requireContext())
-            .setTitle(getString(android.R.string.dialog_alert_title))
-            .setMessage(getString(R.string.delete_question))
-            .setCancelable(false)
-            .setNegativeButton(getString(R.string.no)) { _, _ -> }
-            .setPositiveButton(getString(R.string.yes)) { _, _ ->
-                deleteItem()
-            }
-            .show()
-    }
-
-    private fun addNewDateTime() {
-//    viewModel.addNewDateTime(occurence.occurenceId, getDate(),getDate(),getDate(),getDate())
-        viewModel.addNewDateTime(
-            navigationArgs.id,
-            getDate(),
-            getHour(),
-            getHour(),
-            "Ilestam:')"
-        )
-    }
-
-    private fun getDate(): String {
-        return viewModel.getDate()
-    }
-
-    private fun getHour(): String {
-        return viewModel.getHour()
-    }
-
-    /**
-     * Deletes the current item and navigates to the list fragment.
-     */
-    private fun deleteItem() {
-        findNavController().navigateUp()
-    }
-
-    /**
-     * Called when fragment is destroyed.
-     */
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _bindingOccurence = null
-    }
 }
 
