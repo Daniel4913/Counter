@@ -75,8 +75,8 @@ class CounterViewModel(private val occurenceDao: OccurenceDao, private val dateT
         val newOccurence = getNewOccurenceEntry(occurenceName, occurenceDate, occurMore, category)
         insertOccurence(newOccurence)
     }
-    fun isEntryValid(occurenceName: String, occurenceDate: String, category: String): Boolean {
-        if (occurenceName.isBlank() || occurenceDate.isBlank() || category.isBlank()) {
+    fun isEntryValid(occurenceName: String, occurenceDate: String): Boolean {
+        if (occurenceName.isBlank() || occurenceDate.isBlank()) {
             return false
         }
         return true

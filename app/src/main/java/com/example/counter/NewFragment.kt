@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import android.widget.ArrayAdapter
 import android.widget.TextView
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -29,11 +30,18 @@ class NewFragment : Fragment() {
             (activity?.application as CounterApplication).database.dateTimeDao()
         )
     }
-
     lateinit var occurence: Occurence
 
     private var _binding: FragmentNewBinding? = null
     private val binding get() = _binding!!
+
+    //in onResume to prevent of disappear items from list
+    override fun onResume() {
+        super.onResume()
+        val categories = resources.getStringArray(R.array.categories)
+        val arrayAdapter = ArrayAdapter(requireContext(), R.layout.category_item, categories)
+        binding.categoryDropdown.setAdapter(arrayAdapter)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -61,7 +69,7 @@ class NewFragment : Fragment() {
                 binding.occurenceName.text.toString(),
                 binding.occurenceDate.text.toString(),
                 binding.frequencySwitch.isChecked,
-                binding.categoryList.selectedPosition.toString() //????
+                binding.categoryDropdown.text.toString() //????
             )
         }
         val action = NewFragmentDirections.actionNewFragmentToCounterHomeFragment()
@@ -72,7 +80,6 @@ class NewFragment : Fragment() {
         return viewModel.isEntryValid(
             binding.occurenceName.text.toString(),
             binding.occurenceDate.text.toString(),
-            binding.category.text.toString()
         )
     }
 

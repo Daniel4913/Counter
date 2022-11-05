@@ -5,13 +5,9 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
-import android.text.format.DateUtils
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
-import androidx.core.content.ContextCompat.registerReceiver
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.LiveData
@@ -25,11 +21,14 @@ import com.example.counter.databinding.DatesTimesItemBinding
 import com.example.counter.databinding.FragmentOccurenceBinding
 import com.example.counter.services.TimerService
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import java.time.Duration
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.Month
+import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoUnit
 import java.util.*
 import kotlin.math.roundToInt
-import kotlin.properties.Delegates
 
 class OccurenceFragment : Fragment() {
 
@@ -55,8 +54,6 @@ class OccurenceFragment : Fragment() {
             (activity?.application as CounterApplication).database.dateTimeDao()
         )
     }
-
-
 
     private fun bind(occurence: Occurence) {
         bindingOccurence.apply {
@@ -86,6 +83,21 @@ class OccurenceFragment : Fragment() {
             occurence = selectedOccurence
             bind(occurence)
         }
+        ////CHRONO UTNIT
+
+//        val date1 = LocalDateTime.parse("2022-30-10 T12:00:00")
+//        val date2 = LocalDateTime.parse("2022-03-11 T20:00:00")
+
+        val date1 = LocalDateTime.now()
+        val date2 = LocalDateTime.of(1,Month.OCTOBER,30,11,0,0)
+
+
+
+        println("ChronoUnit.DAYS.between(date1, date2) ${ChronoUnit.DAYS.between(date1, date2) % 86400 / 3600}")
+        println("Duration.between(date1, date2).toDays() ${Duration.between(date1, date2).toDays()}")
+        println("date1.until(date2, ChronoUnit.DAYS) ${date1.until(date2, ChronoUnit.DAYS)}")
+
+//////////////// kek
 
         datesTimes = viewModel.getCurrentOccurence()
         val adapter = DatesTimesListAdapter {
