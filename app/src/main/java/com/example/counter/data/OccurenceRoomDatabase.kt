@@ -9,7 +9,7 @@ import androidx.room.RoomDatabase
     entities = [
         Occurence::class,
         DateTime::class],
-    version = 3,
+    version = 4,
     exportSchema = false
 )
 abstract class CounterRoomDatabase : RoomDatabase() {
@@ -30,7 +30,6 @@ abstract class CounterRoomDatabase : RoomDatabase() {
                     .fallbackToDestructiveMigration()
                     .build()
                 INSTANCE = instance
-//                return instance
                 instance
             }
 

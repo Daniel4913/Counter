@@ -38,6 +38,10 @@ class CounterViewModel(private val occurenceDao: OccurenceDao, private val dateT
         return dateTimeDao.getOccurenceWithDatesTimes(id).asLiveData()
     }
 
+//    fun retrieveLastDateTime(id: Int): LiveData<List<DateTime>>{
+//        return dateTimeDao.getLastDateTime(id).asLiveData()
+//    }
+
 //    To interact with the database off the main thread, start a coroutine and call the DAO method within it
     private fun insertOccurence(occurence: Occurence) {
         viewModelScope.launch {

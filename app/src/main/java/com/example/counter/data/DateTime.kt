@@ -7,7 +7,7 @@ import androidx.room.PrimaryKey
 @Entity
 data class DateTime(
     @PrimaryKey(autoGenerate = true)
-    @ColumnInfo(name="odate_time_id")
+    @ColumnInfo(name="date_time_id")
     val dateTimeId: Int = 0,
 
     @ColumnInfo(name="occurence_owner_id")

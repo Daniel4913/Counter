@@ -5,9 +5,12 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
+import android.os.CountDownTimer
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.get
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.LiveData
@@ -21,11 +24,7 @@ import com.example.counter.databinding.DatesTimesItemBinding
 import com.example.counter.databinding.FragmentOccurenceBinding
 import com.example.counter.services.TimerService
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import java.time.Duration
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.Month
-import java.time.format.DateTimeFormatter
+import java.time.*
 import java.time.temporal.ChronoUnit
 import java.util.*
 import kotlin.math.roundToInt
@@ -63,6 +62,7 @@ class OccurenceFragment : Fragment() {
             deleteBtn.setOnClickListener { showConfirmationDialog() }
             startTimer.setOnClickListener { startStopTimer() }
             resetTimer.setOnClickListener { resetTimer() }
+//            editBtn.setOnClickListener { occurencyTimeFrom.text = getLastDateTime().toString() }
         }
     }
 
@@ -88,21 +88,44 @@ class OccurenceFragment : Fragment() {
 //        val date1 = LocalDateTime.parse("2022-30-10 T12:00:00")
 //        val date2 = LocalDateTime.parse("2022-03-11 T20:00:00")
 
-        val date1 = LocalDateTime.now()
-        val date2 = LocalDateTime.of(1,Month.OCTOBER,30,11,0,0)
+//        val date1 = LocalDateTime.now()
+//        val date2 = LocalDateTime.of(2022,Month.OCTOBER,30,11,0,0)
+//        val date3 = LocalDateTime.of(2022,Month.OCTOBER,30,11,0,0)
+
+
+//        val date3 = LocalDateTime.of()
 
 
 
-        println("ChronoUnit.DAYS.between(date1, date2) ${ChronoUnit.DAYS.between(date1, date2) % 86400 / 3600}")
-        println("Duration.between(date1, date2).toDays() ${Duration.between(date1, date2).toDays()}")
-        println("date1.until(date2, ChronoUnit.DAYS) ${date1.until(date2, ChronoUnit.DAYS)}")
+//        println("ChronoUnit.DAYS.between(date1, date2) ${ChronoUnit.DAYS.between(date2, date1)}")
+//        println("Duration.between(date1, date2).toDays() ${Duration.between(date1, date2).toDays()}")
+//        println("date1.until(date2, ChronoUnit.DAYS) ${date1.until(date2, ChronoUnit.DAYS)}")
+
+
+
+
+
+////////////////////
+
+        //Here is the age String in format to  parse
+        //Here is the age String in format to  parse
+//        val age = "P17Y9M5D"
+
+        // Converting strings into period value
+        // using parse() method
+
+        // Converting strings into period value
+        // using parse() method
+//        val p = Period.parse(age)
+//        println("the age is: ")
+//        println(" ${p.years} +  Years\n + ${p.months} +  Months\n + ${p.days} +  Days\n"
+//        )
 
 //////////////// kek
-
         datesTimes = viewModel.getCurrentOccurence()
         val adapter = DatesTimesListAdapter {
             dateTime = it
-             showConfirmationDialogDateTime()}
+             showConfirmationDialogDeleteDateTime()}
         bindingOccurence.occurenceDetailRecyclerView.adapter = adapter
         viewModel.retrieveDatesTimes(id).observe(this.viewLifecycleOwner) { selectedOccurence ->
             selectedOccurence.let {
@@ -121,6 +144,16 @@ class OccurenceFragment : Fragment() {
         // start stop timer
         serviceIntent = Intent(context?.applicationContext, TimerService::class.java )
         context?.registerReceiver(updateTime, IntentFilter(TimerService.TIMER_UPDATED))
+
+
+        // get string from last item in recyclerview's adapter
+//        val lastDateTimeOnList = bindingOccurence.occurenceDetailRecyclerView.layoutManager?.findViewByPosition(4)
+//        Log.d("LastDateTime??????????", lastDateTime.toString()) Unable to instantiate fragment com.example.counter.OccurenceFragment: calling Fragment constructor caused an exception
+//        Log.d("LastDateTime??????????", lastDateTimeOnList.toString()) null
+
+//        val lastDateTimeOnList = adapter.currentList.first().fullDate
+//        Log.d("LastDateTime??????????", lastDateTimeOnList.toString())  // LIST IS EMPTY
+
     }
 
     private fun addNewDateTime(timerValue: String = " ") {
@@ -178,7 +211,7 @@ class OccurenceFragment : Fragment() {
             .show()
     }
 
-    private fun showConfirmationDialogDateTime() {
+    private fun showConfirmationDialogDeleteDateTime() {
         MaterialAlertDialogBuilder(requireContext())
             .setTitle(getString(android.R.string.dialog_alert_title))
             .setMessage(getString(R.string.delete_dateTime_question))
@@ -201,17 +234,35 @@ class OccurenceFragment : Fragment() {
             .show()
     }
 
+
     /**
-     * Counting bloc to calculate how much time passed between occurences
+     * Counting bloc, to calculate how much time passed between occurences
      */
 
     //todo List<DatesTimes[last in recycler list]>
+    // get last item from list (last date from dates)
+    // chyba nie moge wyciagnac z recycler view tylko musze z db??
+
+//    private fun getLastDateTime() {
+//        val id = navigationArgs.id
+//        val fullDateTime = viewModel.retrieveLastDateTime(id)
+//        Log.d("Full date time", fullDateTime.toString())
+//    }
+
+    //    val lastDateTime = bindingOccurence.occurenceDetailRecyclerView.layoutManager.
+
+    // parse date to LocalDateTime
+
+    //get LocalDateTime.now()
+
+    //calculate time between dates to know how much time passed from last actiity
+
 
 
     /**
      * Timer block for measure how long occurence was
      */
-    //TODO https://www.youtube.com/watch?v=LPjhP9D3pm8
+    // https://www.youtube.com/watch?v=LPjhP9D3pm8
     private fun resetTimer() {
         timePassed =getTimeStringFromDouble(time)
         showSaveTimeDialog()
