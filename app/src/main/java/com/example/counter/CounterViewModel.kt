@@ -10,6 +10,7 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoUnit
 import java.util.*
 
 class CounterViewModel(private val occurenceDao: OccurenceDao, private val dateTimeDao: DateTimeDao)
@@ -37,10 +38,6 @@ class CounterViewModel(private val occurenceDao: OccurenceDao, private val dateT
     fun retrieveDatesTimes(id: Int): LiveData<List<DateTime>>{
         return dateTimeDao.getOccurenceWithDatesTimes(id).asLiveData()
     }
-
-//    fun retrieveLastDateTime(id: Int): LiveData<List<DateTime>>{
-//        return dateTimeDao.getLastDateTime(id).asLiveData()
-//    }
 
 //    To interact with the database off the main thread, start a coroutine and call the DAO method within it
     private fun insertOccurence(occurence: Occurence) {
@@ -142,7 +139,30 @@ class CounterViewModel(private val occurenceDao: OccurenceDao, private val dateT
         val currentTime = LocalDateTime.now()
         return currentTime.format(DateTimeFormatter.ofPattern("HH:mm:ss"))
     }
-}
+
+    /**
+     * Counting bloc, to calculate how much time passed between occurences
+     */
+
+
+
+
+        ////CHRONO UTNIT
+//        val date1 = LocalDateTime.now()
+//        val date2 = LocalDateTime.of(2022,Month.OCTOBER,30,11,0,0)
+//        val date3 = LocalDateTime.of(2022,Month.OCTOBER,30,11,0,0)
+//        val pattern = "HH:mm:ss dd-MM-yyyy"
+//        val formatter = DateTimeFormatter.ofPattern(pattern)
+
+//        val date4 = LocalDateTime.parse(lastDateTime, formatter)
+
+//        println("ChronoUnit.DAYS.between(date1, date2) ${ChronoUnit.DAYS.between(date3, date1)}")
+//        println("ChronoUnit.DAYS.between(date1, date2) ${ChronoUnit.HOURS.between(date4, date1)}")
+//        println("Duration.between(date1, date2).toDays() ${Duration.between(date1, date2).toDays()}")
+//        println("date1.until(date2, ChronoUnit.DAYS) ${date1.until(date2, ChronoUnit.DAYS)}")
+//        println()
+    }
+
 
 
 
