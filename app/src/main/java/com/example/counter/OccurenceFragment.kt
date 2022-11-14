@@ -12,7 +12,6 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.viewModelScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -23,8 +22,6 @@ import com.example.counter.databinding.DatesTimesItemBinding
 import com.example.counter.databinding.FragmentOccurenceBinding
 import com.example.counter.services.TimerService
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import java.time.*
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
@@ -87,27 +84,28 @@ class OccurenceFragment : Fragment() {
         }
 
 
-//////////////// kek
         datesTimes = viewModel.getCurrentOccurence()
         val adapter = DatesTimesListAdapter {
             dateTime = it
             showConfirmationDialogDeleteDateTime()
         }
+
         bindingOccurence.occurenceDetailRecyclerView.adapter = adapter
         viewModel.retrieveDatesTimes(id).observe(this.viewLifecycleOwner) { selectedOccurence ->
             selectedOccurence.let {
                 adapter.submitList(it as MutableList<DateTime>?)
-                lastDateTime = it[0].fullDate
-                val timerr = object : CountDownTimer(10000, 1000) {
-                    override fun onTick(millisUntilFinished: Long) {
-                        var lastDateAndTime = getLastDateTime()
-                        bindingOccurence.occurencyTimeFrom.text = lastDateAndTime.toString()
+                if (it[0].fullDate.isNotEmpty()){
+                    lastDateTime = it[0].fullDate
+                    val timerr = object : CountDownTimer(10000, 1000) {
+                        override fun onTick(millisUntilFinished: Long) {
+                            var lastDateAndTime = getLastDateTime()
+                            bindingOccurence.occurencyTimeFrom.text = lastDateAndTime.toString()
+                        }
+                        override fun onFinish() {}
                     }
-                    override fun onFinish() {}
+                    timerr.start()
                 }
-                timerr.start()
 
-//                bindingOccurence.occurencyTimeFrom.text = lastDateAndTime.toString()
             }
         }
 
@@ -132,25 +130,17 @@ class OccurenceFragment : Fragment() {
         val today = LocalDateTime.now()
         val pattern = "HH:mm:ss dd.MM.yyyy"
         val formatter = DateTimeFormatter.ofPattern(pattern)
-        val date4 = LocalDateTime.parse(lastDateTime, formatter)
+        val lastDate = LocalDateTime.parse(lastDateTime, formatter)
         val hoursPassed = ChronoUnit.SECONDS.between(
-            date4,
+            lastDate,
             today
         )
-        println(
-            "ChronoUnit.HOURS.between(date1, date2) ${
-                ChronoUnit.SECONDS.between(
-                    date4,
-                    today
-                )
-            }"
-        )
         return hoursPassed
+        //    fun corutine(){
+        //        GlobalScope.
+        //    }
     }
 
-//    fun corutine(){
-//        GlobalScope.
-//    }
 
     private fun addNewDateTime(timerValue: String = " ") {
         viewModel.addNewDateTime(
