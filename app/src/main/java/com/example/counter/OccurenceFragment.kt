@@ -94,14 +94,16 @@ class OccurenceFragment : Fragment() {
         viewModel.retrieveDatesTimes(id).observe(this.viewLifecycleOwner) { selectedOccurence ->
             selectedOccurence.let {
                 adapter.submitList(it as MutableList<DateTime>?)
-                if (it[0].fullDate.isNotEmpty()){
+                if (_bindingOccurence!=null && it[0].fullDate.isNotEmpty()){
                     lastDateTime = it[0].fullDate
                     val timerr = object : CountDownTimer(10000, 1000) {
                         override fun onTick(millisUntilFinished: Long) {
                             var lastDateAndTime = getLastDateTime()
                             bindingOccurence.occurencyTimeFrom.text = lastDateAndTime.toString()
                         }
-                        override fun onFinish() {}
+                        override fun onFinish() {
+
+                        }
                     }
                     timerr.start()
                 }

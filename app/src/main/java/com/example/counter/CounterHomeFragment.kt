@@ -12,9 +12,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.counter.databinding.FragmentCounterHomeBinding
 
 class CounterHomeFragment : Fragment() {
-
-
-
     private val viewModel: CounterViewModel by viewModels {
         DateTimeViewModelFactory(
             (activity?.application as CounterApplication).database.occurenceDao(),
@@ -29,18 +26,19 @@ class CounterHomeFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding=FragmentCounterHomeBinding.inflate(inflater,container,false)
+        _binding = FragmentCounterHomeBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val adapter = OccurenceListAdapter{
-            val action = CounterHomeFragmentDirections.actionCounterHomeFragmentToOccurenceFragment(it.occurenceId)
+        val adapter = OccurenceListAdapter {
+            val action =
+                CounterHomeFragmentDirections.actionCounterHomeFragmentToOccurenceFragment(it.occurenceId)
             this.findNavController().navigate(action)
         }
         binding.occurenciesRecyclerView.adapter = adapter
-        viewModel.allOccurences.observe(this.viewLifecycleOwner){ items ->
+        viewModel.allOccurences.observe(this.viewLifecycleOwner) { items ->
             items.let {
                 adapter.submitList(it)
             }
