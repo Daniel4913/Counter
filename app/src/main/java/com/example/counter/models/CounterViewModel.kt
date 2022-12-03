@@ -10,50 +10,55 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
 
-class CounterViewModel(private val occurenceDao: OccurenceDao, private val dateTimeDao: DateTimeDao)
-    : ViewModel() {
+class CounterViewModel(
+    private val occurenceDao: OccurenceDao,
+    private val dateTimeDao: DateTimeDao
+) : ViewModel() {
 
 
     val allOccurences: LiveData<List<Occurence>> = occurenceDao.getOccurencies().asLiveData()
 
-     var currentOccurence = 0
+    var currentOccurence = 0
 
-    fun getCurrentOccurence(): LiveData<List<DateTime>> {
+    fun getOccurenceDatesTimes(): LiveData<List<DateTime>> {
         lateinit var allDatesTimes: LiveData<List<DateTime>>
-        if (currentOccurence!=0){
+        if (currentOccurence != 0) {
             var gettedOccurence = 0
-            var getAllDatesTimes: LiveData<List<DateTime>> = dateTimeDao.getOccurenceWithDatesTimes(gettedOccurence).asLiveData()
+            var getAllDatesTimes: LiveData<List<DateTime>> =
+                dateTimeDao.getOccurenceWithDatesTimes(gettedOccurence).asLiveData()
             allDatesTimes = getAllDatesTimes
         }
         return allDatesTimes
     }
 
-    fun retrieveOccurence(id: Int): LiveData<Occurence>{
+    fun retrieveOccurence(id: Int): LiveData<Occurence> {
         return occurenceDao.getOccurence(id).asLiveData()
     }
 
-    fun retrieveDatesTimes(id: Int): LiveData<List<DateTime>>{
+    fun retrieveDatesTimes(id: Int): LiveData<List<DateTime>> {
         return dateTimeDao.getOccurenceWithDatesTimes(id).asLiveData()
     }
 
-//    To interact with the database off the main thread, start a coroutine and call the DAO method within it
+
+    //    To interact with the database off the main thread, start a coroutine and call the DAO method within it
     private fun insertOccurence(occurence: Occurence) {
         viewModelScope.launch {
-            occurenceDao.insertOccurence(occurence) }
+            occurenceDao.insertOccurence(occurence)
+        }
     }
 
-    fun deleteOccurence(occurence: Occurence){
+    fun deleteOccurence(occurence: Occurence) {
         viewModelScope.launch {
             occurenceDao.delete(occurence)
         }
     }
 
-//  function that takes in strings and boolean and returns an Occurence instance.
+    //  function that takes in strings and boolean and returns an Occurence instance.
     private fun getNewOccurenceEntry(
-    occurenceName: String,
-    createDate: String,
-    occurMore: Boolean,
-    category: String
+        occurenceName: String,
+        createDate: String,
+        occurMore: Boolean,
+        category: String
     ): Occurence {
         return Occurence(
             occurenceName = occurenceName,
@@ -81,15 +86,15 @@ class CounterViewModel(private val occurenceDao: OccurenceDao, private val dateT
         return true
     }
 
-// DATES TIMES BLOCK
+    // DATES TIMES BLOCK
     private fun insertDateTime(dateTime: DateTime) {
         viewModelScope.launch {
             dateTimeDao.insertDateTime(dateTime)
         }
     }
 
-    fun deleteDateTime(dateTime: DateTime){
-        viewModelScope.launch{
+    fun deleteDateTime(dateTime: DateTime) {
+        viewModelScope.launch {
             dateTimeDao.delete(dateTime)
         }
     }
@@ -127,13 +132,12 @@ class CounterViewModel(private val occurenceDao: OccurenceDao, private val dateT
     }
 
 
-
     fun getDate(): String {
         val currentDateTime = LocalDateTime.now()
         return currentDateTime.format(DateTimeFormatter.ofPattern("HH:mm:ss dd.MM.yyyy"))
     }
 
-    fun getHour(): String{
+    fun getHour(): String {
         val currentTime = LocalDateTime.now()
         return currentTime.format(DateTimeFormatter.ofPattern("HH:mm:ss"))
     }
@@ -143,9 +147,7 @@ class CounterViewModel(private val occurenceDao: OccurenceDao, private val dateT
      */
 
 
-
-
-        ////CHRONO UTNIT
+    ////CHRONO UTNIT
 //        val date1 = LocalDateTime.now()
 //        val date2 = LocalDateTime.of(2022,Month.OCTOBER,30,11,0,0)
 //        val date3 = LocalDateTime.of(2022,Month.OCTOBER,30,11,0,0)
@@ -159,18 +161,19 @@ class CounterViewModel(private val occurenceDao: OccurenceDao, private val dateT
 //        println("Duration.between(date1, date2).toDays() ${Duration.between(date1, date2).toDays()}")
 //        println("date1.until(date2, ChronoUnit.DAYS) ${date1.until(date2, ChronoUnit.DAYS)}")
 //        println()
-    }
-
-
+}
 
 
 /**
  * Factory class to instantiate the [ViewModel] instance.
  */
 
-class DateTimeViewModelFactory(private val occurenceDao: OccurenceDao, private val dateTimeDao: DateTimeDao) : ViewModelProvider.Factory {
+class DateTimeViewModelFactory(
+    private val occurenceDao: OccurenceDao,
+    private val dateTimeDao: DateTimeDao
+) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if(modelClass.isAssignableFrom(CounterViewModel::class.java)){
+        if (modelClass.isAssignableFrom(CounterViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")
             return CounterViewModel(occurenceDao, dateTimeDao) as T
         }

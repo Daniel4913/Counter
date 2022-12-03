@@ -89,16 +89,34 @@
             app:layout_constraintStart_toStartOf="@id/occurency_time_to_label"
             app:layout_constraintTop_toBottomOf="@+id/occurency_time_from" />
 
+        <com.google.android.material.card.MaterialCardView
+            android:id="@id/descriptions_holder"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            app:layout_constraintBottom_toTopOf="@id/divider"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/occurency_time_to">
+
+            <TextView
+                android:id="@+id/desciption"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:text="blablalbalb" />
+
+        </com.google.android.material.card.MaterialCardView>
+
         <View
             android:id="@+id/divider"
             style="@style/Divider"
             android:layout_marginTop="@dimen/margin_between_elements"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/occurency_time_to" />
+            app:layout_constraintTop_toBottomOf="@+id/descriptions_holder" />
+
 
         <!--        todo GRAPH/LIST -->
-
         <ImageView
             android:id="@+id/toggle_view"
             android:layout_width="34dp"

@@ -23,6 +23,9 @@ data class Occurence(
     @ColumnInfo(name = "category")
     val category: String,
 
+    @ColumnInfo(name = "description_id")
+    val descriptionId: Int = 0,
+
     ) {
     fun shouldMakeActionToOccurMore(){
         var daysToAction = 0

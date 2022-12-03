@@ -5,11 +5,9 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
-import android.os.CountDownTimer
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.LiveData
@@ -19,7 +17,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.counter.adapters.DatesTimesListAdapter
 import com.example.counter.data.DateTime
 import com.example.counter.data.Occurence
-import com.example.counter.databinding.DatesTimesItemBinding
 import com.example.counter.databinding.FragmentOccurenceBinding
 import com.example.counter.services.TimerService
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -70,7 +67,7 @@ class OccurenceFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         viewModel.currentOccurence = navigationArgs.id
-        viewModel.getCurrentOccurence()
+        viewModel.getOccurenceDatesTimes()
         _bindingOccurence = FragmentOccurenceBinding.inflate(inflater, container, false)
         return bindingOccurence.root
     }
@@ -83,7 +80,7 @@ class OccurenceFragment : Fragment() {
             bind(occurence)
         }
 
-        datesTimes = viewModel.getCurrentOccurence()
+        datesTimes = viewModel.getOccurenceDatesTimes()
         val adapter = DatesTimesListAdapter {
             dateTime = it
             showConfirmationDialogDeleteDateTime()
