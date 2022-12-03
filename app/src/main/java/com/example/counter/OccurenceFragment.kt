@@ -9,6 +9,7 @@ import android.os.CountDownTimer
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.LiveData
@@ -34,8 +35,7 @@ class OccurenceFragment : Fragment() {
     lateinit var occurence: Occurence
     lateinit var datesTimes: LiveData<List<DateTime>>
     lateinit var dateTime: DateTime
-    lateinit var timePassed: String //
-    lateinit var totalTimes: String
+    lateinit var timePassed: String
     lateinit var lastDateTime: String
     private lateinit var serviceIntent: Intent
     private var timerStarted = false
@@ -43,8 +43,8 @@ class OccurenceFragment : Fragment() {
     private var _bindingOccurence: FragmentOccurenceBinding? = null
     private val bindingOccurence get() = _bindingOccurence!!
 
-    private var _bindingDatesTimes: DatesTimesItemBinding? = null
-    private val bindingDatesTimes get() = _bindingDatesTimes!!
+//    private var _bindingDatesTimes: DatesTimesItemBinding? = null
+//    private val bindingDatesTimes get() = _bindingDatesTimes!!
 
     private val viewModel: CounterViewModel by viewModels {
         DateTimeViewModelFactory(
@@ -58,10 +58,10 @@ class OccurenceFragment : Fragment() {
             occurencyName.text = occurence.occurenceName
             occurenceCreateDate.text = occurence.createDate
             occurencyCategory.text = occurence.category
-
             deleteBtn.setOnClickListener { showConfirmationDialog() }
             startTimer.setOnClickListener { startStopTimer() }
             resetTimer.setOnClickListener { resetTimer() }
+
         }
     }
 
@@ -83,7 +83,6 @@ class OccurenceFragment : Fragment() {
             bind(occurence)
         }
 
-
         datesTimes = viewModel.getCurrentOccurence()
         val adapter = DatesTimesListAdapter {
             dateTime = it
@@ -91,37 +90,26 @@ class OccurenceFragment : Fragment() {
         }
 
         bindingOccurence.occurenceDetailRecyclerView.adapter = adapter
-        viewModel.retrieveDatesTimes(id).observe(this.viewLifecycleOwner) { selectedOccurence ->
-            selectedOccurence.let {
-                adapter.submitList(it as MutableList<DateTime>?)
-                if (_bindingOccurence!=null && it[0].fullDate.isNotEmpty()){
-                    lastDateTime = it[0].fullDate
-                    val timerr = object : CountDownTimer(10000, 1000) {
-                        override fun onTick(millisUntilFinished: Long) {
-                            var lastDateAndTime = getLastDateTime()
-                            bindingOccurence.occurencyTimeFrom.text = lastDateAndTime.toString()
-                        }
-                        override fun onFinish() {
+        viewModel.retrieveDatesTimes(id).observe(this.viewLifecycleOwner) { selectedOccurenceList ->
+            selectedOccurenceList.let {
+                adapter.submitList(it as MutableList<DateTime>)
+            }
+        }
 
-                        }
-                    }
-                    timerr.start()
-                }
-
+        viewModel.retrieveDatesTimes(id).observe(this.viewLifecycleOwner) { selectedOccurenceList ->
+            if (selectedOccurenceList.isEmpty()) {
+            } else {
+                lastDateTime = selectedOccurenceList[0].fullDate
+                bindingOccurence.occurencyTimeFrom.text = getLastDateTime().toString()
             }
         }
 
         bindingOccurence.occurenceDetailRecyclerView.layoutManager =
             LinearLayoutManager(this.context)
 
-        // set totalTimes
-        fun setTotalTimes() {
-            bindingOccurence.totalTimes.text = adapter.itemCount.toString() // pokazuje 0 :')
-            totalTimes = adapter.itemCount.toString()
-        }
 
         // Set button
-        bindingOccurence.startActivity.setOnClickListener { addNewDateTime(); setTotalTimes() }
+        bindingOccurence.startActivity.setOnClickListener { addNewDateTime()}
 
         // start stop timer
         serviceIntent = Intent(context?.applicationContext, TimerService::class.java)

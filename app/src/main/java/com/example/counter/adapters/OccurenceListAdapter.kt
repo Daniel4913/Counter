@@ -1,4 +1,4 @@
-package com.example.counter
+package com.example.counter.adapters
 
 import android.view.LayoutInflater
 import android.view.ViewGroup

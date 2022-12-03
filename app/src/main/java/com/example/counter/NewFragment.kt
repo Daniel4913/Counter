@@ -57,9 +57,6 @@ class NewFragment : Fragment() {
             addNewOccurence()
         }
         binding.currentDateTime.text = "pobierz date"
-        binding.currentDateTime.setOnClickListener {
-            binding.occurenceDate.setText(getDate(), TextView.BufferType.EDITABLE)
-        }
     }
 
     private fun addNewOccurence() {
@@ -67,9 +64,9 @@ class NewFragment : Fragment() {
 //            Pass in the item details entered by the user, use the binding instance to read them.
             viewModel.addNewOccurence(
                 binding.occurenceName.text.toString(),
-                binding.occurenceDate.text.toString(),
+                getDate(),
                 binding.frequencySwitch.isChecked,
-                binding.categoryDropdown.text.toString() //????
+                binding.categoryDropdown.text.toString()
             )
         }
         val action = NewFragmentDirections.actionNewFragmentToCounterHomeFragment()
@@ -79,7 +76,6 @@ class NewFragment : Fragment() {
     private fun isEntryValid(): Boolean {
         return viewModel.isEntryValid(
             binding.occurenceName.text.toString(),
-            binding.occurenceDate.text.toString(),
         )
     }
 

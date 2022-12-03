@@ -6,11 +6,8 @@ import com.example.counter.data.DateTimeDao
 import com.example.counter.data.Occurence
 import com.example.counter.data.OccurenceDao
 import kotlinx.coroutines.launch
-import java.time.LocalDate
 import java.time.LocalDateTime
-import java.time.LocalTime
 import java.time.format.DateTimeFormatter
-import java.time.temporal.ChronoUnit
 import java.util.*
 
 class CounterViewModel(private val occurenceDao: OccurenceDao, private val dateTimeDao: DateTimeDao)
@@ -53,14 +50,14 @@ class CounterViewModel(private val occurenceDao: OccurenceDao, private val dateT
 
 //  function that takes in strings and boolean and returns an Occurence instance.
     private fun getNewOccurenceEntry(
-        occurenceName: String,
-        occurenceDate: String,
-        occurMore: Boolean,
-        category: String
+    occurenceName: String,
+    createDate: String,
+    occurMore: Boolean,
+    category: String
     ): Occurence {
         return Occurence(
             occurenceName = occurenceName,
-            createDate = occurenceDate,
+            createDate = createDate,
             occurMore = occurMore,
             category = category
         )
@@ -69,15 +66,16 @@ class CounterViewModel(private val occurenceDao: OccurenceDao, private val dateT
     // fn to acquire data from newfragment
     fun addNewOccurence(
         occurenceName: String,
-        occurenceDate: String,
+        createDate: String,
         occurMore: Boolean,
         category: String
     ) {
-        val newOccurence = getNewOccurenceEntry(occurenceName, occurenceDate, occurMore, category)
+        val newOccurence = getNewOccurenceEntry(occurenceName, createDate, occurMore, category)
         insertOccurence(newOccurence)
     }
-    fun isEntryValid(occurenceName: String, occurenceDate: String): Boolean {
-        if (occurenceName.isBlank() || occurenceDate.isBlank()) {
+
+    fun isEntryValid(occurenceName: String): Boolean {
+        if (occurenceName.isBlank()) {
             return false
         }
         return true
