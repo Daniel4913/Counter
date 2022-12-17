@@ -38,13 +38,13 @@
         android:layout_marginEnd="@dimen/margin_between_elements"
         android:fontFamily="sans-serif-medium"
         android:textAlignment="center"
-        app:layout_constraintEnd_toStartOf="@id/tendency"
+        app:layout_constraintEnd_toStartOf="@id/occurIcon"
         app:layout_constraintHorizontal_weight="1"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="3" />
 
     <ImageView
-        android:id="@+id/tendency"
+        android:id="@+id/occurIcon"
         android:layout_width="80dp"
         android:layout_height="45dp"
         android:importantForAccessibility="no"

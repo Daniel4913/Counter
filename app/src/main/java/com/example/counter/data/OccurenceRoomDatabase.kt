@@ -8,13 +8,15 @@ import androidx.room.RoomDatabase
 @Database(
     entities = [
         Occurence::class,
-        DateTime::class],
-    version = 4,
+        DateTime::class,
+        Description::class],
+    version = 5,
     exportSchema = false
 )
 abstract class CounterRoomDatabase : RoomDatabase() {
     abstract fun occurenceDao(): OccurenceDao
     abstract fun dateTimeDao(): DateTimeDao
+    abstract fun descriptionDao(): DescriptionDao
 
     companion object {
         @Volatile

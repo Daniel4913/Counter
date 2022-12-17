@@ -19,8 +19,8 @@ interface DescriptionDao {
     suspend fun insertDescription(description: Description)
 
     @Update
-    suspend fun update(description: Description)
+    suspend fun updateDescription(description: Description)
 
     @Delete
-    suspend fun delete(description: Description)
+    suspend fun deleteDescription(description: Description)
 }

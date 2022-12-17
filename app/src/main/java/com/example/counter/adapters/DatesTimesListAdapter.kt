@@ -37,10 +37,6 @@ class DatesTimesListAdapter(private val onItemClicked: (DateTime) -> Unit):
         }
     }
 
-    override fun getItem(position: Int): DateTime {
-        return super.getItem(position)
-    }
-
     companion object {
         private val DiffCallback = object : DiffUtil.ItemCallback<DateTime>(){
             override fun areItemsTheSame(oldItem: DateTime, newItem: DateTime): Boolean {

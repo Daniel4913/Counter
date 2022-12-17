@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+//import android.os.Build.VERSION_CODES.R to bylo zaimportowane kiedy zjebaly sie stringi (unresolved reference R. string)
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -15,7 +16,11 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.counter.adapters.DatesTimesListAdapter
+
+import com.example.counter.R.string
+
 import com.example.counter.data.DateTime
+
 import com.example.counter.data.Occurence
 import com.example.counter.databinding.FragmentOccurenceBinding
 import com.example.counter.services.TimerService
@@ -40,13 +45,11 @@ class OccurenceFragment : Fragment() {
     private var _bindingOccurence: FragmentOccurenceBinding? = null
     private val bindingOccurence get() = _bindingOccurence!!
 
-//    private var _bindingDatesTimes: DatesTimesItemBinding? = null
-//    private val bindingDatesTimes get() = _bindingDatesTimes!!
-
     private val viewModel: CounterViewModel by viewModels {
         DateTimeViewModelFactory(
             (activity?.application as CounterApplication).database.occurenceDao(),
-            (activity?.application as CounterApplication).database.dateTimeDao()
+            (activity?.application as CounterApplication).database.dateTimeDao(),
+            (activity?.application as CounterApplication).database.descriptionDao()
         )
     }
 
@@ -55,10 +58,20 @@ class OccurenceFragment : Fragment() {
             occurencyName.text = occurence.occurenceName
             occurenceCreateDate.text = occurence.createDate
             occurencyCategory.text = occurence.category
+            occurIcon.setImageResource(getOccurIcon())
             deleteBtn.setOnClickListener { showConfirmationDialog() }
+            editBtn.setOnClickListener { editOccurence() }
             startTimer.setOnClickListener { startStopTimer() }
             resetTimer.setOnClickListener { resetTimer() }
+        }
+    }
 
+    private fun getOccurIcon(): Int {
+        val occurMore: Boolean =  occurence.occurMore
+        return if (occurMore) {
+            R.drawable.ic_expand_more
+        } else {
+            R.drawable.ic_expand_less
         }
     }
 
@@ -80,7 +93,6 @@ class OccurenceFragment : Fragment() {
             bind(occurence)
         }
 
-        datesTimes = viewModel.getOccurenceDatesTimes()
         val adapter = DatesTimesListAdapter {
             dateTime = it
             showConfirmationDialogDeleteDateTime()
@@ -95,23 +107,50 @@ class OccurenceFragment : Fragment() {
 
         viewModel.retrieveDatesTimes(id).observe(this.viewLifecycleOwner) { selectedOccurenceList ->
             if (selectedOccurenceList.isEmpty()) {
+
             } else {
                 lastDateTime = selectedOccurenceList[0].fullDate
                 bindingOccurence.occurencyTimeFrom.text = getLastDateTime().toString()
             }
         }
 
+        viewModel.retrieveDescriptions(id)
+            .observe(this.viewLifecycleOwner) { selectedDescriptionsList ->
+                if (selectedDescriptionsList.isEmpty()) {
+                    bindingOccurence.desciption.text = "Create description here"
+                } else {
+                    bindingOccurence.desciption.text = selectedDescriptionsList[0].descriptionNote
+                }
+            }
+
+        bindingOccurence.descriptionsHolder.setOnClickListener {
+            val idOccurence = navigationArgs.id
+            val action =
+                OccurenceFragmentDirections.actionOccurenceFragmentToDescriptionFragment(idOccurence)
+            this.findNavController().navigate(action)
+        }
+
+//        bindingOccurence.editBtn.setOnClickListener {
+//            val occurenceId = navigationArgs.id
+//            val action = OccurenceFragmentDirections.actionOccurenceFragmentToNewFragment("Edit occurence",occurenceId)
+//            this.findNavController().navigate(action)
+//        }
+
         bindingOccurence.occurenceDetailRecyclerView.layoutManager =
             LinearLayoutManager(this.context)
 
-
         // Set button
-        bindingOccurence.startActivity.setOnClickListener { addNewDateTime()}
+        bindingOccurence.startActivity.setOnClickListener { addNewDateTime() }
 
         // start stop timer
         serviceIntent = Intent(context?.applicationContext, TimerService::class.java)
         context?.registerReceiver(updateTime, IntentFilter(TimerService.TIMER_UPDATED))
+
+        //TO NIE DZIALA
+        val datesTimesSize = adapter.currentList.size +1
+        bindingOccurence.occurencyTimeTo.text = datesTimesSize.toString()
     }
+
 
     fun getLastDateTime(): Long {
         val today = LocalDateTime.now()
@@ -155,11 +194,16 @@ class OccurenceFragment : Fragment() {
     }
 
     /**
-     * Deletes the current occurence and navigates to the list fragment.
+     * Deletes the current occurence and navigates to the home fragment.
      */
     private fun deleteOccurence() {
         viewModel.deleteOccurence(occurence)
         findNavController().navigateUp()
+    }
+
+    private fun editOccurence(){
+        val action = OccurenceFragmentDirections.actionOccurenceFragmentToNewFragment("Edit occurence",occurence.occurenceId)
+        this.findNavController().navigate(action)
     }
 
     /**
@@ -176,10 +220,10 @@ class OccurenceFragment : Fragment() {
     private fun showConfirmationDialog() {
         MaterialAlertDialogBuilder(requireContext())
             .setTitle(getString(android.R.string.dialog_alert_title))
-            .setMessage(getString(R.string.delete_question))
+            .setMessage(getString(com.example.counter.R.string.delete_question))
             .setCancelable(false)
-            .setNegativeButton(getString(R.string.no)) { _, _ -> }
-            .setPositiveButton(getString(R.string.yes)) { _, _ ->
+            .setNegativeButton(getString(string.no)) { _, _ -> }
+            .setPositiveButton(getString(string.yes)) { _, _ ->
                 deleteOccurence()
             }
             .show()
@@ -188,10 +232,10 @@ class OccurenceFragment : Fragment() {
     private fun showConfirmationDialogDeleteDateTime() {
         MaterialAlertDialogBuilder(requireContext())
             .setTitle(getString(android.R.string.dialog_alert_title))
-            .setMessage(getString(R.string.delete_dateTime_question))
+            .setMessage(getString(string.delete_dateTime_question))
             .setCancelable(false)
-            .setNegativeButton(getString(R.string.no)) { _, _ -> }
-            .setPositiveButton(getString(R.string.yes)) { _, _ ->
+            .setNegativeButton(getString(string.no)) { _, _ -> }
+            .setPositiveButton(getString(string.yes)) { _, _ ->
                 deleteDateTime()
             }
             .show()
@@ -200,10 +244,10 @@ class OccurenceFragment : Fragment() {
     private fun showSaveTimeDialog() {
         MaterialAlertDialogBuilder(requireContext())
             .setTitle(getString(android.R.string.dialog_alert_title))
-            .setMessage(getString(R.string.save_timer_question, timePassed))
+            .setMessage(getString(string.save_timer_question, timePassed))
             .setCancelable(false)
-            .setNegativeButton(getString(R.string.no)) { _, _ -> }
-            .setPositiveButton(getString(R.string.yes)) { _, _ ->
+            .setNegativeButton(getString(string.no)) { _, _ -> }
+            .setPositiveButton(getString(string.yes)) { _, _ ->
                 addNewDateTime(timePassed)
             }
             .show()
@@ -211,7 +255,7 @@ class OccurenceFragment : Fragment() {
 
 
     /**
-     * Timer block for measure how long occurence was
+     * Timer block for measure how long singgle occurence-activity was
      */
     // https://www.youtube.com/watch?v=LPjhP9D3pm8
     private fun resetTimer() {

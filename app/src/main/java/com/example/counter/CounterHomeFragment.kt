@@ -15,7 +15,8 @@ class CounterHomeFragment : Fragment() {
     private val viewModel: CounterViewModel by viewModels {
         DateTimeViewModelFactory(
             (activity?.application as CounterApplication).database.occurenceDao(),
-            (activity?.application as CounterApplication).database.dateTimeDao()
+            (activity?.application as CounterApplication).database.dateTimeDao(),
+            (activity?.application as CounterApplication).database.descriptionDao()
         )
     }
 
@@ -34,9 +35,10 @@ class CounterHomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val adapter = OccurenceListAdapter {
             val action =
-                CounterHomeFragmentDirections.actionCounterHomeFragmentToOccurenceFragment(it.occurenceId)
+                CounterHomeFragmentDirections.actionCounterHomeFragmentToOccurenceFragment(it.occurenceId, it.occurenceName)
             this.findNavController().navigate(action)
         }
+
         binding.occurenciesRecyclerView.adapter = adapter
         viewModel.allOccurences.observe(this.viewLifecycleOwner) { items ->
             items.let {
@@ -46,7 +48,7 @@ class CounterHomeFragment : Fragment() {
 
         binding.occurenciesRecyclerView.layoutManager = LinearLayoutManager(this.context)
         binding.newOccurency.setOnClickListener {
-            val action = CounterHomeFragmentDirections.actionCounterHomeFragmentToNewFragment()
+            val action = CounterHomeFragmentDirections.actionCounterHomeFragmentToNewFragment("Create new occurence")
             this.findNavController().navigate(action)
         }
     }

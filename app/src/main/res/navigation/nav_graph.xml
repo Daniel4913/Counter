@@ -13,6 +13,13 @@
         <action
             android:id="@+id/action_newFragment_to_counterHomeFragment"
             app:destination="@id/counterHomeFragment" />
+        <argument
+            android:name="title"
+            app:argType="string" />
+        <argument
+            android:name="occurence_id"
+            app:argType="integer"
+            android:defaultValue="-1" />
     </fragment>
     <fragment
         android:id="@+id/occurenceFragment"
@@ -26,6 +33,12 @@
         <action
             android:id="@+id/action_occurenceFragment_to_newFragment"
             app:destination="@id/newFragment" />
+        <action
+            android:id="@+id/action_occurenceFragment_to_descriptionFragment"
+            app:destination="@id/descriptionFragment" />
+        <argument
+            android:name="title"
+            app:argType="string" />
     </fragment>
     <fragment
         android:id="@+id/counterHomeFragment"
@@ -37,5 +50,17 @@
         <action
             android:id="@+id/action_counterHomeFragment_to_occurenceFragment"
             app:destination="@id/occurenceFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/descriptionFragment"
+        android:name="com.example.counter.DescriptionFragment"
+        android:label="fragment_description"
+        tools:layout="@layout/fragment_description" >
+        <action
+            android:id="@+id/action_descriptionFragment_to_occurenceFragment"
+            app:destination="@id/occurenceFragment" />
+        <argument
+            android:name="id"
+            app:argType="integer" />
     </fragment>
 </navigation>

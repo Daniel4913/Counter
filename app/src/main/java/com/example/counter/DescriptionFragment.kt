@@ -1,59 +1,110 @@
 package com.example.counter
 
+import android.content.Context
 import android.os.Bundle
+import android.view.*
+import android.view.inputmethod.InputMethodManager
+import android.widget.Toast
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.counter.adapters.DescriptionListAdapter
+import com.example.counter.data.Description
+import com.example.counter.databinding.FragmentDescriptionBinding
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [DescriptionFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class DescriptionFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
+    private val navigationArgs: DescriptionFragmentArgs by navArgs()
+
+    lateinit var description: Description
+
+    private var _binding: FragmentDescriptionBinding? = null
+    private val binding get() = _binding!!
+
+
+    private val viewModel: CounterViewModel by viewModels {
+        DateTimeViewModelFactory(
+            (activity?.application as CounterApplication).database.occurenceDao(),
+            (activity?.application as CounterApplication).database.dateTimeDao(),
+            (activity?.application as CounterApplication).database.descriptionDao()
+        )
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_description, container, false)
+        viewModel.currentOccurence = navigationArgs.id
+        viewModel.getOccurenceDescriptions()
+        _binding = FragmentDescriptionBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment DescriptionFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            DescriptionFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
+    private fun addNewDescription() {
+        viewModel.addNewDescription(
+            binding.descriptionEditText.text.toString(),
+            navigationArgs.id
+        )
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        val duration = Toast.LENGTH_LONG
+        val text = "One click to copy to clipboard. Click long to delete "
+        val toast = Toast.makeText(requireContext(), text, duration)
+        toast.show()
+
+        binding.addBtn.setOnClickListener {
+            addNewDescription()
+        }
+
+        val adapter = DescriptionListAdapter {
+            description = it
+            showConfirmationDialog()
+        }
+
+        binding.descriptionsRecyclerView.adapter = adapter
+
+        val id = navigationArgs.id
+        viewModel.retrieveDescriptions(id).observe(this.viewLifecycleOwner) { selectedOcurence ->
+            selectedOcurence.let {
+                adapter.submitList(it)
             }
+        }
+        binding.descriptionsRecyclerView.layoutManager = LinearLayoutManager(this.context)
+    }
+
+    private fun deleteDescription() {
+        viewModel.deleteDescription(description)
+        findNavController().navigateUp()
+    }
+
+    /**
+     * Displays an alert dialog to get the user's confirmation before deleting the item.
+     */
+    private fun showConfirmationDialog() {
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle(getString(android.R.string.dialog_alert_title))
+            .setMessage(getString(R.string.delete_question))
+            .setCancelable(false)
+            .setNegativeButton(getString(R.string.no)) { _, _ -> }
+            .setPositiveButton(getString(R.string.yes)) { _, _ ->
+                deleteDescription()
+            }
+            .show()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        // Hide keyboard.
+        val inputMethodManager = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as
+                InputMethodManager
+        inputMethodManager.hideSoftInputFromWindow(requireActivity().currentFocus?.windowToken, 0)
+        _binding = null
     }
 }

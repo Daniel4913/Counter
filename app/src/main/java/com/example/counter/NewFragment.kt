@@ -13,6 +13,7 @@ import android.widget.ArrayAdapter
 import android.widget.TextView
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.example.counter.data.Occurence
 //import androidx.navigation.fragment.navArgs
 import com.example.counter.databinding.FragmentNewBinding
@@ -22,20 +23,30 @@ import com.example.counter.databinding.FragmentNewBinding
 
 class NewFragment : Fragment() {
 
-//    private val navigationArgs: OccurenceFragmentArgs by navArgs()
+    val navigationArgs: NewFragmentArgs by navArgs()
 
     private val viewModel: CounterViewModel by viewModels {
         DateTimeViewModelFactory(
             (activity?.application as CounterApplication).database.occurenceDao(),
-            (activity?.application as CounterApplication).database.dateTimeDao()
+            (activity?.application as CounterApplication).database.dateTimeDao(),
+            (activity?.application as CounterApplication).database.descriptionDao()
         )
     }
+
     lateinit var occurence: Occurence
 
     private var _binding: FragmentNewBinding? = null
     private val binding get() = _binding!!
 
-    //in onResume to prevent of disappear items from list
+    private fun bind(occurence: Occurence){
+        binding.apply {
+            occurenceName.setText(  occurence.occurenceName, TextView.BufferType.SPANNABLE)
+            categoryDropdown.setText(occurence.category, TextView.BufferType.SPANNABLE)
+            addBtn.setOnClickListener { updateOccurence() }
+        }
+    }
+
+    //in onResume to prevent of disappear category items from list
     override fun onResume() {
         super.onResume()
         val categories = resources.getStringArray(R.array.categories)
@@ -53,10 +64,16 @@ class NewFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.addBtn.setOnClickListener {
-            addNewOccurence()
-        }
-        binding.currentDateTime.text = "pobierz date"
+        val id = navigationArgs.occurenceId
+        if (id > 0){
+            viewModel.retrieveOccurence(id).observe(this.viewLifecycleOwner) {selectedOccurence ->
+                occurence = selectedOccurence
+                bind(occurence)
+        }} else {
+                binding.addBtn.setOnClickListener {
+                    addNewOccurence()
+                }
+            }
     }
 
     private fun addNewOccurence() {
@@ -77,6 +94,20 @@ class NewFragment : Fragment() {
         return viewModel.isEntryValid(
             binding.occurenceName.text.toString(),
         )
+    }
+
+    private fun updateOccurence(){
+        if (isEntryValid()){
+            viewModel.updateOccurence(
+                this.navigationArgs.occurenceId,
+                this.binding.occurenceName.text.toString(),
+                occurence.createDate, //pobiera pierwotną date stworzenia occurence
+                this.binding.frequencySwitch.isChecked,
+                this.binding.categoryDropdown.text.toString()
+            )
+            val action = NewFragmentDirections.actionNewFragmentToCounterHomeFragment()
+            findNavController().navigate(action)
+        }
     }
 
 
