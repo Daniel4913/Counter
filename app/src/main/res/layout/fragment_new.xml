@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_margin="@dimen/margin">
 
         <TextView
@@ -29,6 +30,7 @@
             app:layout_constraintTop_toTopOf="@id/occurence_name_label"
             app:srcCompat="@drawable/ic_engineering" />
 
+
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/occurence_name_label"
             android:layout_width="0dp"
@@ -46,12 +48,33 @@
                 android:layout_height="match_parent"
                 android:layout_marginStart="16dp"
                 android:inputType="textAutoComplete|textCapWords"
-                android:singleLine="true"
-
-
-                />
+                android:singleLine="true" />
 
         </com.google.android.material.textfield.TextInputLayout>
+
+        <TextView
+            android:id="@+id/tvDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            app:layout_constraintBottom_toTopOf="@id/frequency_switch"
+            app:layout_constraintEnd_toStartOf="@id/tvTime"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/occurence_name_label"
+            android:text="11111"
+            tools:text="11.11.1111" />
+
+        <TextView
+            android:id="@+id/tvTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            app:layout_constraintBottom_toTopOf="@id/frequency_switch"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/tvDate"
+            app:layout_constraintTop_toBottomOf="@id/occurence_name_label"
+            android:text="timetime"
+            tools:text="18:03" />
 
         <com.google.android.material.switchmaterial.SwitchMaterial
             android:id="@+id/frequency_switch"
@@ -62,7 +85,7 @@
             android:text="@string/more_often"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/occurence_name_label" />
+            app:layout_constraintTop_toBottomOf="@+id/tvDate" />
 
 
         <TextView
@@ -79,13 +102,11 @@
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/category_label"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="@dimen/margin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
             android:hint="do mycia* "
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/category_text">
 
@@ -93,14 +114,8 @@
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="32dp"
-                android:layout_marginTop="32dp"
-                android:layout_marginEnd="32dp"
-                android:layout_marginBottom="32dp"
                 android:hint="Category"
-                app:startIconDrawable="@drawable/ic_baseline_category_24"
-
-                >
+                app:startIconDrawable="@drawable/ic_baseline_category_24">
 
                 <AutoCompleteTextView
                     android:id="@+id/category_dropdown"
@@ -135,4 +150,4 @@
             app:layout_constraintEnd_toEndOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-</ScrollView>
+</FrameLayout>

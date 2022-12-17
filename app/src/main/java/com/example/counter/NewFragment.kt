@@ -1,27 +1,36 @@
 package com.example.counter
 
-//import android.content.Context
+
+import android.app.DatePickerDialog
+import android.app.Dialog
+import android.app.ProgressDialog.show
+import android.app.TimePickerDialog
+import android.content.Context
 import android.content.Context.INPUT_METHOD_SERVICE
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.ArrayAdapter
+import android.widget.DatePicker
 import android.widget.TextView
+import android.widget.TimePicker
+import androidx.core.content.ContentProviderCompat.requireContext
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentTransaction
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.counter.data.Occurence
-//import androidx.navigation.fragment.navArgs
 import com.example.counter.databinding.FragmentNewBinding
+import com.example.counter.pickers.DatePickerFragment
 
-//import kotlin.reflect.KProperty
 
-
-class NewFragment : Fragment() {
+class NewFragment : Fragment(){
 
     val navigationArgs: NewFragmentArgs by navArgs()
 
@@ -38,10 +47,11 @@ class NewFragment : Fragment() {
     private var _binding: FragmentNewBinding? = null
     private val binding get() = _binding!!
 
-    private fun bind(occurence: Occurence){
+    private fun bind(occurence: Occurence) {
         binding.apply {
-            occurenceName.setText(  occurence.occurenceName, TextView.BufferType.SPANNABLE)
+            occurenceName.setText(occurence.occurenceName, TextView.BufferType.SPANNABLE)
             categoryDropdown.setText(occurence.category, TextView.BufferType.SPANNABLE)
+//            tvDate.setText(datePickerDialog().toString(), TextView.BufferType.SPANNABLE)
             addBtn.setOnClickListener { updateOccurence() }
         }
     }
@@ -65,15 +75,31 @@ class NewFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val id = navigationArgs.occurenceId
-        if (id > 0){
-            viewModel.retrieveOccurence(id).observe(this.viewLifecycleOwner) {selectedOccurence ->
+        if (id > 0) {
+            viewModel.retrieveOccurence(id).observe(this.viewLifecycleOwner) { selectedOccurence ->
                 occurence = selectedOccurence
                 bind(occurence)
-        }} else {
-                binding.addBtn.setOnClickListener {
-                    addNewOccurence()
+            }
+        } else {
+            binding.addBtn.setOnClickListener {
+                addNewOccurence()
+            }
+        }
+        binding.tvDate.setOnClickListener {
+            val datePickerFragment = DatePickerFragment()
+            val supportFragmentManager = requireActivity().supportFragmentManager
+
+            supportFragmentManager.setFragmentResultListener(
+                "REQUEST_KEY",viewLifecycleOwner)
+            { resultKey, bundle ->
+                    if (resultKey == "REQUEST_KEY"){
+                        val date = bundle.getString("SELECTED_DATE")
+                        binding.tvDate.text = date
+            Log.d("NewFragment","//////////////tvDate binding dadte text")
                 }
             }
+            datePickerFragment.show(supportFragmentManager,"DatePickerFragment") // wyświetla się co prawda ale wciąż nie wiem jak pobrać tą datę :))
+        }
     }
 
     private fun addNewOccurence() {
@@ -96,8 +122,8 @@ class NewFragment : Fragment() {
         )
     }
 
-    private fun updateOccurence(){
-        if (isEntryValid()){
+    private fun updateOccurence() {
+        if (isEntryValid()) {
             viewModel.updateOccurence(
                 this.navigationArgs.occurenceId,
                 this.binding.occurenceName.text.toString(),
@@ -110,9 +136,8 @@ class NewFragment : Fragment() {
         }
     }
 
-
-    private fun getDate(): String {
-        return viewModel.getDate()
+    fun getDate(): String{
+        return ""
     }
 
     override fun onDestroyView() {
@@ -123,4 +148,5 @@ class NewFragment : Fragment() {
         inputMethodManager.hideSoftInputFromWindow(requireActivity().currentFocus?.windowToken, 0)
         _binding = null
     }
+
 }

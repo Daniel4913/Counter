@@ -52,8 +52,6 @@ class OccurenceListAdapter(private val onItemClicked: (Occurence) -> Unit) :
         }
     }
 
-
-
     companion object {
         private val DiffCallback = object : DiffUtil.ItemCallback<Occurence>() {
             override fun areItemsTheSame(oldItem: Occurence, newItem: Occurence): Boolean {
