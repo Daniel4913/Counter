@@ -56,24 +56,26 @@
             android:id="@+id/tvDate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
+            android:text="11111"
             app:layout_constraintBottom_toTopOf="@id/frequency_switch"
             app:layout_constraintEnd_toStartOf="@id/tvTime"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/occurence_name_label"
-            android:text="11111"
             tools:text="11.11.1111" />
 
         <TextView
             android:id="@+id/tvTime"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
+            android:text="timetime"
             app:layout_constraintBottom_toTopOf="@id/frequency_switch"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/tvDate"
             app:layout_constraintTop_toBottomOf="@id/occurence_name_label"
-            android:text="timetime"
             tools:text="18:03" />
 
         <com.google.android.material.switchmaterial.SwitchMaterial
@@ -85,7 +87,7 @@
             android:text="@string/more_often"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tvDate" />
+            app:layout_constraintBottom_toTopOf="@+id/category_text" />
 
 
         <TextView

@@ -1,37 +1,23 @@
 package com.example.counter
 
-
-import android.app.DatePickerDialog
-import android.app.Dialog
-import android.app.ProgressDialog.show
-import android.app.TimePickerDialog
-import android.content.Context
 import android.content.Context.INPUT_METHOD_SERVICE
-
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
-import android.widget.ArrayAdapter
-import android.widget.DatePicker
-import android.widget.TextView
-import android.widget.TimePicker
-import androidx.core.content.ContentProviderCompat.requireContext
-import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.FragmentTransaction
+import android.widget.*
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.counter.data.Occurence
 import com.example.counter.databinding.FragmentNewBinding
 import com.example.counter.pickers.DatePickerFragment
+import com.example.counter.pickers.TimePickerFragment
 
 
 class NewFragment : Fragment(){
-
     val navigationArgs: NewFragmentArgs by navArgs()
 
     private val viewModel: CounterViewModel by viewModels {
@@ -41,7 +27,6 @@ class NewFragment : Fragment(){
             (activity?.application as CounterApplication).database.descriptionDao()
         )
     }
-
     lateinit var occurence: Occurence
 
     private var _binding: FragmentNewBinding? = null
@@ -51,7 +36,8 @@ class NewFragment : Fragment(){
         binding.apply {
             occurenceName.setText(occurence.occurenceName, TextView.BufferType.SPANNABLE)
             categoryDropdown.setText(occurence.category, TextView.BufferType.SPANNABLE)
-//            tvDate.setText(datePickerDialog().toString(), TextView.BufferType.SPANNABLE)
+//            tvDate.setText(occurence.createDate)
+//            tvTime.setText(occurence.createDate)
             addBtn.setOnClickListener { updateOccurence() }
         }
     }
@@ -85,21 +71,53 @@ class NewFragment : Fragment(){
                 addNewOccurence()
             }
         }
-        binding.tvDate.setOnClickListener {
-            val datePickerFragment = DatePickerFragment()
-            val supportFragmentManager = requireActivity().supportFragmentManager
 
-            supportFragmentManager.setFragmentResultListener(
-                "REQUEST_KEY",viewLifecycleOwner)
-            { resultKey, bundle ->
-                    if (resultKey == "REQUEST_KEY"){
-                        val date = bundle.getString("SELECTED_DATE")
-                        binding.tvDate.text = date
-            Log.d("NewFragment","//////////////tvDate binding dadte text")
-                }
-            }
-            datePickerFragment.show(supportFragmentManager,"DatePickerFragment") // wyświetla się co prawda ale wciąż nie wiem jak pobrać tą datę :))
+        binding.tvDate.setOnClickListener {
+            getDate()
         }
+
+        binding.tvTime.setOnClickListener {
+            getTime()
+        }
+
+        val duration = Toast.LENGTH_LONG
+        val text = "Click on date and time to change it"
+        val toast = Toast.makeText(requireContext(), text, duration)
+        toast.show()
+    }
+
+
+    private fun getDate(){
+        val datePickerFragment = DatePickerFragment()
+        val supportFragmentManager = requireActivity().supportFragmentManager
+
+        supportFragmentManager.setFragmentResultListener(
+            "DATE_KEY",viewLifecycleOwner)
+        { resultKey, bundle ->
+            if (resultKey == "DATE_KEY"){
+                val date = bundle.getString("SELECTED_DATE")
+                binding.tvDate.text = date
+            }
+        }
+        datePickerFragment.show(supportFragmentManager,"DatePickerFragment")
+    }
+
+    fun getDateTime(date: String, time: String): String{
+        return time
+    }
+    private fun getTime() {
+        val timePickerFragment = TimePickerFragment()
+        val supportFragmentManagerTime = requireActivity().supportFragmentManager
+
+        supportFragmentManagerTime.setFragmentResultListener(
+            "TIME_KEY",viewLifecycleOwner)
+        { resultKey, bundleTime ->
+            if (resultKey == "TIME_KEY"){
+                val time = bundleTime.getString("SELECTED_TIME")
+                binding.tvTime.text = time
+            }
+        }
+        timePickerFragment.show(supportFragmentManagerTime,"TimePickerFragment")
     }
 
     private fun addNewOccurence() {
@@ -107,7 +125,7 @@ class NewFragment : Fragment(){
 //            Pass in the item details entered by the user, use the binding instance to read them.
             viewModel.addNewOccurence(
                 binding.occurenceName.text.toString(),
-                getDate(),
+                getDateTime(binding.tvDate.text.toString(),binding.tvTime.toString()),
                 binding.frequencySwitch.isChecked,
                 binding.categoryDropdown.text.toString()
             )
@@ -136,9 +154,6 @@ class NewFragment : Fragment(){
         }
     }
 
-    fun getDate(): String{
-        return ""
-    }
 
     override fun onDestroyView() {
         super.onDestroyView()

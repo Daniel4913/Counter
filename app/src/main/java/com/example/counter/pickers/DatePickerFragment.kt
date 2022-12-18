@@ -24,9 +24,10 @@ import android.widget.TimePicker
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.setFragmentResult
 import java.text.SimpleDateFormat
+import java.time.format.DateTimeFormatter
 import java.util.*
 
-class DatePickerFragment: DialogFragment(), DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener {
+class DatePickerFragment: DialogFragment(), DatePickerDialog.OnDateSetListener{
     val c = Calendar.getInstance()
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -41,19 +42,15 @@ class DatePickerFragment: DialogFragment(), DatePickerDialog.OnDateSetListener, 
         c.set(Calendar.YEAR, year)
         c.set(Calendar.MONTH, month)
         c.set(Calendar.DAY_OF_MONTH, dayOfMonth)
-
         val selectedDate = SimpleDateFormat("dd-MM-yyy").format(c.time)
+        Log.d("onDateSet///////////", selectedDate.toString())
         val selectedDateBundle = Bundle()
-        selectedDateBundle.putString("SELECTED_DATE",selectedDate)
+        selectedDateBundle.putString("SELECTED_DATE",selectedDate.toString())
 
-        setFragmentResult("REQUEST_KEY", selectedDateBundle)
-        Log.d("Picker","///////////////// onDateSet")
-
+        setFragmentResult("DATE_KEY", selectedDateBundle)
     }
 
 
-    override fun onTimeSet(view: TimePicker?, hourOfDay: Int, minute: Int) {
-        TODO("Not yet implemented")
-    }
+
 
 }
