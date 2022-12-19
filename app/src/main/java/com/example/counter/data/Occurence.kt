@@ -26,10 +26,10 @@ data class Occurence(
     @ColumnInfo(name = "description_id")
     val descriptionId: Int = 0,
 
-    ) {
-    fun shouldMakeActionToOccurMore(){
-        var daysToAction = 0
-        var daysAfterNotAction = 5
-        return // days after not aciton
-    }
-}
+    @ColumnInfo(name = "interval_value")
+    val intervalValue: Int,
+
+    @ColumnInfo(name = "interval_frequency")
+    val intervalFrequency: String = "hours"
+
+    )

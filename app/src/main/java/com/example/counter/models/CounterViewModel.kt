@@ -74,13 +74,17 @@ class CounterViewModel(
         occurenceName: String,
         createDate: String,
         occurMore: Boolean,
-        category: String
+        category: String,
+        intervalValue: Int,
+        intervalFrequency: String
     ): Occurence {
         return Occurence(
             occurenceName = occurenceName,
             createDate = createDate,
             occurMore = occurMore,
-            category = category
+            category = category,
+            intervalValue = intervalValue,
+            intervalFrequency = intervalFrequency
         )
     }
 
@@ -89,9 +93,11 @@ class CounterViewModel(
         occurenceName: String,
         createDate: String,
         occurMore: Boolean,
-        category: String
+        category: String,
+        intervalValue: Int,
+        intervalFrequency: String
     ) {
-        val newOccurence = getNewOccurenceEntry(occurenceName, createDate, occurMore, category)
+        val newOccurence = getNewOccurenceEntry(occurenceName, createDate, occurMore, category, intervalValue,intervalFrequency)
         insertOccurence(newOccurence)
     }
 
@@ -100,14 +106,18 @@ class CounterViewModel(
         occurenceName: String,
         createDate: String,
         occurMore: Boolean,
-        category: String
+        category: String,
+        interavalValue: Int,
+        intervalFrequency: String
     ) {
         val updatedOccurence = getUpdatedOccurenceEntry(
             occurenceId = occurenceId,
             occurenceName = occurenceName,
             createDate = createDate,
             occurMore = occurMore,
-            category = category
+            category = category,
+            intervalValue = interavalValue,
+            intervalFrequency = intervalFrequency
         )
         updateOccurence(updatedOccurence)
     }
@@ -117,14 +127,18 @@ class CounterViewModel(
         occurenceName: String,
         createDate: String,
         occurMore: Boolean,
-        category: String
+        category: String,
+        intervalValue: Int,
+        intervalFrequency: String
     ): Occurence {
         return Occurence(
             occurenceId = occurenceId,
             occurenceName = occurenceName,
             createDate = createDate,
             occurMore = occurMore,
-            category = category
+            category = category,
+            intervalValue = intervalValue,
+            intervalFrequency = intervalFrequency
         )
     }
 
@@ -134,7 +148,6 @@ class CounterViewModel(
         }
         return true
     }
-
 
     // DATES TIMES BLOCK
     private fun insertDateTime(dateTime: DateTime) {

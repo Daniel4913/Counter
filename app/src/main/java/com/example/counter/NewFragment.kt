@@ -151,7 +151,9 @@ class NewFragment : Fragment() {
                 binding.occurenceName.text.toString(),
                 createDate,
                 binding.frequencySwitch.isChecked,
-                binding.categoryDropdown.text.toString()
+                binding.categoryDropdown.text.toString(),
+                binding.intervalNumberPicker.value,
+                ""
             )
         }
         val action = NewFragmentDirections.actionNewFragmentToCounterHomeFragment()
@@ -174,7 +176,9 @@ class NewFragment : Fragment() {
                     this.binding.tvTime.text.toString()
                 ),
                 this.binding.frequencySwitch.isChecked,
-                this.binding.categoryDropdown.text.toString()
+                this.binding.categoryDropdown.text.toString(),
+                this.binding.intervalNumberPicker.value,
+                ""
             )
             val action = NewFragmentDirections.actionNewFragmentToCounterHomeFragment()
             findNavController().navigate(action)
