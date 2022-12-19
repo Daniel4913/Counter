@@ -38,8 +38,8 @@ class NewFragment : Fragment() {
             occurenceName.setText(occurence.occurenceName, TextView.BufferType.SPANNABLE)
             categoryDropdown.setText(occurence.category, TextView.BufferType.SPANNABLE)
             addBtn.setOnClickListener { updateOccurence() }
-            binding.tvDate.setText(splitCreateDate()[0])
-            binding.tvTime.setText(splitCreateDate()[1])
+            tvDate.setText(splitCreateDate()[0])
+            tvTime.setText(splitCreateDate()[1])
         }
 
     }
@@ -87,12 +87,22 @@ class NewFragment : Fragment() {
             binding.tvTime.setText("${hourOfDay}:${minute}")
             binding.tvDate.setText("${year}-${month}-${day}")
         }
+
+        var selectedNumberInterval = 0
+        binding.intervalNumberPicker.minValue = 0
+        binding.intervalNumberPicker.maxValue = 60
+        binding.intervalNumberPicker.setOnValueChangedListener { picker, oldVal, newVal ->
+            selectedNumberInterval = newVal
+        }
+
     }
 
     private fun splitCreateDate(): List<String>{
         val fullCreateDate = occurence.createDate
         val delim = " "
         return fullCreateDate.split(delim)
+
+
 
     }
 

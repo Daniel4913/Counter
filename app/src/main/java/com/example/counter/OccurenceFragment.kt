@@ -166,6 +166,7 @@ class OccurenceFragment : Fragment() {
                 0L -> "${hours}h ${minutes}m ${seconds}s"
                 else -> "${days}d ${hours}h ${minutes}m ${seconds}s"
             }
+
         return calculated
         }
     }
