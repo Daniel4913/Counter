@@ -15,9 +15,10 @@ import com.example.counter.data.Occurence
 import com.example.counter.databinding.FragmentNewBinding
 import com.example.counter.pickers.DatePickerFragment
 import com.example.counter.pickers.TimePickerFragment
+import java.util.*
 
 
-class NewFragment : Fragment(){
+class NewFragment : Fragment() {
     val navigationArgs: NewFragmentArgs by navArgs()
 
     private val viewModel: CounterViewModel by viewModels {
@@ -36,18 +37,11 @@ class NewFragment : Fragment(){
         binding.apply {
             occurenceName.setText(occurence.occurenceName, TextView.BufferType.SPANNABLE)
             categoryDropdown.setText(occurence.category, TextView.BufferType.SPANNABLE)
-//            tvDate.setText(occurence.createDate)
-//            tvTime.setText(occurence.createDate)
             addBtn.setOnClickListener { updateOccurence() }
+            binding.tvDate.setText(splitCreateDate()[0])
+            binding.tvTime.setText(splitCreateDate()[1])
         }
-    }
 
-    //in onResume to prevent of disappear category items from list
-    override fun onResume() {
-        super.onResume()
-        val categories = resources.getStringArray(R.array.categories)
-        val arrayAdapter = ArrayAdapter(requireContext(), R.layout.category_item, categories)
-        binding.categoryDropdown.setAdapter(arrayAdapter)
     }
 
     override fun onCreateView(
@@ -60,6 +54,7 @@ class NewFragment : Fragment(){
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         val id = navigationArgs.occurenceId
         if (id > 0) {
             viewModel.retrieveOccurence(id).observe(this.viewLifecycleOwner) { selectedOccurence ->
@@ -67,65 +62,84 @@ class NewFragment : Fragment(){
                 bind(occurence)
             }
         } else {
-            binding.addBtn.setOnClickListener {
-                addNewOccurence()
-            }
+            binding.addBtn.setOnClickListener { addNewOccurence() }
         }
 
-        binding.tvDate.setOnClickListener {
-            getDate()
-        }
+        binding.tvDate.setOnClickListener { getDate() }
 
-        binding.tvTime.setOnClickListener {
-            getTime()
-        }
+        binding.tvTime.setOnClickListener { getTime() }
 
         val duration = Toast.LENGTH_LONG
         val text = "Click on date and time to change it"
         val toast = Toast.makeText(requireContext(), text, duration)
         toast.show()
+
+        val c = Calendar.getInstance()
+        val year = c.get(Calendar.YEAR)
+        val month = c.get(Calendar.MONTH)
+        val day = c.get(Calendar.DAY_OF_MONTH)
+        val hourOfDay = c.get(Calendar.HOUR_OF_DAY)
+        val minute = c.get(Calendar.MINUTE)
+        val now = "${hourOfDay}:${minute}"
+
+        if (binding.tvTime.text == now) {
+        } else {
+            binding.tvTime.setText("${hourOfDay}:${minute}")
+            binding.tvDate.setText("${year}-${month}-${day}")
+        }
+    }
+
+    private fun splitCreateDate(): List<String>{
+        val fullCreateDate = occurence.createDate
+        val delim = " "
+        return fullCreateDate.split(delim)
+
     }
 
 
-    private fun getDate(){
+    private fun getDate() {
         val datePickerFragment = DatePickerFragment()
         val supportFragmentManager = requireActivity().supportFragmentManager
 
         supportFragmentManager.setFragmentResultListener(
-            "DATE_KEY",viewLifecycleOwner)
+            "DATE_KEY", viewLifecycleOwner
+        )
         { resultKey, bundle ->
-            if (resultKey == "DATE_KEY"){
+            if (resultKey == "DATE_KEY") {
                 val date = bundle.getString("SELECTED_DATE")
                 binding.tvDate.text = date
             }
         }
-        datePickerFragment.show(supportFragmentManager,"DatePickerFragment")
+        datePickerFragment.show(supportFragmentManager, "DatePickerFragment")
     }
 
-    fun getDateTime(date: String, time: String): String{
-        return time
+    fun getNewDateTime(date: String, time: String): String {
+        return "$date $time"
     }
+
     private fun getTime() {
         val timePickerFragment = TimePickerFragment()
         val supportFragmentManagerTime = requireActivity().supportFragmentManager
 
         supportFragmentManagerTime.setFragmentResultListener(
-            "TIME_KEY",viewLifecycleOwner)
+            "TIME_KEY", viewLifecycleOwner
+        )
         { resultKey, bundleTime ->
-            if (resultKey == "TIME_KEY"){
+            if (resultKey == "TIME_KEY") {
                 val time = bundleTime.getString("SELECTED_TIME")
                 binding.tvTime.text = time
             }
         }
-        timePickerFragment.show(supportFragmentManagerTime,"TimePickerFragment")
+        timePickerFragment.show(supportFragmentManagerTime, "TimePickerFragment")
     }
 
     private fun addNewOccurence() {
         if (isEntryValid()) {
-//            Pass in the item details entered by the user, use the binding instance to read them.
+            val createDate =
+                getNewDateTime(binding.tvDate.text.toString(), binding.tvTime.text.toString())
             viewModel.addNewOccurence(
                 binding.occurenceName.text.toString(),
-                getDateTime(binding.tvDate.text.toString(),binding.tvTime.toString()),
+                createDate,
                 binding.frequencySwitch.isChecked,
                 binding.categoryDropdown.text.toString()
             )
@@ -145,7 +159,10 @@ class NewFragment : Fragment(){
             viewModel.updateOccurence(
                 this.navigationArgs.occurenceId,
                 this.binding.occurenceName.text.toString(),
-                occurence.createDate, //pobiera pierwotną date stworzenia occurence
+                getNewDateTime(
+                    this.binding.tvDate.text.toString(),
+                    this.binding.tvTime.text.toString()
+                ),
                 this.binding.frequencySwitch.isChecked,
                 this.binding.categoryDropdown.text.toString()
             )
@@ -154,6 +171,13 @@ class NewFragment : Fragment(){
         }
     }
 
+    // to prevent of disappear category items from list
+    override fun onResume() {
+        super.onResume()
+        val categories = resources.getStringArray(R.array.categories)
+        val arrayAdapter = ArrayAdapter(requireContext(), R.layout.category_item, categories)
+        binding.categoryDropdown.setAdapter(arrayAdapter)
+    }
 
     override fun onDestroyView() {
         super.onDestroyView()

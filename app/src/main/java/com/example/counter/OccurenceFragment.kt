@@ -6,12 +6,12 @@ import android.content.Intent
 import android.content.IntentFilter
 //import android.os.Build.VERSION_CODES.R to bylo zaimportowane kiedy zjebaly sie stringi (unresolved reference R. string)
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.LiveData
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -29,13 +29,15 @@ import java.time.*
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 import kotlin.math.roundToInt
+import kotlin.time.Duration.Companion.seconds
 
 class OccurenceFragment : Fragment() {
 
     private val navigationArgs: OccurenceFragmentArgs by navArgs()
 
     lateinit var occurence: Occurence
-    lateinit var datesTimes: LiveData<List<DateTime>>
+
+    //    lateinit var datesTimes: LiveData<List<DateTime>> unused
     lateinit var dateTime: DateTime
     lateinit var timePassed: String
     lateinit var lastDateTime: String
@@ -67,7 +69,7 @@ class OccurenceFragment : Fragment() {
     }
 
     private fun getOccurIcon(): Int {
-        val occurMore: Boolean =  occurence.occurMore
+        val occurMore: Boolean = occurence.occurMore
         return if (occurMore) {
             R.drawable.ic_expand_more
         } else {
@@ -99,6 +101,7 @@ class OccurenceFragment : Fragment() {
         }
 
         bindingOccurence.occurenceDetailRecyclerView.adapter = adapter
+
         viewModel.retrieveDatesTimes(id).observe(this.viewLifecycleOwner) { selectedOccurenceList ->
             selectedOccurenceList.let {
                 adapter.submitList(it as MutableList<DateTime>)
@@ -107,10 +110,9 @@ class OccurenceFragment : Fragment() {
 
         viewModel.retrieveDatesTimes(id).observe(this.viewLifecycleOwner) { selectedOccurenceList ->
             if (selectedOccurenceList.isEmpty()) {
-
             } else {
                 lastDateTime = selectedOccurenceList[0].fullDate
-                bindingOccurence.occurencyTimeFrom.text = getLastDateTime().toString()
+                bindingOccurence.occurencyTimeFrom.text = calculateTimeFrom(getSecondsPassed())
             }
         }
 
@@ -130,12 +132,6 @@ class OccurenceFragment : Fragment() {
             this.findNavController().navigate(action)
         }
 
-//        bindingOccurence.editBtn.setOnClickListener {
-//            val occurenceId = navigationArgs.id
-//            val action = OccurenceFragmentDirections.actionOccurenceFragmentToNewFragment("Edit occurence",occurenceId)
-//            this.findNavController().navigate(action)
-//        }
-
         bindingOccurence.occurenceDetailRecyclerView.layoutManager =
             LinearLayoutManager(this.context)
 
@@ -147,26 +143,32 @@ class OccurenceFragment : Fragment() {
         context?.registerReceiver(updateTime, IntentFilter(TimerService.TIMER_UPDATED))
 
         //TO NIE DZIALA
-        val datesTimesSize = adapter.currentList.size +1
+        val datesTimesSize = adapter.currentList.size + 1
         bindingOccurence.occurencyTimeTo.text = datesTimesSize.toString()
+
     }
 
-
-    fun getLastDateTime(): Long {
+    fun getSecondsPassed(): Long {
         val today = LocalDateTime.now()
         val pattern = "HH:mm:ss dd.MM.yyyy"
         val formatter = DateTimeFormatter.ofPattern(pattern)
         val lastDate = LocalDateTime.parse(lastDateTime, formatter)
-        val hoursPassed = ChronoUnit.SECONDS.between(
+        val secondsPassed = ChronoUnit.SECONDS.between(
             lastDate,
             today
         )
-        return hoursPassed
-        //    fun corutine(){
-        //        GlobalScope.
-        //    }
+        return secondsPassed
     }
 
+    private fun calculateTimeFrom(secondsPassed: Long): String {
+        secondsPassed.seconds.toComponents { days, hours, minutes, seconds, nanoseconds ->
+            val calculated = when (days) {
+                0L -> "${hours}h ${minutes}m ${seconds}s"
+                else -> "${days}d ${hours}h ${minutes}m ${seconds}s"
+            }
+        return calculated
+        }
+    }
 
     private fun addNewDateTime(timerValue: String = " ") {
         viewModel.addNewDateTime(
@@ -201,8 +203,11 @@ class OccurenceFragment : Fragment() {
         findNavController().navigateUp()
     }
 
-    private fun editOccurence(){
-        val action = OccurenceFragmentDirections.actionOccurenceFragmentToNewFragment("Edit occurence",occurence.occurenceId)
+    private fun editOccurence() {
+        val action = OccurenceFragmentDirections.actionOccurenceFragmentToNewFragment(
+            "Edit occurence",
+            occurence.occurenceId
+        )
         this.findNavController().navigate(action)
     }
 

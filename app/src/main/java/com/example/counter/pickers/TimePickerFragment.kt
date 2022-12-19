@@ -16,24 +16,26 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
 
-class TimePickerFragment: DialogFragment(), TimePickerDialog.OnTimeSetListener  {
+class TimePickerFragment : DialogFragment(), TimePickerDialog.OnTimeSetListener {
     val c = Calendar.getInstance()
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val hourOfDay = c.get(Calendar.HOUR_OF_DAY)
         val minute = c.get(Calendar.MINUTE)
 
-        return TimePickerDialog(requireContext(),this,hourOfDay,minute, is24HourFormat(activity) )
+        return TimePickerDialog(requireContext(), this, hourOfDay, minute, is24HourFormat(activity))
     }
 
     override fun onTimeSet(view: TimePicker?, hourOfDay: Int, minute: Int) {
         c.set(Calendar.HOUR_OF_DAY, hourOfDay)
         c.set(Calendar.MINUTE, minute)
 
-        val selectedTime = c.time
-        Log.d("onTimeSet///////////", selectedTime.toString())
+        fun selectedTimeToString(hourOfDay: Int, minute: Int): String {
+            return "${hourOfDay}:${minute}"
+        }
+
         val selectedDateBundle = Bundle()
-        selectedDateBundle.putString("SELECTED_TIME",selectedTime.toString())
+        selectedDateBundle.putString("SELECTED_TIME", selectedTimeToString(hourOfDay, minute))
 
         setFragmentResult("TIME_KEY", selectedDateBundle)
     }

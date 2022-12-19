@@ -10,6 +10,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.counter.adapters.OccurenceListAdapter
 import com.example.counter.databinding.FragmentCounterHomeBinding
+import kotlin.time.Duration.Companion.days
 
 class CounterHomeFragment : Fragment() {
     private val viewModel: CounterViewModel by viewModels {
