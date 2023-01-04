@@ -16,6 +16,9 @@ class Constants {
         const val DEFAULT_MAX_MINUTES = 120
         // TODO mozna by zrobic pozniej STEP minut co ilestam :')
 
+
+        // Frequency Chips
+        const val DEFAULT_FREQUENCE = "Hours"
     }
 
 

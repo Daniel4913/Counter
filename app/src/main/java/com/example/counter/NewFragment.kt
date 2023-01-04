@@ -13,17 +13,15 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.counter.Constants.Companion.DEFAULT_DAYS
+import com.example.counter.Constants.Companion.DEFAULT_FREQUENCE
 import com.example.counter.Constants.Companion.DEFAULT_HOURS
 import com.example.counter.Constants.Companion.DEFAULT_MAX_DAYS
 import com.example.counter.Constants.Companion.DEFAULT_MAX_HOURS
-import com.example.counter.Constants.Companion.DEFAULT_MAX_MINUTES
 import com.example.counter.Constants.Companion.DEFAULT_MINUTES
 import com.example.counter.data.Occurence
 import com.example.counter.databinding.FragmentNewBinding
 import com.example.counter.pickers.DatePickerFragment
 import com.example.counter.pickers.TimePickerFragment
-import com.google.android.material.chip.Chip
-import com.google.android.material.chip.ChipGroup
 import java.util.*
 
 
@@ -42,8 +40,8 @@ class NewFragment : Fragment() {
     private var intervalHours = DEFAULT_HOURS
     private var intervalMinutes = DEFAULT_MINUTES
 
-    private var intervalFrequencyChip = 0
-    private var intervalValue = 0
+    private var intervalFrequencyChip = DEFAULT_FREQUENCE
+    private var intervalValue = DEFAULT_HOURS
 
     lateinit var occurence: Occurence
 
@@ -84,6 +82,9 @@ class NewFragment : Fragment() {
             binding.addBtn.setOnClickListener { addNewOccurence() }
         }
 
+        setIntervalValue()
+        getIntervalFrequency(1, R.id.frequency_chipGroup)
+
         binding.tvDate.setOnClickListener { getDate() }
 
         binding.tvTime.setOnClickListener { getTime() }
@@ -114,14 +115,14 @@ class NewFragment : Fragment() {
 
     }
 
-    private fun getInterval(day: Int, hour: Int, min: Int): String {
-        return "$day $hour $min"
+    private fun getInterval(value: Int ,frequency: String): String {
+        return "$value $frequency"
     }
 
-    private fun getIntervalFrequencyChip(chipId: Int, chipGroup: ChipGroup) {
+    private fun getIntervalFrequency(chipId: Int, chipGroup: Int) {
         if (chipId != 0) {
             try {
-                chipGroup.findViewById<Chip>(chipId).isChecked = true
+
             } catch (e: Exception) {
                 Log.d("getIntervalFrequencyChip ", e.message.toString())
             }
@@ -129,6 +130,8 @@ class NewFragment : Fragment() {
     }
 
     private fun setIntervalValue() {
+        binding.intervalNumberPicker.minValue = intervalValue
+        binding.intervalNumberPicker.maxValue = DEFAULT_MAX_DAYS
         binding.intervalNumberPicker.setOnValueChangedListener { picker, oldVal, newVal ->
             intervalDays = newVal
         }
@@ -186,7 +189,7 @@ class NewFragment : Fragment() {
                 createDate,
                 binding.frequencySwitch.isChecked,
                 binding.categoryDropdown.text.toString(),
-                getInterval(intervalDays, intervalHours, intervalMinutes)
+                getInterval(intervalDays, intervalFrequencyChip)
             )
         }
         val action = NewFragmentDirections.actionNewFragmentToCounterHomeFragment()
@@ -210,7 +213,7 @@ class NewFragment : Fragment() {
                 createDate,
                 binding.frequencySwitch.isChecked,
                 binding.categoryDropdown.text.toString(),
-                getInterval(intervalDays, intervalHours, intervalMinutes)
+                getInterval(intervalValue, intervalFrequencyChip)
             )
             val action = NewFragmentDirections.actionNewFragmentToCounterHomeFragment()
             findNavController().navigate(action)
