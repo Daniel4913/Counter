@@ -67,6 +67,7 @@ class OccurenceFragment : Fragment() {
             editBtn.setOnClickListener { editOccurence() }
             startTimer.setOnClickListener { startStopTimer() }
             resetTimer.setOnClickListener { resetTimer() }
+            intervalTextView.text = occurence.intervalFrequency
         }
     }
 

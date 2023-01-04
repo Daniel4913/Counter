@@ -17,9 +17,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="10dp"
-            android:text="@string/occurence_name"
+            android:text="Zadzwon do mamy"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
         <TextView
             android:id="@+id/occurence_create_date"
             style="@style/Widget.Counter.TextViewSmall"
@@ -37,18 +38,18 @@
             android:layout_width="wrap_content"
             android:padding="10dp"
             android:text="zdrowie"
+            app:layout_constraintBottom_toTopOf="@id/occur_icon"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/occur_icon"/>
+            app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
             android:id="@+id/occur_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:src="@drawable/ic_expand_less"
+            app:layout_constraintBottom_toTopOf="@id/timer_counter"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/occurency_category"
-            app:layout_constraintBottom_toTopOf="@id/timer_counter"
-            android:src="@drawable/ic_expand_less"
             tools:srcCompat="@drawable/ic_expand_less" />
 
         <TextView
@@ -99,6 +100,29 @@
             app:layout_constraintStart_toStartOf="@id/occurency_time_to_label"
             app:layout_constraintTop_toBottomOf="@+id/occurency_time_from" />
 
+        <TextView
+
+            android:id="@+id/occurence_interval_label"
+            style="@style/Widget.Counter.TextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Rob to co:"
+            app:layout_constraintStart_toStartOf="@+id/occurency_time_to_label"
+            app:layout_constraintTop_toBottomOf="@+id/occurency_time_to_label" />
+
+        <TextView
+            android:id="@+id/interval_textView"
+            style="@style/Widget.Counter.TextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="32dp"
+            android:text="2 days"
+            android:textSize="24sp"
+            app:layout_constraintBottom_toBottomOf="@+id/occurence_interval_label"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/occurence_interval_label" />
+
         <com.google.android.material.card.MaterialCardView
             android:id="@id/descriptions_holder"
             android:layout_width="match_parent"
@@ -107,13 +131,14 @@
             app:layout_constraintBottom_toTopOf="@id/divider"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/occurency_time_to">
+            app:layout_constraintTop_toBottomOf="@id/occurence_interval_label">
 
             <TextView
                 android:id="@+id/desciption"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 tools:text="blablalbalb" />
+
 
         </com.google.android.material.card.MaterialCardView>
 
@@ -185,7 +210,7 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/occurence_detail_recycler_view"
                 android:layout_width="match_parent"
-                android:layout_height="380dp"
+                android:layout_height="350dp"
                 android:orientation="vertical"
                 android:scrollbars="vertical" />
         </com.google.android.material.card.MaterialCardView>
@@ -209,5 +234,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/edit_btn"
             app:layout_constraintTop_toBottomOf="@id/occurence_detail_holder" />
+
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

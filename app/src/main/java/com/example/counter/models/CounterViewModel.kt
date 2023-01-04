@@ -15,10 +15,18 @@ class CounterViewModel(
 ) : ViewModel() {
 
     val allOccurences: LiveData<List<Occurence>> = occurenceDao.getOccurencies().asLiveData()
+
+
     var currentOccurence = 0
 
-    private fun getIntervalFrequency() {
-
+    private fun getIntervalValueAndFrequency(currentOccurence: Occurence) {
+        if (currentOccurence != null){
+            val occurence = retrieveOccurence(currentOccurence.occurenceId) as Occurence
+            val valueAndFrequency =  occurence.intervalFrequency.split(" ")
+            val value = valueAndFrequency[0]
+            val frequency = valueAndFrequency[1]
+            Log.d("getIntervalValueAndFrequency", "$value $frequency")
+        }
     }
 
     fun getOccurenceDatesTimes(): LiveData<List<DateTime>> {
