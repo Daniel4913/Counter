@@ -55,6 +55,8 @@ class OccurenceFragment : Fragment() {
         )
     }
 
+
+
     private fun bind(occurence: Occurence) {
         bindingOccurence.apply {
             occurencyName.text = occurence.occurenceName

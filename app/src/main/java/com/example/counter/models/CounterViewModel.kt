@@ -1,5 +1,6 @@
 package com.example.counter
 
+import android.util.Log
 import androidx.lifecycle.*
 import com.example.counter.data.*
 import kotlinx.coroutines.launch
@@ -15,6 +16,10 @@ class CounterViewModel(
 
     val allOccurences: LiveData<List<Occurence>> = occurenceDao.getOccurencies().asLiveData()
     var currentOccurence = 0
+
+    private fun getIntervalFrequency() {
+
+    }
 
     fun getOccurenceDatesTimes(): LiveData<List<DateTime>> {
         lateinit var allDatesTimes: LiveData<List<DateTime>>

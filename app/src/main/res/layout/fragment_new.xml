@@ -92,8 +92,6 @@
             app:layout_constraintStart_toStartOf="parent" />
 
 
-
-
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/setIntervalsBox"
             android:layout_width="match_parent"
@@ -118,6 +116,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
+                android:scrollbars="none"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/tv_set_interval"
                 app:layout_constraintTop_toTopOf="parent">
@@ -130,6 +129,7 @@
 
                     <com.google.android.material.chip.ChipGroup
                         android:id="@+id/frequency_chipGroup"
+                        style="@style/CustomChipStyle"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         app:checkedChip="@+id/chip_minutes"
@@ -139,30 +139,35 @@
 
                         <com.google.android.material.chip.Chip
                             android:id="@+id/chip_minutes"
+                            style="@style/CustomChipStyle"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Minutes" />
 
                         <com.google.android.material.chip.Chip
                             android:id="@+id/chip_hours"
+                            style="@style/CustomChipStyle"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Hours" />
 
                         <com.google.android.material.chip.Chip
                             android:id="@+id/chip_days"
+                            style="@style/CustomChipStyle"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Days" />
 
                         <com.google.android.material.chip.Chip
                             android:id="@+id/chip_weeks"
+                            style="@style/CustomChipStyle"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Weeks" />
 
                         <com.google.android.material.chip.Chip
                             android:id="@+id/chip_months"
+                            style="@style/CustomChipStyle"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Months" />

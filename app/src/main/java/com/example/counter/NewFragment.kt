@@ -22,6 +22,8 @@ import com.example.counter.data.Occurence
 import com.example.counter.databinding.FragmentNewBinding
 import com.example.counter.pickers.DatePickerFragment
 import com.example.counter.pickers.TimePickerFragment
+import com.google.android.material.chip.Chip
+import com.google.android.material.chip.ChipGroup
 import java.util.*
 
 
@@ -36,14 +38,13 @@ class NewFragment : Fragment() {
         )
     }
 
-    private var intervalDays = DEFAULT_DAYS
-    private var intervalHours = DEFAULT_HOURS
-    private var intervalMinutes = DEFAULT_MINUTES
 
     private var intervalFrequencyChip = DEFAULT_FREQUENCE
+    private var intervalFrequencyChipId = 0
     private var intervalValue = DEFAULT_HOURS
 
     lateinit var occurence: Occurence
+//    private var currentOccurence: Occurence? = occurence
 
     private var _binding: FragmentNewBinding? = null
     private val binding get() = _binding!!
@@ -83,7 +84,7 @@ class NewFragment : Fragment() {
         }
 
         setIntervalValue()
-        getIntervalFrequency(1, R.id.frequency_chipGroup)
+
 
         binding.tvDate.setOnClickListener { getDate() }
 
@@ -108,32 +109,51 @@ class NewFragment : Fragment() {
             binding.tvDate.setText("${year}-${month}-${day}")
         }
 
-        binding.frequencyChipGroup.setOnCheckedStateChangeListener { group, checked ->
-            val chip = group.checkedChipId
+
+        //TODO update chip gdy edytujemy
+//if (currentOccurence != null) {
+//    currentOccurence?.occurenceId?.let {
+//        viewModel.retrieveOccurence(it).observe(viewLifecycleOwner) { value ->
+//            intervalFrequencyChip =
+//                value.intervalFrequency //todo wyciagnac tylko czestotliwosc dzien/godzina itd
+//            Log.d("intervalFrequencyChip from retrieve occurence", value.intervalFrequency)
+//            updateChip(intervalFrequencyChipId, binding.frequencyChipGroup)
+//            //TODO FATAL EXCEPTION: lateinit property occurence has not been initialized
+//        }
+//    }
+//}
+
+        binding.frequencyChipGroup.setOnCheckedStateChangeListener { group, selectedChipId ->
+            val chip = group.findViewById<Chip>(selectedChipId.first())
+            val selectedFrequency = chip.text.toString().lowercase(Locale.ROOT)
             Log.d("checked chip ID: ", chip.toString())
+            intervalFrequencyChip = selectedFrequency
+            intervalFrequencyChipId = selectedChipId.first()
         }
 
+
     }
 
-    private fun getInterval(value: Int ,frequency: String): String {
-        return "$value $frequency"
-    }
-
-    private fun getIntervalFrequency(chipId: Int, chipGroup: Int) {
-        if (chipId != 0) {
+    private fun updateChip(intervalFrequencyChipId: Int, frequencyChipGroup: ChipGroup) {
+        if (intervalFrequencyChipId != 0) {
             try {
-
+                frequencyChipGroup.findViewById<Chip>(intervalFrequencyChipId).isChecked = true
             } catch (e: Exception) {
-                Log.d("getIntervalFrequencyChip ", e.message.toString())
+
             }
         }
     }
+
+    private fun getInterval(value: Int, frequency: String): String {
+        return "$value $frequency"
+    }
+
 
     private fun setIntervalValue() {
         binding.intervalNumberPicker.minValue = intervalValue
         binding.intervalNumberPicker.maxValue = DEFAULT_MAX_DAYS
         binding.intervalNumberPicker.setOnValueChangedListener { picker, oldVal, newVal ->
-            intervalDays = newVal
+            intervalValue = newVal
         }
     }
 
@@ -189,7 +209,7 @@ class NewFragment : Fragment() {
                 createDate,
                 binding.frequencySwitch.isChecked,
                 binding.categoryDropdown.text.toString(),
-                getInterval(intervalDays, intervalFrequencyChip)
+                getInterval(intervalValue, intervalFrequencyChip)
             )
         }
         val action = NewFragmentDirections.actionNewFragmentToCounterHomeFragment()
