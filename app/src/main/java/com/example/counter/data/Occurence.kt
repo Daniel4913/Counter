@@ -26,9 +26,6 @@ data class Occurence(
     @ColumnInfo(name = "description_id")
     val descriptionId: Int = 0,
 
-    @ColumnInfo(name = "interval_value")
-    val intervalValue: Int,
-
     @ColumnInfo(name = "interval_frequency")
     val intervalFrequency: String = "hours"
 

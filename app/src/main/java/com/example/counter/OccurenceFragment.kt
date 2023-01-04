@@ -145,7 +145,6 @@ class OccurenceFragment : Fragment() {
         //TO NIE DZIALA
         val datesTimesSize = adapter.currentList.size + 1
         bindingOccurence.occurencyTimeTo.text = datesTimesSize.toString()
-
     }
 
     fun getSecondsPassed(): Long {

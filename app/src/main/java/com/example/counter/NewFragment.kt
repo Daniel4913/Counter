@@ -2,6 +2,7 @@ package com.example.counter
 
 import android.content.Context.INPUT_METHOD_SERVICE
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -11,10 +12,18 @@ import android.widget.*
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import com.example.counter.Constants.Companion.DEFAULT_DAYS
+import com.example.counter.Constants.Companion.DEFAULT_HOURS
+import com.example.counter.Constants.Companion.DEFAULT_MAX_DAYS
+import com.example.counter.Constants.Companion.DEFAULT_MAX_HOURS
+import com.example.counter.Constants.Companion.DEFAULT_MAX_MINUTES
+import com.example.counter.Constants.Companion.DEFAULT_MINUTES
 import com.example.counter.data.Occurence
 import com.example.counter.databinding.FragmentNewBinding
 import com.example.counter.pickers.DatePickerFragment
 import com.example.counter.pickers.TimePickerFragment
+import com.google.android.material.chip.Chip
+import com.google.android.material.chip.ChipGroup
 import java.util.*
 
 
@@ -28,6 +37,14 @@ class NewFragment : Fragment() {
             (activity?.application as CounterApplication).database.descriptionDao()
         )
     }
+
+    private var intervalDays = DEFAULT_DAYS
+    private var intervalHours = DEFAULT_HOURS
+    private var intervalMinutes = DEFAULT_MINUTES
+
+    private var intervalFrequencyChip = 0
+    private var intervalValue = 0
+
     lateinit var occurence: Occurence
 
     private var _binding: FragmentNewBinding? = null
@@ -40,6 +57,8 @@ class NewFragment : Fragment() {
             addBtn.setOnClickListener { updateOccurence() }
             tvDate.setText(splitCreateDate()[0])
             tvTime.setText(splitCreateDate()[1])
+            intervalNumberPicker.minValue = DEFAULT_HOURS
+            intervalNumberPicker.maxValue = DEFAULT_MAX_HOURS
         }
 
     }
@@ -88,22 +107,37 @@ class NewFragment : Fragment() {
             binding.tvDate.setText("${year}-${month}-${day}")
         }
 
-        var selectedNumberInterval = 0
-        binding.intervalNumberPicker.minValue = 0
-        binding.intervalNumberPicker.maxValue = 60
-        binding.intervalNumberPicker.setOnValueChangedListener { picker, oldVal, newVal ->
-            selectedNumberInterval = newVal
+        binding.frequencyChipGroup.setOnCheckedStateChangeListener { group, checked ->
+            val chip = group.checkedChipId
+            Log.d("checked chip ID: ", chip.toString())
         }
 
     }
 
-    private fun splitCreateDate(): List<String>{
+    private fun getInterval(day: Int, hour: Int, min: Int): String {
+        return "$day $hour $min"
+    }
+
+    private fun getIntervalFrequencyChip(chipId: Int, chipGroup: ChipGroup) {
+        if (chipId != 0) {
+            try {
+                chipGroup.findViewById<Chip>(chipId).isChecked = true
+            } catch (e: Exception) {
+                Log.d("getIntervalFrequencyChip ", e.message.toString())
+            }
+        }
+    }
+
+    private fun setIntervalValue() {
+        binding.intervalNumberPicker.setOnValueChangedListener { picker, oldVal, newVal ->
+            intervalDays = newVal
+        }
+    }
+
+    private fun splitCreateDate(): List<String> {
         val fullCreateDate = occurence.createDate
         val delim = " "
         return fullCreateDate.split(delim)
-
-
-
     }
 
 
@@ -152,8 +186,7 @@ class NewFragment : Fragment() {
                 createDate,
                 binding.frequencySwitch.isChecked,
                 binding.categoryDropdown.text.toString(),
-                binding.intervalNumberPicker.value,
-                ""
+                getInterval(intervalDays, intervalHours, intervalMinutes)
             )
         }
         val action = NewFragmentDirections.actionNewFragmentToCounterHomeFragment()
@@ -168,17 +201,16 @@ class NewFragment : Fragment() {
 
     private fun updateOccurence() {
         if (isEntryValid()) {
+            val createDate =
+                getNewDateTime(binding.tvDate.text.toString(), binding.tvTime.text.toString())
+
             viewModel.updateOccurence(
-                this.navigationArgs.occurenceId,
-                this.binding.occurenceName.text.toString(),
-                getNewDateTime(
-                    this.binding.tvDate.text.toString(),
-                    this.binding.tvTime.text.toString()
-                ),
-                this.binding.frequencySwitch.isChecked,
-                this.binding.categoryDropdown.text.toString(),
-                this.binding.intervalNumberPicker.value,
-                ""
+                occurence.occurenceId,
+                binding.occurenceName.text.toString(),
+                createDate,
+                binding.frequencySwitch.isChecked,
+                binding.categoryDropdown.text.toString(),
+                getInterval(intervalDays, intervalHours, intervalMinutes)
             )
             val action = NewFragmentDirections.actionNewFragmentToCounterHomeFragment()
             findNavController().navigate(action)
@@ -201,5 +233,6 @@ class NewFragment : Fragment() {
         inputMethodManager.hideSoftInputFromWindow(requireActivity().currentFocus?.windowToken, 0)
         _binding = null
     }
+
 
 }

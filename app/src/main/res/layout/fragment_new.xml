@@ -82,32 +82,117 @@
             android:id="@+id/frequency_switch"
             android:layout_width="0dp"
             android:layout_height="50dp"
-            android:layout_marginTop="@dimen/margin"
             android:layout_marginStart="16dp"
+            android:layout_marginTop="@dimen/margin"
             android:layout_marginEnd="16dp"
             android:checked="true"
             android:text="@string/more_often"
+            app:layout_constraintBottom_toTopOf="@+id/setIntervalsBox"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintBottom_toTopOf="@+id/interval_number_picker" />
+            app:layout_constraintStart_toStartOf="parent" />
 
-        <NumberPicker
-            android:id="@+id/interval_number_picker"
-            android:layout_width="wrap_content"
+
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/setIntervalsBox"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
             app:layout_constraintBottom_toTopOf="@id/divider"
-            app:layout_constraintEnd_toStartOf="@id/interval_frequency_picker"
-            app:layout_constraintStart_toStartOf="parent"
-            tools:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintTop_toBottomOf="@+id/frequency_switch">
 
-        <NumberPicker
-            android:id="@+id/interval_frequency_picker"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="@+id/interval_number_picker"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/interval_number_picker"
-            app:layout_constraintTop_toTopOf="@+id/interval_number_picker" />
+            <TextView
+                android:id="@+id/tv_set_interval"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:text="Set interval"
+                app:layout_constraintEnd_toStartOf="@id/frequency_scrollView"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <HorizontalScrollView
+                android:id="@+id/frequency_scrollView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/tv_set_interval"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <LinearLayout
+                    android:id="@+id/linearLayout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <com.google.android.material.chip.ChipGroup
+                        android:id="@+id/frequency_chipGroup"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:checkedChip="@+id/chip_minutes"
+                        app:selectionRequired="true"
+                        app:singleLine="true"
+                        app:singleSelection="true">
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/chip_minutes"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Minutes" />
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/chip_hours"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Hours" />
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/chip_days"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Days" />
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/chip_weeks"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Weeks" />
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/chip_months"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Months" />
+
+                    </com.google.android.material.chip.ChipGroup>
+
+                </LinearLayout>
+            </HorizontalScrollView>
+
+            <NumberPicker
+                android:id="@+id/interval_number_picker"
+                android:layout_width="wrap_content"
+                android:layout_height="150dp"
+                app:layout_constraintEnd_toEndOf="@+id/frequency_scrollView"
+                app:layout_constraintStart_toStartOf="@+id/frequency_scrollView"
+                app:layout_constraintTop_toBottomOf="@+id/frequency_scrollView" />
+
+            <TextView
+                android:id="@+id/textView4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="135dp"
+                android:text="Set value"
+                app:layout_constraintBottom_toBottomOf="@+id/interval_number_picker"
+                app:layout_constraintEnd_toStartOf="@+id/interval_number_picker"
+                app:layout_constraintStart_toStartOf="@+id/tv_set_interval"
+                app:layout_constraintTop_toBottomOf="@+id/frequency_scrollView" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
 
         <View
             android:id="@+id/divider"
@@ -115,7 +200,7 @@
             android:layout_marginTop="32dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/interval_number_picker" />
+            app:layout_constraintTop_toBottomOf="@+id/setIntervalsBox" />
 
         <TextView
             android:id="@+id/choose_category_text"
@@ -167,16 +252,6 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/category_label" />
-
-        <TextView
-            android:id="@+id/tv_set_interval"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="Set interval"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/frequency_switch" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

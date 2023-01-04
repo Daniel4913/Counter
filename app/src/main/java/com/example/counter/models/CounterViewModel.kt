@@ -75,7 +75,6 @@ class CounterViewModel(
         createDate: String,
         occurMore: Boolean,
         category: String,
-        intervalValue: Int,
         intervalFrequency: String
     ): Occurence {
         return Occurence(
@@ -83,7 +82,6 @@ class CounterViewModel(
             createDate = createDate,
             occurMore = occurMore,
             category = category,
-            intervalValue = intervalValue,
             intervalFrequency = intervalFrequency
         )
     }
@@ -94,10 +92,9 @@ class CounterViewModel(
         createDate: String,
         occurMore: Boolean,
         category: String,
-        intervalValue: Int,
         intervalFrequency: String
     ) {
-        val newOccurence = getNewOccurenceEntry(occurenceName, createDate, occurMore, category, intervalValue,intervalFrequency)
+        val newOccurence = getNewOccurenceEntry(occurenceName, createDate, occurMore, category, intervalFrequency)
         insertOccurence(newOccurence)
     }
 
@@ -107,7 +104,6 @@ class CounterViewModel(
         createDate: String,
         occurMore: Boolean,
         category: String,
-        interavalValue: Int,
         intervalFrequency: String
     ) {
         val updatedOccurence = getUpdatedOccurenceEntry(
@@ -116,7 +112,6 @@ class CounterViewModel(
             createDate = createDate,
             occurMore = occurMore,
             category = category,
-            intervalValue = interavalValue,
             intervalFrequency = intervalFrequency
         )
         updateOccurence(updatedOccurence)
@@ -128,7 +123,6 @@ class CounterViewModel(
         createDate: String,
         occurMore: Boolean,
         category: String,
-        intervalValue: Int,
         intervalFrequency: String
     ): Occurence {
         return Occurence(
@@ -137,7 +131,6 @@ class CounterViewModel(
             createDate = createDate,
             occurMore = occurMore,
             category = category,
-            intervalValue = intervalValue,
             intervalFrequency = intervalFrequency
         )
     }
