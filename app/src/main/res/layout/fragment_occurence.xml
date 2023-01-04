@@ -74,11 +74,10 @@
             android:id="@+id/occurency_time_from"
             style="@style/Widget.Counter.TextView"
             android:layout_width="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="@dimen/margin"
-            android:text=""
-            app:layout_constraintStart_toEndOf="@id/occurency_time_from_label"
-            app:layout_constraintTop_toBottomOf="@+id/occurence_create_date" />
+            android:text="000"
+            app:layout_constraintBottom_toBottomOf="@+id/occurency_time_from_label"
+            app:layout_constraintStart_toStartOf="@+id/occurency_time_to"
+            app:layout_constraintTop_toTopOf="@+id/occurency_time_from_label" />
 
         <TextView
             android:id="@+id/occurency_time_to_label"
@@ -94,11 +93,11 @@
             android:id="@+id/occurency_time_to"
             style="@style/Widget.Counter.TextView"
             android:layout_width="wrap_content"
-            android:layout_marginTop="@dimen/margin"
-            android:text="@string/time_to"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="@id/occurency_time_to_label"
-            app:layout_constraintTop_toBottomOf="@+id/occurency_time_from" />
+            android:text="000"
+            android:layout_marginStart="16dp"
+            app:layout_constraintBottom_toBottomOf="@+id/occurency_time_to_label"
+            app:layout_constraintStart_toEndOf="@+id/occurency_time_to_label"
+            app:layout_constraintTop_toTopOf="@+id/occurency_time_to_label" />
 
         <TextView
 
