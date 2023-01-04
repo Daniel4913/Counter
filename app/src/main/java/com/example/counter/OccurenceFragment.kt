@@ -6,7 +6,6 @@ import android.content.Intent
 import android.content.IntentFilter
 //import android.os.Build.VERSION_CODES.R to bylo zaimportowane kiedy zjebaly sie stringi (unresolved reference R. string)
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,6 +14,8 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.counter.Constants.Companion.DAYS
+import com.example.counter.Constants.Companion.HOURS
 import com.example.counter.adapters.DatesTimesListAdapter
 
 import com.example.counter.R.string
@@ -30,18 +31,31 @@ import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 import kotlin.math.roundToInt
 import kotlin.time.Duration.Companion.seconds
+import com.example.counter.Constants.Companion.MINUTES
+import com.example.counter.Constants.Companion.MONTHS
+import com.example.counter.Constants.Companion.WEEKS
 
 class OccurenceFragment : Fragment() {
+
 
     private val navigationArgs: OccurenceFragmentArgs by navArgs()
 
     lateinit var occurence: Occurence
 
     //    lateinit var datesTimes: LiveData<List<DateTime>> unused
+    private lateinit var serviceIntent: Intent
+
     lateinit var dateTime: DateTime
     lateinit var timePassed: String
     lateinit var lastDateTime: String
-    private lateinit var serviceIntent: Intent
+
+    private var minutes = MINUTES
+    private var hours = HOURS
+    private var days = DAYS
+    private var weeks = WEEKS
+    private var months = MONTHS
+
+
     private var timerStarted = false
     private var time = 0.0
     private var _bindingOccurence: FragmentOccurenceBinding? = null
@@ -56,7 +70,6 @@ class OccurenceFragment : Fragment() {
     }
 
 
-
     private fun bind(occurence: Occurence) {
         bindingOccurence.apply {
             occurencyName.text = occurence.occurenceName
@@ -68,6 +81,8 @@ class OccurenceFragment : Fragment() {
             startTimer.setOnClickListener { startStopTimer() }
             resetTimer.setOnClickListener { resetTimer() }
             intervalTextView.text = occurence.intervalFrequency
+
+//            getSecondsTo()
         }
     }
 
@@ -115,7 +130,7 @@ class OccurenceFragment : Fragment() {
             if (selectedOccurenceList.isEmpty()) {
             } else {
                 lastDateTime = selectedOccurenceList[0].fullDate
-                bindingOccurence.occurencyTimeFrom.text = calculateTimeFrom(getSecondsPassed())
+                bindingOccurence.occurencyTimeFrom.text = secondsToComponents(getSecondsPassed())
             }
         }
 
@@ -148,7 +163,49 @@ class OccurenceFragment : Fragment() {
         //TO NIE DZIALA
         val datesTimesSize = adapter.currentList.size + 1
         bindingOccurence.occurencyTimeTo.text = datesTimesSize.toString()
+
+        if (this::occurence.isInitialized) {
+            getSecondsTo()
+        }
+
     }
+
+    // CALCULATING BLOK
+
+    fun getSecondsTo(): Long {
+        val interval = occurence.intervalFrequency
+
+        val intervalValue = interval.split(" ")[0].toLong()
+        val intervalFrequency = interval.split(" ")[1]
+        var toSeconds: Long = 0
+        when (intervalFrequency) {
+            MINUTES -> toSeconds = 60 * intervalValue
+            HOURS -> toSeconds = 3600 * intervalValue
+            DAYS -> toSeconds = 86400 * intervalValue
+            WEEKS -> toSeconds = 604800 * intervalValue
+            MONTHS -> toSeconds = 2629800 * intervalValue
+        }
+        return toSeconds
+    }
+
+    private fun calculateTimeTo(secondsTo: Long): String {
+
+        val durationInterval = secondsTo.seconds
+        val durationLastDateTime = lastDateTime.seconds
+        val secondsLastDT = ChronoUnit.SECONDS.between()
+
+        val interval = secondsTo
+        val pattern = "HH:mm:ss dd.MM.yyyy"
+        val formatter = DateTimeFormatter.ofPattern(pattern)
+        val lastDate = LocalDateTime.parse(lastDateTime, formatter)
+        val secondsPassed = ChronoUnit.SECONDS.between(
+            lastDate,
+            interval
+        )
+        return secondsPassed.toString()
+    }
+
+
 
     fun getSecondsPassed(): Long {
         val today = LocalDateTime.now()
@@ -162,16 +219,18 @@ class OccurenceFragment : Fragment() {
         return secondsPassed
     }
 
-    private fun calculateTimeFrom(secondsPassed: Long): String {
+    private fun secondsToComponents(secondsPassed: Long): String {
         secondsPassed.seconds.toComponents { days, hours, minutes, seconds, nanoseconds ->
             val calculated = when (days) {
                 0L -> "${hours}h ${minutes}m ${seconds}s"
                 else -> "${days}d ${hours}h ${minutes}m ${seconds}s"
             }
 
-        return calculated
+            return calculated
         }
     }
+
+    // SRATATATA
 
     private fun addNewDateTime(timerValue: String = " ") {
         viewModel.addNewDateTime(

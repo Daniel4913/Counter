@@ -12,12 +12,10 @@ import android.widget.*
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import com.example.counter.Constants.Companion.DEFAULT_DAYS
-import com.example.counter.Constants.Companion.DEFAULT_FREQUENCE
+import com.example.counter.Constants.Companion.DAYS
 import com.example.counter.Constants.Companion.DEFAULT_HOURS
 import com.example.counter.Constants.Companion.DEFAULT_MAX_DAYS
 import com.example.counter.Constants.Companion.DEFAULT_MAX_HOURS
-import com.example.counter.Constants.Companion.DEFAULT_MINUTES
 import com.example.counter.data.Occurence
 import com.example.counter.databinding.FragmentNewBinding
 import com.example.counter.pickers.DatePickerFragment
@@ -39,7 +37,7 @@ class NewFragment : Fragment() {
     }
 
 
-    private var intervalFrequencyChip = DEFAULT_FREQUENCE
+    private var intervalFrequencyChip = DAYS
     private var intervalFrequencyChipId = 0
     private var intervalValue = DEFAULT_HOURS
 
@@ -144,7 +142,7 @@ class NewFragment : Fragment() {
         }
     }
 
-    private fun getInterval(value: Int, frequency: String): String {
+    private fun getIntervalFrequency(value: Int, frequency: String): String {
         return "$value $frequency"
     }
 
@@ -209,7 +207,7 @@ class NewFragment : Fragment() {
                 createDate,
                 binding.frequencySwitch.isChecked,
                 binding.categoryDropdown.text.toString(),
-                getInterval(intervalValue, intervalFrequencyChip)
+                getIntervalFrequency(intervalValue, intervalFrequencyChip)
             )
         }
         val action = NewFragmentDirections.actionNewFragmentToCounterHomeFragment()
@@ -233,7 +231,7 @@ class NewFragment : Fragment() {
                 createDate,
                 binding.frequencySwitch.isChecked,
                 binding.categoryDropdown.text.toString(),
-                getInterval(intervalValue, intervalFrequencyChip)
+                getIntervalFrequency(intervalValue, intervalFrequencyChip)
             )
             val action = NewFragmentDirections.actionNewFragmentToCounterHomeFragment()
             findNavController().navigate(action)
