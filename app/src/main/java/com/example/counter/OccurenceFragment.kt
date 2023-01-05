@@ -4,9 +4,9 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.icu.util.UniversalTimeScale.toLong
 //import android.os.Build.VERSION_CODES.R to bylo zaimportowane kiedy zjebaly sie stringi (unresolved reference R. string)
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -32,8 +32,6 @@ import kotlin.time.Duration.Companion.seconds
 import com.example.counter.Constants.Companion.MINUTES
 import com.example.counter.Constants.Companion.MONTHS
 import com.example.counter.Constants.Companion.WEEKS
-import kotlin.time.Duration
-import kotlin.time.DurationUnit
 
 class OccurenceFragment : Fragment() {
 
@@ -81,6 +79,7 @@ class OccurenceFragment : Fragment() {
             startTimer.setOnClickListener { startStopTimer() }
             resetTimer.setOnClickListener { resetTimer() }
             intervalTextView.text = occurence.intervalFrequency
+
         }
     }
 
@@ -130,7 +129,11 @@ class OccurenceFragment : Fragment() {
                 lastDateTime = selectedOccurenceList[0].fullDate
                 bindingOccurence.occurencyTimeFrom.text = secondsToComponents(getSecondsPassed())
 
+
+                bindingOccurence.occurencyTimeTo.text =
+                    secondsToComponents(calculateSecondsTo(getSecondsTo()))
             }
+
         }
 
         viewModel.retrieveDescriptions(id)
@@ -163,12 +166,13 @@ class OccurenceFragment : Fragment() {
         val datesTimesSize = adapter.currentList.size + 1
         bindingOccurence.occurencyTimeTo.text = datesTimesSize.toString()
 
-        if (this::occurence.isInitialized) {
-            val gettedSecondsTo = getSecondsTo()
-            val calculatedSecondsTo = calculateTimeTo(gettedSecondsTo).toLong(DurationUnit.SECONDS)
-            bindingOccurence.occurencyTimeTo.text =
-                secondsToComponents(calculatedSecondsTo)
-        }
+//        if (this::occurence.isInitialized) {
+//            val gettedSecondsTo = getSecondsTo()
+//            val calculatedSecondsTo = calculateTimeTo(gettedSecondsTo).toLong(DurationUnit.SECONDS)
+//            Log.d("calculatedSecondsTo", calculatedSecondsTo.toString())
+//            bindingOccurence.occurencyTimeTo.text =
+//                secondsToComponents(calculatedSecondsTo)
+//        }
 
     }
 
@@ -181,21 +185,60 @@ class OccurenceFragment : Fragment() {
         val intervalFrequency = interval.split(" ")[1]
         var toSecondsTo: Long = 0
         when (intervalFrequency) {
-            MINUTES -> toSecondsTo = 60 * intervalValue
-            HOURS -> toSecondsTo = 3600 * intervalValue
-            DAYS -> toSecondsTo = 86400 * intervalValue
-            WEEKS -> toSecondsTo = 604800 * intervalValue
-            MONTHS -> toSecondsTo = 2629800 * intervalValue
+            MINUTES -> {
+                toSecondsTo = 60 * intervalValue
+            }
+            HOURS -> {
+                toSecondsTo = 3600 * intervalValue
+            }
+            DAYS -> {
+                toSecondsTo = 86400 * intervalValue
+
+            }
+            WEEKS -> {
+                toSecondsTo = 604800 * intervalValue
+            }
+            MONTHS -> {
+                toSecondsTo = 2629800 * intervalValue
+            }
         }
         return toSecondsTo
     }
 
-    private fun calculateTimeTo(secondsTo: Long): Duration {
-        val durationInterval = secondsTo.seconds
-        val durationLastDateTime = lastDateTime.toLong().seconds
-        val calculated = durationInterval.minus(durationLastDateTime)
-        return calculated
+    private fun calculateTimeToInSeconds() {
+
     }
+
+    private fun calculateSecondsTo(secondsTo: Long): Long {
+        val timeFrom = lastDateTime
+        val timeTo = secondsTo
+        val pattern = "HH:mm:ss dd.MM.yyyy"
+        val formatter = DateTimeFormatter.ofPattern(pattern)
+        val lastDate = LocalDateTime.parse(timeFrom, formatter)
+        val calculatedToDay = lastDate.plusSeconds(timeTo)
+        Log.d("calculateTimeTo", "From $timeFrom to ${calculatedToDay}")
+        val secondsTo = ChronoUnit.SECONDS.between(
+            calculatedToDay,
+            LocalDateTime.now(),
+        )
+        Log.d("calculateTimeTo chronounit between", "secondsTo $secondsTo")
+        return secondsTo
+    }
+//    private fun calculateSecondsTo(secondsTo: Long): Long {
+//        val timeFrom = lastDateTime
+//        val timeTo = secondsTo
+//        val pattern = "HH:mm:ss dd.MM.yyyy"
+//        val formatter = DateTimeFormatter.ofPattern(pattern)
+//        val lastDate = LocalDateTime.parse(timeFrom, formatter)
+//        val calculatedToDay = lastDate.plusSeconds(timeTo)
+//        Log.d("calculateTimeTo", "From $timeFrom to ${calculatedToDay}")
+//        val secondsTo = ChronoUnit.SECONDS.between(
+//            calculatedToDay,
+//            lastDate
+//        )
+//        Log.d("calculateTimeTo chronounit between", "secondsTo $secondsTo")
+//        return secondsTo
+//    }
 
     fun getSecondsPassed(): Long {
         val today = LocalDateTime.now()
@@ -221,7 +264,7 @@ class OccurenceFragment : Fragment() {
         }
     }
 
-    // SRATATATA
+    // DB SRATATATA
 
     private fun addNewDateTime(timerValue: String = " ") {
         viewModel.addNewDateTime(

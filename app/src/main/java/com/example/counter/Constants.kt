@@ -18,11 +18,11 @@ class Constants {
 
 
         // Frequency Chips
-        const val MINUTES = "Minutes"
-        const val HOURS = "Hours"
-        const val DAYS = "Days"
-        const val WEEKS = "Weeks"
-        const val MONTHS = "Month"
+        const val MINUTES = "minutes"
+        const val HOURS = "hours"
+        const val DAYS = "days"
+        const val WEEKS = "weeks"
+        const val MONTHS = "month"
     }
 
 

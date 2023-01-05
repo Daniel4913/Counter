@@ -110,6 +110,8 @@
             app:layout_constraintStart_toStartOf="@+id/occurency_time_to_label"
             app:layout_constraintTop_toBottomOf="@+id/occurency_time_to_label" />
 
+
+
         <TextView
             android:id="@+id/interval_textView"
             style="@style/Widget.Counter.TextView"
@@ -122,6 +124,15 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/occurence_interval_label" />
 
+        <TextView
+            android:id="@+id/how_long_textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Na podstawie timera wykonanie tego srednio zajmuje ci 10 dni"
+            app:layout_constraintStart_toStartOf="@+id/occurence_interval_label"
+            app:layout_constraintTop_toBottomOf="@+id/occurence_interval_label" />
+
         <com.google.android.material.card.MaterialCardView
             android:id="@id/descriptions_holder"
             android:layout_width="match_parent"
@@ -130,7 +141,7 @@
             app:layout_constraintBottom_toTopOf="@id/divider"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/occurence_interval_label">
+            app:layout_constraintTop_toBottomOf="@id/how_long_textView">
 
             <TextView
                 android:id="@+id/desciption"
@@ -233,6 +244,8 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/edit_btn"
             app:layout_constraintTop_toBottomOf="@id/occurence_detail_holder" />
+
+
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
