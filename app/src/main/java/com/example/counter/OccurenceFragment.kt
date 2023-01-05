@@ -132,6 +132,9 @@ class OccurenceFragment : Fragment() {
 
                 bindingOccurence.occurencyTimeTo.text =
                     secondsToComponents(calculateSecondsTo(getSecondsTo()))
+
+                val datesTimesSize = selectedOccurenceList.size
+                bindingOccurence.listSizeTextView.text = datesTimesSize.toString()
             }
 
         }
@@ -167,11 +170,7 @@ class OccurenceFragment : Fragment() {
         bindingOccurence.occurencyTimeTo.text = datesTimesSize.toString()
 
 //        if (this::occurence.isInitialized) {
-//            val gettedSecondsTo = getSecondsTo()
-//            val calculatedSecondsTo = calculateTimeTo(gettedSecondsTo).toLong(DurationUnit.SECONDS)
-//            Log.d("calculatedSecondsTo", calculatedSecondsTo.toString())
-//            bindingOccurence.occurencyTimeTo.text =
-//                secondsToComponents(calculatedSecondsTo)
+//
 //        }
 
     }
@@ -205,9 +204,6 @@ class OccurenceFragment : Fragment() {
         return toSecondsTo
     }
 
-    private fun calculateTimeToInSeconds() {
-
-    }
 
     private fun calculateSecondsTo(secondsTo: Long): Long {
         val timeFrom = lastDateTime
@@ -216,29 +212,13 @@ class OccurenceFragment : Fragment() {
         val formatter = DateTimeFormatter.ofPattern(pattern)
         val lastDate = LocalDateTime.parse(timeFrom, formatter)
         val calculatedToDay = lastDate.plusSeconds(timeTo)
-        Log.d("calculateTimeTo", "From $timeFrom to ${calculatedToDay}")
         val secondsTo = ChronoUnit.SECONDS.between(
             calculatedToDay,
             LocalDateTime.now(),
         )
-        Log.d("calculateTimeTo chronounit between", "secondsTo $secondsTo")
         return secondsTo
     }
-//    private fun calculateSecondsTo(secondsTo: Long): Long {
-//        val timeFrom = lastDateTime
-//        val timeTo = secondsTo
-//        val pattern = "HH:mm:ss dd.MM.yyyy"
-//        val formatter = DateTimeFormatter.ofPattern(pattern)
-//        val lastDate = LocalDateTime.parse(timeFrom, formatter)
-//        val calculatedToDay = lastDate.plusSeconds(timeTo)
-//        Log.d("calculateTimeTo", "From $timeFrom to ${calculatedToDay}")
-//        val secondsTo = ChronoUnit.SECONDS.between(
-//            calculatedToDay,
-//            lastDate
-//        )
-//        Log.d("calculateTimeTo chronounit between", "secondsTo $secondsTo")
-//        return secondsTo
-//    }
+
 
     fun getSecondsPassed(): Long {
         val today = LocalDateTime.now()
@@ -259,7 +239,6 @@ class OccurenceFragment : Fragment() {
                 0L -> "${hours}h ${minutes}m ${seconds}s"
                 else -> "${days}d ${hours}h ${minutes}m ${seconds}s"
             }
-
             return calculated
         }
     }
