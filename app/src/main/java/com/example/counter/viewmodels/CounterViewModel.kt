@@ -1,4 +1,4 @@
-package com.example.counter
+package com.example.counter.viewmodels
 
 import android.util.Log
 import androidx.lifecycle.*
@@ -18,16 +18,6 @@ class CounterViewModel(
 
 
     var currentOccurence = 0
-
-    private fun getIntervalValueAndFrequency(currentOccurence: Occurence) {
-        if (currentOccurence != null){
-            val occurence = retrieveOccurence(currentOccurence.occurenceId) as Occurence
-            val valueAndFrequency =  occurence.intervalFrequency.split(" ")
-            val value = valueAndFrequency[0]
-            val frequency = valueAndFrequency[1]
-            Log.d("getIntervalValueAndFrequency", "$value $frequency")
-        }
-    }
 
     fun getOccurenceDatesTimes(): LiveData<List<DateTime>> {
         lateinit var allDatesTimes: LiveData<List<DateTime>>
@@ -283,4 +273,17 @@ class DateTimeViewModelFactory(
         }
         throw IllegalArgumentException("Unknow view model classs////////////")
     }
+
+
+    //jakies logi
+//    private fun getIntervalValueAndFrequency(currentOccurence: Occurence) {
+//        if (currentOccurence != null){
+//            val occurence = retrieveOccurence(currentOccurence.occurenceId) as Occurence
+//            val valueAndFrequency =  occurence.intervalFrequency.split(" ")
+//            val value = valueAndFrequency[0]
+//            val frequency = valueAndFrequency[1]
+//            Log.d("getIntervalValueAndFrequency", "$value $frequency")
+//        }
+//    }
+
 }

@@ -6,7 +6,6 @@ import android.content.Intent
 import android.content.IntentFilter
 //import android.os.Build.VERSION_CODES.R to bylo zaimportowane kiedy zjebaly sie stringi (unresolved reference R. string)
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -32,6 +31,8 @@ import kotlin.time.Duration.Companion.seconds
 import com.example.counter.Constants.Companion.MINUTES
 import com.example.counter.Constants.Companion.MONTHS
 import com.example.counter.Constants.Companion.WEEKS
+import com.example.counter.viewmodels.CounterViewModel
+import com.example.counter.viewmodels.DateTimeViewModelFactory
 
 class OccurenceFragment : Fragment() {
 
@@ -159,7 +160,7 @@ class OccurenceFragment : Fragment() {
             LinearLayoutManager(this.context)
 
         // Set button
-        bindingOccurence.startActivity.setOnClickListener { addNewDateTime() }
+        bindingOccurence.addActivity.setOnClickListener { addNewDateTime() }
 
         // start stop timer
         serviceIntent = Intent(context?.applicationContext, TimerService::class.java)

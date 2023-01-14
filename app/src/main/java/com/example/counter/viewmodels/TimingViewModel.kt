@@ -1,12 +1,7 @@
-package com.example.counter.models
+package com.example.counter.viewmodels
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import com.example.counter.CounterViewModel
-import com.example.counter.data.Occurence
 import com.example.counter.data.OccurenceDao
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 class TimingViewModel(private val occurenceDao: OccurenceDao): ViewModel() {
 

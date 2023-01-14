@@ -8,7 +8,7 @@
     <fragment
         android:id="@+id/newFragment"
         android:name="com.example.counter.NewFragment"
-        android:label="New Occurence"
+        android:label="Create New Occurrence"
         tools:layout="@layout/fragment_new">
 
         <action

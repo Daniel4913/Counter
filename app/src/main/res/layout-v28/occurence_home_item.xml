@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="4dp"
+    android:layout_marginBottom="4dp"
+    tools:background="@color/black">
+    <!--todo kategoria wyswietlana jako np pasek koloru - kazda kategoria ma swoj kolor-->
+
+    <com.google.android.material.card.MaterialCardView
+
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_margin="6dp"
+        android:fillViewport="true"
+        app:cardBackgroundColor="#10FF2CDF"
+        app:cardCornerRadius="50dp"
+        app:cardElevation="2dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <!--todo kategoria wyswietlana jako np pasek koloru - kazda kategoria ma swoj kolor-->
+
+            <ImageView
+                android:id="@+id/occurence_icon_imageView"
+                android:layout_width="50dp"
+                android:layout_height="0dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:elevation="2dp"
+                android:outlineAmbientShadowColor="@color/red"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.0"
+                app:srcCompat="@drawable/ic_rocket"
+                app:tint="@color/lightMediumGray" />
+
+            <TextView
+                android:id="@+id/occurence_name"
+                style="@style/Widget.Counter.ListItemTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:fontFamily="sans-serif"
+                android:maxWidth="120dp"
+                android:maxLength="15"
+                android:textColor="@color/mediumGray"
+                app:layout_constraintBottom_toBottomOf="@+id/occurence_icon_imageView"
+                app:layout_constraintStart_toEndOf="@+id/occurence_icon_imageView"
+                app:layout_constraintTop_toTopOf="@+id/occurence_icon_imageView"
+                tools:text="Kofeina" />
+
+            <TextView
+                android:id="@+id/time_from_last"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/occurence_name"
+                android:layout_marginStart="16dp"
+                android:fontFamily="sans-serif-medium"
+                android:text="3:33"
+
+                android:textAlignment="center"
+                android:textColor="@color/lightMediumGray"
+                app:layout_constraintBottom_toBottomOf="@+id/imageView2"
+                app:layout_constraintHorizontal_weight="1"
+                app:layout_constraintStart_toEndOf="@+id/imageView2"
+                app:layout_constraintTop_toTopOf="@+id/imageView2"
+                app:layout_constraintVertical_bias="0.0" />
+
+
+            <ImageView
+                android:id="@+id/ic_watch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="22dp"
+                app:layout_constraintBottom_toBottomOf="@+id/time_from_last"
+                app:layout_constraintEnd_toStartOf="@+id/chip4"
+                app:layout_constraintStart_toEndOf="@+id/time_from_last"
+                app:layout_constraintTop_toTopOf="@+id/time_from_last"
+                app:srcCompat="@drawable/ic_watch"
+                 />
+
+            <ImageView
+                android:id="@+id/occurIcon"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginEnd="4dp"
+                android:importantForAccessibility="no"
+                android:outlineAmbientShadowColor="@color/red"
+                app:layout_constraintBottom_toBottomOf="@+id/ic_watch"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/ic_watch"
+                app:srcCompat="@drawable/occur_more_ic"
+                app:tint="#70D72D2D" />
+
+            <ImageView
+                android:id="@+id/imageView2"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginStart="12dp"
+                app:layout_constraintBottom_toBottomOf="@+id/occurence_name"
+                app:layout_constraintStart_toEndOf="@+id/occurence_name"
+                app:layout_constraintTop_toTopOf="@+id/occurence_name"
+                app:layout_constraintVertical_bias="0.0"
+                app:srcCompat="@drawable/ic_timer" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:text="elo"
+                app:layout_constraintTop_toTopOf="@id/occurIcon"
+                android:background="@drawable/ic_rocket"
+                android:backgroundTint="#56A3A3A3"
+                android:drawableTint="#9EB60707"
+                app:layout_constraintBottom_toBottomOf="@+id/occurIcon"
+                app:layout_constraintEnd_toStartOf="@+id/occurIcon" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout><!--<?xml version="1.0" encoding="utf-8"?>-->
+    <!--<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
+    <!--    xmlns:app="http://schemas.android.com/apk/res-auto"-->
+    <!--    xmlns:tools="http://schemas.android.com/tools"-->
+    <!--    android:layout_width="match_parent"-->
+    <!--    android:layout_height="wrap_content"-->
+    <!--    android:layout_marginTop="4dp"-->
+    <!--    android:layout_marginBottom="4dp"-->
+    <!--    tools:background="@color/black">-->
+    <!--    &lt;!&ndash;todo kategoria wyswietlana jako np pasek koloru - kazda kategoria ma swoj kolor&ndash;&gt;-->
+
+    <!--    <com.google.android.material.card.MaterialCardView-->
+
+    <!--        android:layout_width="match_parent"-->
+    <!--        android:layout_height="50dp"-->
+    <!--        android:layout_margin="6dp"-->
+    <!--        android:fillViewport="true"-->
+    <!--        app:cardBackgroundColor="#10FF2CDF"-->
+    <!--        app:cardCornerRadius="50dp"-->
+    <!--        app:cardElevation="2dp"-->
+    <!--        app:layout_constraintBottom_toBottomOf="parent"-->
+    <!--        app:layout_constraintEnd_toEndOf="parent"-->
+    <!--        app:layout_constraintHorizontal_bias="0.5"-->
+    <!--        app:layout_constraintStart_toStartOf="parent"-->
+    <!--        app:layout_constraintTop_toTopOf="parent">-->
+
+    <!--        <androidx.constraintlayout.widget.ConstraintLayout-->
+    <!--            android:layout_width="match_parent"-->
+    <!--            android:layout_height="match_parent">-->
+    <!--            &lt;!&ndash;todo kategoria wyswietlana jako np pasek koloru - kazda kategoria ma swoj kolor&ndash;&gt;-->
+    <!--            <ImageView-->
+    <!--                android:id="@+id/occurence_icon_imageView"-->
+    <!--                android:layout_width="50dp"-->
+    <!--                android:layout_height="0dp"-->
+    <!--                android:layout_marginStart="16dp"-->
+    <!--                android:layout_marginTop="8dp"-->
+    <!--                android:layout_marginBottom="8dp"-->
+
+    <!--                app:layout_constraintBottom_toBottomOf="parent"-->
+    <!--                app:layout_constraintStart_toStartOf="parent"-->
+    <!--                app:layout_constraintTop_toTopOf="parent"-->
+    <!--                app:srcCompat="@drawable/ic_baseline_category_24"-->
+    <!--                app:tint="@color/lightMediumGray" />-->
+
+    <!--            <TextView-->
+    <!--                android:id="@+id/occurence_name"-->
+    <!--                style="@style/Widget.Counter.ListItemTextView"-->
+
+    <!--                android:layout_width="wrap_content"-->
+    <!--                android:layout_height="wrap_content"-->
+    <!--                android:layout_marginStart="12dp"-->
+    <!--                android:fontFamily="sans-serif"-->
+    <!--                android:maxLength="15"-->
+    <!--                android:textColor="@color/mediumGray"-->
+    <!--                app:layout_constraintBottom_toBottomOf="@+id/occurence_icon_imageView"-->
+    <!--                app:layout_constraintStart_toEndOf="@+id/occurence_icon_imageView"-->
+    <!--                app:layout_constraintTop_toTopOf="@+id/occurence_icon_imageView"-->
+    <!--                tools:text="Kofeina" />-->
+
+    <!--            <TextView-->
+    <!--                android:id="@+id/time_from_last"-->
+    <!--                android:layout_width="wrap_content"-->
+    <!--                android:layout_height="wrap_content"-->
+    <!--                android:layout_below="@+id/occurence_name"-->
+    <!--                android:layout_marginStart="20dp"-->
+    <!--                android:fontFamily="sans-serif-medium"-->
+    <!--                android:text="3:33"-->
+    <!--                android:textAlignment="center"-->
+
+    <!--                android:textColor="@color/lightMediumGray"-->
+    <!--                app:layout_constraintBottom_toBottomOf="@+id/occurence_name"-->
+    <!--                app:layout_constraintHorizontal_weight="1"-->
+    <!--                app:layout_constraintStart_toEndOf="@+id/occurence_name"-->
+    <!--                app:layout_constraintTop_toTopOf="@+id/occurence_name"-->
+    <!--                app:layout_constraintVertical_bias="0.0" />-->
+
+    <!--            <ImageView-->
+    <!--                android:id="@+id/imageView"-->
+    <!--                android:layout_width="wrap_content"-->
+    <!--                android:layout_height="wrap_content"-->
+    <!--                android:layout_marginStart="16dp"-->
+    <!--                app:layout_constraintBottom_toBottomOf="@+id/time_from_last"-->
+    <!--                app:layout_constraintStart_toEndOf="@+id/time_from_last"-->
+    <!--                app:layout_constraintTop_toTopOf="@+id/time_from_last"-->
+    <!--                app:srcCompat="@drawable/ic_graph"-->
+    <!--                app:tint="@color/lightMediumGray" />-->
+
+    <!--            <TextView-->
+    <!--                android:id="@+id/time_to_next"-->
+    <!--                android:layout_width="wrap_content"-->
+    <!--                android:layout_height="wrap_content"-->
+    <!--                android:layout_alignParentEnd="true"-->
+    <!--                android:layout_marginStart="24dp"-->
+    <!--                android:fontFamily="sans-serif-medium"-->
+    <!--                android:text="3:33"-->
+    <!--                android:textAlignment="center"-->
+    <!--                android:textColor="@color/lightMediumGray"-->
+    <!--                app:layout_constraintBottom_toBottomOf="@+id/imageView"-->
+    <!--                app:layout_constraintHorizontal_weight="1"-->
+    <!--                app:layout_constraintStart_toEndOf="@+id/imageView"-->
+    <!--                app:layout_constraintTop_toTopOf="@+id/imageView"-->
+    <!--                app:layout_constraintVertical_bias="0.0" />-->
+
+    <!--            <ImageView-->
+    <!--                android:id="@+id/ic_watch"-->
+    <!--                android:layout_width="wrap_content"-->
+    <!--                android:layout_height="wrap_content"-->
+    <!--                android:layout_marginStart="16dp"-->
+    <!--                app:layout_constraintBottom_toBottomOf="@+id/time_to_next"-->
+    <!--                app:layout_constraintStart_toEndOf="@+id/time_to_next"-->
+    <!--                app:layout_constraintTop_toTopOf="@+id/time_to_next"-->
+    <!--                app:layout_constraintVertical_bias="0.375"-->
+    <!--                app:srcCompat="@drawable/ic_watch"-->
+    <!--                app:tint="@color/lightMediumGray" />-->
+
+    <!--            <ImageView-->
+    <!--                android:id="@+id/occurIcon"-->
+    <!--                android:layout_width="wrap_content"-->
+    <!--                android:layout_height="wrap_content"-->
+    <!--                android:layout_marginEnd="4dp"-->
+    <!--                android:importantForAccessibility="no"-->
+    <!--                app:layout_constraintBottom_toBottomOf="@+id/ic_watch"-->
+    <!--                app:layout_constraintEnd_toEndOf="parent"-->
+    <!--                app:layout_constraintStart_toEndOf="@+id/ic_watch"-->
+    <!--                app:layout_constraintTop_toTopOf="@+id/ic_watch"-->
+    <!--                app:tint="#70D72D2D"-->
+    <!--                android:outlineAmbientShadowColor="@color/red"-->
+    <!--                app:srcCompat="@drawable/ic_expand_less" />-->
+
+
+    <!--        </androidx.constraintlayout.widget.ConstraintLayout>-->
+
+    <!--    </com.google.android.material.card.MaterialCardView>-->
+
+
+    <!--</androidx.constraintlayout.widget.ConstraintLayout>-->

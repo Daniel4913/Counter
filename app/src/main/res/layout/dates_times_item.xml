@@ -1,59 +1,111 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:descendantFocusability="blocksDescendants">
+    android:layout_height="wrap_content"
+    android:descendantFocusability="blocksDescendants"
+    tools:background="@color/black">
 
-    <TextView
-        android:id="@+id/date_full"
-        style="@style/Widget.Counter.ListItemTextView"
-        android:layout_width="180dp"
-        android:layout_marginStart="@dimen/margin_between_elements"
-        android:textSize="10sp"
-        android:fontFamily="sans-serif"
-        app:layout_constraintEnd_toStartOf="@+id/time_from"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="01.01" />
+    <com.google.android.material.card.MaterialCardView
 
-    <TextView
-        android:id="@+id/time_from"
-        style="@style/Widget.Counter.TextViewSmall"
-        android:layout_width="wrap_content"
-        android:layout_below="@+id/date_full"
-        android:layout_marginStart="@dimen/margin_between_elements"
-        android:fontFamily="sans-serif-medium"
-        android:textAlignment="center"
-        app:layout_constraintEnd_toStartOf="@+id/time_last"
-        app:layout_constraintHorizontal_weight="1"
-        app:layout_constraintStart_toEndOf="@+id/date_full"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="3:21:26" />
-    <TextView
-        android:id="@+id/time_last"
-        style="@style/Widget.Counter.TextViewSmall"
-        android:layout_width="80dp"
-        android:layout_alignParentEnd="true"
-        android:layout_marginEnd="@dimen/margin_between_elements"
-        android:fontFamily="sans-serif-medium"
-        android:textAlignment="center"
-        app:layout_constraintStart_toEndOf="@id/time_from"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="3:00" />
-    <TextView
-        android:id="@+id/time_spent_with_timer"
-        style="@style/Widget.Counter.TextViewSmall"
-        android:layout_width="80dp"
-        android:layout_alignParentEnd="true"
-        android:layout_marginEnd="@dimen/margin_between_elements"
-        android:fontFamily="sans-serif-medium"
-        android:textAlignment="center"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="1dp"
+        android:fillViewport="true"
+        app:cardBackgroundColor="#20FF2CDF"
+        app:cardCornerRadius="50dp"
+        app:cardElevation="2dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toEndOf="@id/time_last"
-        tools:text="0:20" />
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            >
+
+            <TextView
+                android:id="@+id/date_full"
+                style="@style/Widget.Counter.ListItemTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                android:fontFamily="sans-serif-condensed-light"
+                android:textColor="@color/lightMediumGray"
+                app:layout_constraintBottom_toBottomOf="@+id/time_from"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/time_from"
+                tools:text="01.01.1111 15:25:21" />
+
+            <TextView
+                android:id="@+id/time_from"
+                style="@style/Widget.Counter.ListItemTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="18sp"
+                android:layout_below="@+id/date_full"
+                android:layout_marginStart="8dp"
+                android:fontFamily="sans-serif-condensed-light"
+                android:textAlignment="center"
+                android:textColor="@color/lightMediumGray"
+                app:layout_constraintBottom_toBottomOf="@+id/time_last"
+                app:layout_constraintStart_toEndOf="@+id/date_full"
+                app:layout_constraintTop_toTopOf="@+id/time_last"
+
+                tools:text="3:21:26" />
+
+            <TextView
+                android:id="@+id/time_last"
+                style="@style/Widget.Counter.ListItemTextView"
+                android:layout_width="wrap_content"
+
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_marginStart="20dp"
+                android:fontFamily="sans-serif-condensed-light"
+                android:textAlignment="center"
+                android:textColor="@color/lightMediumGray"
+                android:textSize="18sp"
+                app:layout_constraintBottom_toBottomOf="@+id/time_spent_with_timer"
+                app:layout_constraintStart_toEndOf="@id/time_from"
+                app:layout_constraintTop_toTopOf="@+id/time_spent_with_timer"
+                tools:text="3:00" />
+
+            <TextView
+                android:id="@+id/time_spent_with_timer"
+                style="@style/Widget.Counter.ListItemTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:fontFamily="sans-serif-condensed-light"
+                android:textAlignment="center"
+                android:textColor="@color/lightMediumGray"
+                android:textSize="18sp"
+                app:layout_constraintBottom_toBottomOf="@+id/occurIcon"
+                app:layout_constraintEnd_toStartOf="@+id/occurIcon"
+                app:layout_constraintStart_toEndOf="@+id/time_last"
+                app:layout_constraintTop_toTopOf="@+id/occurIcon"
+                tools:text="0:20" />
+
+            <ImageView
+                android:id="@+id/occurIcon"
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="12dp"
+                android:layout_marginBottom="4dp"
+                android:importantForAccessibility="no"
+                android:outlineAmbientShadowColor="@color/red"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/occur_more_ic"
+                app:tint="#70D72D2D" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </com.google.android.material.card.MaterialCardView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
