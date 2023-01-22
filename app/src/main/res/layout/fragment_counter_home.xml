@@ -23,6 +23,7 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:background="@drawable/bg_trans"
             >
 
             <ImageView
@@ -92,7 +93,7 @@
                 android:id="@+id/occurency_time_from_label"
                 style="@style/Widget.Counter.Header"
                 android:layout_alignParentEnd="true"
-                android:text="@string/time_from"
+                android:text="@string/time_from_last"
                 android:textAlignment="center"
                 android:textColor="@color/lightGray"
                 android:textSize="8dp"
@@ -118,7 +119,7 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/occurencies_recycler_view"
         android:layout_width="match_parent"
-        android:layout_height="500dp"
+        android:layout_height="550dp"
         android:orientation="vertical"
         android:scrollbars="vertical"
         app:layout_constraintBottom_toBottomOf="parent"

@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Counter</string>
     <string name="new_occurency">New</string>
-    <string name="time_from">Time from</string>
+    <string name="time_from_last">Time from last</string>
     <string name="time_to">Time to next</string>
     <string name="occurency_name">Occurency name</string>
     <string name="occurency_name_tip">Creating new occurency</string>

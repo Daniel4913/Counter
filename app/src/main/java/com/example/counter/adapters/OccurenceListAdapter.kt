@@ -6,22 +6,20 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.counter.R
-import com.example.counter.data.DateTime
 import com.example.counter.data.Occurence
 import com.example.counter.databinding.OccurenceHomeItemBinding
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
-import java.time.temporal.ChronoUnit
+import com.example.counter.viewmodels.TimeCounter
+
 
 class OccurenceListAdapter(private val onItemClicked: (Occurence) -> Unit) :
-    ListAdapter<Occurence, OccurenceListAdapter.OccurenceViewHolder>(DiffCallback) {
+    ListAdapter<Occurence,  OccurenceListAdapter.OccurenceViewHolder>(DiffCallback) {
+
+    
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): OccurenceViewHolder {
         return OccurenceViewHolder(
             OccurenceHomeItemBinding.inflate(
-                LayoutInflater.from(
-                    parent.context
-                )
+                LayoutInflater.from(parent.context),parent,false
             )
         )
     }
@@ -40,6 +38,7 @@ class OccurenceListAdapter(private val onItemClicked: (Occurence) -> Unit) :
             binding.apply {
                 occurenceName.text = occurence.occurenceName
                 occurIcon.setImageResource(getOccurIcon(occurence))
+                timeFromLast.text = occurence.intervalFrequency
             }
         }
         private fun getOccurIcon(occurence: Occurence): Int {

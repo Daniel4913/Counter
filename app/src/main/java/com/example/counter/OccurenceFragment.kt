@@ -36,7 +36,6 @@ import com.example.counter.viewmodels.DateTimeViewModelFactory
 
 class OccurenceFragment : Fragment() {
 
-
     private val navigationArgs: OccurenceFragmentArgs by navArgs()
 
     lateinit var occurence: Occurence
@@ -80,7 +79,6 @@ class OccurenceFragment : Fragment() {
             startTimer.setOnClickListener { startStopTimer() }
             resetTimer.setOnClickListener { resetTimer() }
             intervalTextView.text = occurence.intervalFrequency
-
         }
     }
 
@@ -128,14 +126,15 @@ class OccurenceFragment : Fragment() {
             if (selectedOccurenceList.isEmpty()) {
             } else {
                 lastDateTime = selectedOccurenceList[0].fullDate
-                bindingOccurence.occurencyTimeFrom.text = secondsToComponents(getSecondsPassed())
-
+                bindingOccurence.occurencyTimeFrom.text =
+                    secondsToComponents(getSecondsPassed())
 
                 bindingOccurence.occurencyTimeTo.text =
                     secondsToComponents(calculateSecondsTo(getSecondsTo()))
 
                 val datesTimesSize = selectedOccurenceList.size
-                bindingOccurence.listSizeTextView.text = datesTimesSize.toString()
+                bindingOccurence.listSizeTextView.text =
+                    datesTimesSize.toString()
             }
 
         }
