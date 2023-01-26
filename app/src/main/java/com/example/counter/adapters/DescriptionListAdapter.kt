@@ -48,14 +48,12 @@ class DescriptionListAdapter(private val onItemClicked: (Description) -> Unit) :
             }
         }
 
-
         override fun onLongClick(v: View?): Boolean {
             if (v != null) {
                 Toast.makeText(v.context, "Copied to clipboard", Toast.LENGTH_SHORT).show()
             }
             return true
         }
-
     }
 
 

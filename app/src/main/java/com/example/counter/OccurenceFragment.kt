@@ -149,10 +149,6 @@ class OccurenceFragment : Fragment() {
         val datesTimesSize = adapter.currentList.size + 1
         bindingOccurence.occurencyTimeTo.text = datesTimesSize.toString()
 
-//        if (this::occurence.isInitialized) {
-//
-//        }
-
     }
 
     // CALCULATING BLOK
