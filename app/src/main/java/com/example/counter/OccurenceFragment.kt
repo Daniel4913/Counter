@@ -40,19 +40,11 @@ class OccurenceFragment : Fragment() {
 
     lateinit var occurence: Occurence
 
-    //    lateinit var datesTimes: LiveData<List<DateTime>> unused
     private lateinit var serviceIntent: Intent
 
     lateinit var dateTime: DateTime
     lateinit var timePassed: String
     lateinit var lastDateTime: String
-
-    private var minutes = MINUTES
-    private var hours = HOURS
-    private var days = DAYS
-    private var weeks = WEEKS
-    private var months = MONTHS
-
 
     private var timerStarted = false
     private var time = 0.0
@@ -66,7 +58,6 @@ class OccurenceFragment : Fragment() {
             (activity?.application as CounterApplication).database.descriptionDao()
         )
     }
-
 
     private fun bind(occurence: Occurence) {
         bindingOccurence.apply {
@@ -95,8 +86,7 @@ class OccurenceFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        viewModel.currentOccurence = navigationArgs.id
-        viewModel.getOccurenceDatesTimes()
+        viewModel.getOccurrenceWithDatesTimes()
         _bindingOccurence = FragmentOccurenceBinding.inflate(inflater, container, false)
         return bindingOccurence.root
     }
@@ -136,17 +126,7 @@ class OccurenceFragment : Fragment() {
                 bindingOccurence.listSizeTextView.text =
                     datesTimesSize.toString()
             }
-
         }
-
-        viewModel.retrieveDescriptions(id)
-            .observe(this.viewLifecycleOwner) { selectedDescriptionsList ->
-                if (selectedDescriptionsList.isEmpty()) {
-                    bindingOccurence.desciption.text = "Create description here"
-                } else {
-                    bindingOccurence.desciption.text = selectedDescriptionsList[0].descriptionNote
-                }
-            }
 
         bindingOccurence.descriptionsHolder.setOnClickListener {
             val idOccurence = navigationArgs.id

@@ -5,7 +5,7 @@ import androidx.room.Relation
 import com.example.counter.data.Description
 import com.example.counter.data.Occurence
 
-data class OccurenceWithDescripion (
+data class OccurrenceWithDescripion (
     @Embedded
     val occurence: Occurence,
 

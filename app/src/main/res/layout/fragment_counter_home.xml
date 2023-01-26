@@ -12,19 +12,17 @@
         android:layout_width="match_parent"
         android:layout_height="150dp"
         android:layout_margin="10dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        android:padding="8dp"
         app:cardBackgroundColor="#20FF2CDF"
         app:cardCornerRadius="10dp"
         app:cardElevation="0.5dp"
-        android:padding="8dp"
-        >
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@drawable/bg_trans"
-            >
+            android:background="@drawable/bg_trans">
 
             <ImageView
                 android:id="@+id/profile_imageView"
@@ -42,8 +40,7 @@
                 android:layout_marginTop="24dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/ic_fox"
-                />
+                app:srcCompat="@drawable/ic_fox" />
 
             <TextView
                 android:id="@+id/occurency_name_label"
@@ -66,12 +63,12 @@
                 android:id="@+id/textView3"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
                 android:maxLines="1"
                 android:overScrollMode="ifContentScrolls"
                 android:text="Lorem ipsum – tekst składający się z łacińskich i quasi-łacińskich wyrazów, mający korzenie w klasycznej łacinie, wzorowany na fragmencie traktatu Cycerona „O granicach dobra i z"
                 android:textColor="@color/lightGray"
                 android:textSize="12sp"
-                android:layout_marginStart="16dp"
                 app:layout_constraintStart_toStartOf="@+id/occurence_icon"
                 app:layout_constraintTop_toBottomOf="@+id/occurence_icon" />
 
@@ -116,6 +113,7 @@
 
     </com.google.android.material.card.MaterialCardView>
 
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/occurencies_recycler_view"
         android:layout_width="match_parent"
@@ -125,7 +123,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/occurence_cardView" />
+        app:layout_constraintTop_toBottomOf="@id/occurence_cardView" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/new_occurency"

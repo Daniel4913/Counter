@@ -2,6 +2,7 @@ package com.example.counter.data
 
 import androidx.room.*
 import com.example.counter.data.relations.OccurrenceWithDatesTimes
+import com.example.counter.data.relations.OccurrenceWithDescripion
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -16,8 +17,12 @@ interface OccurenceDao {
     fun getOccurenceId(id: Int): Int
 
     @Transaction
-    @Query("SELECT * from occurence WHERE occurence_id = :id")
-    fun getOccurrenceWithDatesTimes(id: Int): Flow<List<OccurrenceWithDatesTimes>>
+    @Query("SELECT * from occurence ")
+    fun getOccurrencesWithDatesTimes(): Flow<List<OccurrenceWithDatesTimes>>
+
+    @Transaction
+    @Query("SELECT * from description WHERE occurence_owner_id = :id")
+    fun getOccurrencesWithDescriptions(id: Int): Flow<List<Description>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertOccurence(occurence: Occurence)

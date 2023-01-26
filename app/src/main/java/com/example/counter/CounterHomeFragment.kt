@@ -1,7 +1,6 @@
 package com.example.counter
 
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -9,7 +8,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.counter.adapters.OccurenceListAdapter
+import com.example.counter.adapters.OccurrenceWithDateTimeAdapter
 import com.example.counter.databinding.FragmentCounterHomeBinding
 import com.example.counter.viewmodels.CounterViewModel
 import com.example.counter.viewmodels.DateTimeViewModelFactory
@@ -36,15 +35,13 @@ class CounterHomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val adapter = OccurenceListAdapter {
-            val action =
-                CounterHomeFragmentDirections.actionCounterHomeFragmentToOccurenceFragment(it.occurenceId, it.occurenceName)
-            this.findNavController().navigate(action)
-        }
 
-        val occDT = viewModel.getOccurrenceWithDatesTimes(15).observe(this.viewLifecycleOwner){
-            items->
-        Log.d("OccurenceDatesTimes", "$items")
+
+
+        val adapter = OccurrenceWithDateTimeAdapter {
+            val action =
+                CounterHomeFragmentDirections.actionCounterHomeFragmentToOccurenceFragment(it.occurence.occurenceId, it.occurence.occurenceName)
+            this.findNavController().navigate(action)
         }
 
         binding.occurenciesRecyclerView.adapter = adapter
@@ -53,8 +50,9 @@ class CounterHomeFragment : Fragment() {
                 adapter.submitList(it)
             }
         }
-
         binding.occurenciesRecyclerView.layoutManager = LinearLayoutManager(this.context)
+
+
         binding.newOccurency.setOnClickListener {
             val action = CounterHomeFragmentDirections.actionCounterHomeFragmentToNewFragment("Create new occurence")
             this.findNavController().navigate(action)

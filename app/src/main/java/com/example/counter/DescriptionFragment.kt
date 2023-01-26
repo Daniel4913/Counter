@@ -40,8 +40,6 @@ class DescriptionFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        viewModel.currentOccurence = navigationArgs.id
-        viewModel.getOccurenceDescriptions()
         _binding = FragmentDescriptionBinding.inflate(inflater, container, false)
         return binding.root
     }
