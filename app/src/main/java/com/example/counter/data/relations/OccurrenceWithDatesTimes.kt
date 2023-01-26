@@ -5,15 +5,15 @@ import androidx.room.Relation
 import com.example.counter.data.DateTime
 import com.example.counter.data.Occurence
 
-data class OccurenceWithDatesTimes (
+data class OccurrenceWithDatesTimes (
     @Embedded
     val occurence: Occurence,
 
     @Relation(
-        parentColumn = "occurenceId",
-        entityColumn = "occurenceOwnerId"
+        parentColumn = "occurence_id",
+        entityColumn = "occurence_owner_id"
     )
-    val datesTimes: List<DateTime>
+    val occurrenceDatesTimes: List<DateTime>
 ){
 
 }

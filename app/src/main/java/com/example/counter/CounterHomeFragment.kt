@@ -1,6 +1,7 @@
 package com.example.counter
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -39,6 +40,11 @@ class CounterHomeFragment : Fragment() {
             val action =
                 CounterHomeFragmentDirections.actionCounterHomeFragmentToOccurenceFragment(it.occurenceId, it.occurenceName)
             this.findNavController().navigate(action)
+        }
+
+        val occDT = viewModel.getOccurrenceWithDatesTimes(15).observe(this.viewLifecycleOwner){
+            items->
+        Log.d("OccurenceDatesTimes", "$items")
         }
 
         binding.occurenciesRecyclerView.adapter = adapter

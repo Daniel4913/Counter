@@ -3,6 +3,7 @@ package com.example.counter.viewmodels
 import android.util.Log
 import androidx.lifecycle.*
 import com.example.counter.data.*
+import com.example.counter.data.relations.OccurrenceWithDatesTimes
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -18,6 +19,8 @@ class CounterViewModel(
 
 
     var currentOccurence = 0
+
+
 
     fun getOccurenceDatesTimes(): LiveData<List<DateTime>> {
         lateinit var allDatesTimes: LiveData<List<DateTime>>
@@ -48,6 +51,12 @@ class CounterViewModel(
     fun retrieveDatesTimes(id: Int): LiveData<List<DateTime>> {
         return dateTimeDao.getOccurenceWithDatesTimes(id).asLiveData()
     }
+
+    fun getOccurrenceWithDatesTimes(id: Int): LiveData<List<OccurrenceWithDatesTimes>>{
+        return occurenceDao.getOccurrenceWithDatesTimes(id).asLiveData()
+    }
+
+
 
     fun retrieveDescriptions(id: Int): LiveData<List<Description>> {
         return descriptionDao.getOccurenceWithDescriptions(id).asLiveData()
