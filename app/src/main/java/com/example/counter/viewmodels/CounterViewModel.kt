@@ -1,8 +1,9 @@
-package com.example.counter
+package com.example.counter.viewmodels
 
-import android.util.Log
 import androidx.lifecycle.*
 import com.example.counter.data.*
+import com.example.counter.data.relations.OccurrenceWithDatesTimes
+import com.example.counter.data.relations.OccurrenceWithDescripion
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -14,42 +15,9 @@ class CounterViewModel(
     private val descriptionDao: DescriptionDao
 ) : ViewModel() {
 
-    val allOccurences: LiveData<List<Occurence>> = occurenceDao.getOccurencies().asLiveData()
+    val allOccurences: LiveData<List<OccurrenceWithDatesTimes>> =
+        occurenceDao.getOccurrencesWithDatesTimes().asLiveData()
 
-
-    var currentOccurence = 0
-
-    private fun getIntervalValueAndFrequency(currentOccurence: Occurence) {
-        if (currentOccurence != null){
-            val occurence = retrieveOccurence(currentOccurence.occurenceId) as Occurence
-            val valueAndFrequency =  occurence.intervalFrequency.split(" ")
-            val value = valueAndFrequency[0]
-            val frequency = valueAndFrequency[1]
-            Log.d("getIntervalValueAndFrequency", "$value $frequency")
-        }
-    }
-
-    fun getOccurenceDatesTimes(): LiveData<List<DateTime>> {
-        lateinit var allDatesTimes: LiveData<List<DateTime>>
-        if (currentOccurence != 0) {
-            var gettedOccurence = 0
-            var getAllDatesTimes: LiveData<List<DateTime>> =
-                dateTimeDao.getOccurenceWithDatesTimes(gettedOccurence).asLiveData()
-            allDatesTimes = getAllDatesTimes
-        }
-        return allDatesTimes
-    }
-
-    fun getOccurenceDescriptions(): LiveData<List<Description>> {
-        lateinit var allDescriptions: LiveData<List<Description>>
-        if (currentOccurence != -1) {
-            var gettedOccurence = 0
-//            var getDescriptions = descriptionDao.getOccurenceWithDescriptions(gettedOccurence).asLiveData()
-            var getDescriptions = retrieveDescriptions(gettedOccurence)
-            allDescriptions = getDescriptions
-        }
-        return allDescriptions
-    }
 
     fun retrieveOccurence(id: Int): LiveData<Occurence> {
         return occurenceDao.getOccurence(id).asLiveData()
@@ -59,8 +27,12 @@ class CounterViewModel(
         return dateTimeDao.getOccurenceWithDatesTimes(id).asLiveData()
     }
 
+    fun getOccurrenceWithDatesTimes(): LiveData<List<OccurrenceWithDatesTimes>> {
+        return occurenceDao.getOccurrencesWithDatesTimes().asLiveData()
+    }
+
     fun retrieveDescriptions(id: Int): LiveData<List<Description>> {
-        return descriptionDao.getOccurenceWithDescriptions(id).asLiveData()
+        return occurenceDao.getOccurrencesWithDescriptions(id).asLiveData()
     }
 
     //    To interact with the database off the main thread, start a coroutine and call the DAO method within it
@@ -107,7 +79,8 @@ class CounterViewModel(
         category: String,
         intervalFrequency: String
     ) {
-        val newOccurence = getNewOccurenceEntry(occurenceName, createDate, occurMore, category, intervalFrequency)
+        val newOccurence =
+            getNewOccurenceEntry(occurenceName, createDate, occurMore, category, intervalFrequency)
         insertOccurence(newOccurence)
     }
 
@@ -283,4 +256,17 @@ class DateTimeViewModelFactory(
         }
         throw IllegalArgumentException("Unknow view model classs////////////")
     }
+
+
+    //jakies logi
+//    private fun getIntervalValueAndFrequency(currentOccurence: Occurence) {
+//        if (currentOccurence != null){
+//            val occurence = retrieveOccurence(currentOccurence.occurenceId) as Occurence
+//            val valueAndFrequency =  occurence.intervalFrequency.split(" ")
+//            val value = valueAndFrequency[0]
+//            val frequency = valueAndFrequency[1]
+//            Log.d("getIntervalValueAndFrequency", "$value $frequency")
+//        }
+//    }
+
 }

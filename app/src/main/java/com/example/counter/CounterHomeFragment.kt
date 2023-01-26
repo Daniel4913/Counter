@@ -8,9 +8,10 @@ import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.counter.adapters.OccurenceListAdapter
+import com.example.counter.adapters.OccurrenceWithDateTimeAdapter
 import com.example.counter.databinding.FragmentCounterHomeBinding
-import kotlin.time.Duration.Companion.days
+import com.example.counter.viewmodels.CounterViewModel
+import com.example.counter.viewmodels.DateTimeViewModelFactory
 
 class CounterHomeFragment : Fragment() {
     private val viewModel: CounterViewModel by viewModels {
@@ -34,9 +35,12 @@ class CounterHomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val adapter = OccurenceListAdapter {
+
+
+
+        val adapter = OccurrenceWithDateTimeAdapter {
             val action =
-                CounterHomeFragmentDirections.actionCounterHomeFragmentToOccurenceFragment(it.occurenceId, it.occurenceName)
+                CounterHomeFragmentDirections.actionCounterHomeFragmentToOccurenceFragment(it.occurence.occurenceId, it.occurence.occurenceName)
             this.findNavController().navigate(action)
         }
 
@@ -46,8 +50,9 @@ class CounterHomeFragment : Fragment() {
                 adapter.submitList(it)
             }
         }
-
         binding.occurenciesRecyclerView.layoutManager = LinearLayoutManager(this.context)
+
+
         binding.newOccurency.setOnClickListener {
             val action = CounterHomeFragmentDirections.actionCounterHomeFragmentToNewFragment("Create new occurence")
             this.findNavController().navigate(action)

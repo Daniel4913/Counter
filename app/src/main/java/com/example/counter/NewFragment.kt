@@ -20,8 +20,11 @@ import com.example.counter.data.Occurence
 import com.example.counter.databinding.FragmentNewBinding
 import com.example.counter.pickers.DatePickerFragment
 import com.example.counter.pickers.TimePickerFragment
+import com.example.counter.viewmodels.CounterViewModel
+import com.example.counter.viewmodels.DateTimeViewModelFactory
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
+import com.vanniktech.emoji.installForceSingleEmoji
 import java.util.*
 
 
@@ -41,11 +44,14 @@ class NewFragment : Fragment() {
     private var intervalFrequencyChipId = 0
     private var intervalValue = DEFAULT_HOURS
 
+//    lateinit var emojiProvider: EmojiProvider
+
     lateinit var occurence: Occurence
 //    private var currentOccurence: Occurence? = occurence
 
     private var _binding: FragmentNewBinding? = null
     private val binding get() = _binding!!
+    private var emojiIcon = ""
 
     private fun bind(occurence: Occurence) {
         binding.apply {
@@ -56,8 +62,9 @@ class NewFragment : Fragment() {
             tvTime.setText(splitCreateDate()[1])
             intervalNumberPicker.minValue = DEFAULT_HOURS
             intervalNumberPicker.maxValue = DEFAULT_MAX_HOURS
-        }
+            emojiEditText.setText(emojiIcon)
 
+        }
     }
 
     override fun onCreateView(
@@ -65,6 +72,12 @@ class NewFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentNewBinding.inflate(inflater, container, false)
+
+
+//        val emojiManager = EmojiManager.install(emojiProvider)
+//        val emojiPopup = EmojiPopup(binding.root, binding.emojiEditText)
+//        binding.iconInfinity.setOnClickListener { emojiPopup.show() }
+
         return binding.root
     }
 
@@ -84,9 +97,12 @@ class NewFragment : Fragment() {
         setIntervalValue()
 
 
+
         binding.tvDate.setOnClickListener { getDate() }
 
         binding.tvTime.setOnClickListener { getTime() }
+
+        binding.frequencySwitch.setOnClickListener { updateFrequencySwitchText() }
 
         val duration = Toast.LENGTH_LONG
         val text = "Click on date and time to change it"
@@ -130,6 +146,18 @@ class NewFragment : Fragment() {
         }
 
 
+    }
+
+    private fun updateFrequencySwitchText() {
+        val switch = binding.frequencySwitch
+        when (switch.isChecked) {
+            true -> {
+                switch.text = getText(R.string.more_often)
+            }
+            false -> {
+                switch.text = getText(R.string.less)
+            }
+        }
     }
 
     private fun updateChip(intervalFrequencyChipId: Int, frequencyChipGroup: ChipGroup) {
@@ -198,12 +226,21 @@ class NewFragment : Fragment() {
         timePickerFragment.show(supportFragmentManagerTime, "TimePickerFragment")
     }
 
+    private fun occIconAndName(): String {
+        val icon = binding.emojiEditText.text
+        val name = binding.occurenceName.text
+        binding.emojiEditText.installForceSingleEmoji()
+        binding.emojiEditText.isEmojiCompatEnabled
+
+        return "$icon $name"
+    }
+
     private fun addNewOccurence() {
         if (isEntryValid()) {
             val createDate =
                 getNewDateTime(binding.tvDate.text.toString(), binding.tvTime.text.toString())
             viewModel.addNewOccurence(
-                binding.occurenceName.text.toString(),
+                occIconAndName(),
                 createDate,
                 binding.frequencySwitch.isChecked,
                 binding.categoryDropdown.text.toString(),

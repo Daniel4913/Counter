@@ -6,7 +6,6 @@ import android.content.Intent
 import android.content.IntentFilter
 //import android.os.Build.VERSION_CODES.R to bylo zaimportowane kiedy zjebaly sie stringi (unresolved reference R. string)
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -32,27 +31,20 @@ import kotlin.time.Duration.Companion.seconds
 import com.example.counter.Constants.Companion.MINUTES
 import com.example.counter.Constants.Companion.MONTHS
 import com.example.counter.Constants.Companion.WEEKS
+import com.example.counter.viewmodels.CounterViewModel
+import com.example.counter.viewmodels.DateTimeViewModelFactory
 
 class OccurenceFragment : Fragment() {
-
 
     private val navigationArgs: OccurenceFragmentArgs by navArgs()
 
     lateinit var occurence: Occurence
 
-    //    lateinit var datesTimes: LiveData<List<DateTime>> unused
     private lateinit var serviceIntent: Intent
 
     lateinit var dateTime: DateTime
     lateinit var timePassed: String
     lateinit var lastDateTime: String
-
-    private var minutes = MINUTES
-    private var hours = HOURS
-    private var days = DAYS
-    private var weeks = WEEKS
-    private var months = MONTHS
-
 
     private var timerStarted = false
     private var time = 0.0
@@ -67,7 +59,6 @@ class OccurenceFragment : Fragment() {
         )
     }
 
-
     private fun bind(occurence: Occurence) {
         bindingOccurence.apply {
             occurencyName.text = occurence.occurenceName
@@ -79,7 +70,6 @@ class OccurenceFragment : Fragment() {
             startTimer.setOnClickListener { startStopTimer() }
             resetTimer.setOnClickListener { resetTimer() }
             intervalTextView.text = occurence.intervalFrequency
-
         }
     }
 
@@ -96,8 +86,7 @@ class OccurenceFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        viewModel.currentOccurence = navigationArgs.id
-        viewModel.getOccurenceDatesTimes()
+        viewModel.getOccurrenceWithDatesTimes()
         _bindingOccurence = FragmentOccurenceBinding.inflate(inflater, container, false)
         return bindingOccurence.root
     }
@@ -127,26 +116,17 @@ class OccurenceFragment : Fragment() {
             if (selectedOccurenceList.isEmpty()) {
             } else {
                 lastDateTime = selectedOccurenceList[0].fullDate
-                bindingOccurence.occurencyTimeFrom.text = secondsToComponents(getSecondsPassed())
-
+                bindingOccurence.occurencyTimeFrom.text =
+                    secondsToComponents(getSecondsPassed())
 
                 bindingOccurence.occurencyTimeTo.text =
                     secondsToComponents(calculateSecondsTo(getSecondsTo()))
 
                 val datesTimesSize = selectedOccurenceList.size
-                bindingOccurence.listSizeTextView.text = datesTimesSize.toString()
+                bindingOccurence.listSizeTextView.text =
+                    datesTimesSize.toString()
             }
-
         }
-
-        viewModel.retrieveDescriptions(id)
-            .observe(this.viewLifecycleOwner) { selectedDescriptionsList ->
-                if (selectedDescriptionsList.isEmpty()) {
-                    bindingOccurence.desciption.text = "Create description here"
-                } else {
-                    bindingOccurence.desciption.text = selectedDescriptionsList[0].descriptionNote
-                }
-            }
 
         bindingOccurence.descriptionsHolder.setOnClickListener {
             val idOccurence = navigationArgs.id
@@ -159,7 +139,7 @@ class OccurenceFragment : Fragment() {
             LinearLayoutManager(this.context)
 
         // Set button
-        bindingOccurence.startActivity.setOnClickListener { addNewDateTime() }
+        bindingOccurence.addActivity.setOnClickListener { addNewDateTime() }
 
         // start stop timer
         serviceIntent = Intent(context?.applicationContext, TimerService::class.java)
@@ -168,10 +148,6 @@ class OccurenceFragment : Fragment() {
         //TO NIE DZIALA
         val datesTimesSize = adapter.currentList.size + 1
         bindingOccurence.occurencyTimeTo.text = datesTimesSize.toString()
-
-//        if (this::occurence.isInitialized) {
-//
-//        }
 
     }
 

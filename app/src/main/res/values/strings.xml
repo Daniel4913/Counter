@@ -1,11 +1,12 @@
 <resources>
     <string name="app_name">Counter</string>
     <string name="new_occurency">New</string>
-    <string name="time_from">Time from</string>
+    <string name="time_from_last">Time from last</string>
     <string name="time_to">Time to next</string>
     <string name="occurency_name">Occurency name</string>
     <string name="occurency_name_tip">Creating new occurency</string>
     <string name="more_often">I want to occur this more often</string>
+    <string name="less">I want to occur this less</string>
     <string name="category_text">Choose category</string>
     <string name="add_btn_text">Add</string>
     <string name="auto_start_timer">Start timer after added</string>

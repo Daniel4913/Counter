@@ -13,6 +13,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.counter.adapters.DescriptionListAdapter
 import com.example.counter.data.Description
 import com.example.counter.databinding.FragmentDescriptionBinding
+import com.example.counter.viewmodels.CounterViewModel
+import com.example.counter.viewmodels.DateTimeViewModelFactory
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 class DescriptionFragment : Fragment() {
@@ -38,8 +40,6 @@ class DescriptionFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        viewModel.currentOccurence = navigationArgs.id
-        viewModel.getOccurenceDescriptions()
         _binding = FragmentDescriptionBinding.inflate(inflater, container, false)
         return binding.root
     }
