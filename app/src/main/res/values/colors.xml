@@ -20,6 +20,7 @@
     <color name="black">#000000</color>
     <color name="red">#FF4646</color>
     <color name="yellow">#FFC114</color>
+    <color name="orange">#F49200</color>
     <color name="green">#00C980</color>
     <!--light theme-->
     // Custom chip style

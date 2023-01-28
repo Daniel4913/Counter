@@ -15,5 +15,12 @@ data class OccurrenceWithDatesTimes (
     )
     val occurrenceDatesTimes: List<DateTime>
 ){
+    companion object{
 
+//        fun sortByDateTime(): Comparator<DateTime> = object :Comparator<DateTime>{
+//            override fun compare(p0: DateTime?, p1: DateTime?): Int {
+//                return p0!!.secondsToNext!!.compareTo(p1!!.secondsToNext!!)
+//            }
+//        }
+    }
 }

@@ -73,19 +73,38 @@ class TimeCounter(occurence: Occurence, dateTime: DateTime) {
         return secondsPassed
     }
 
+    fun nieWykonane(){
+
+    }
+
 
     fun secondsToComponents(secondsPassed: Long): String {
         secondsPassed.seconds.toComponents { days, hours, minutes, seconds, nanoseconds ->
-            val calculated = when (days) {
-                0L -> "${hours}h ${minutes}m"
-                else -> "${days}d ${hours}h"
+            var calculated = ""
+
+             when (days) {
+                0L -> calculated = "${hours}h ${minutes}m"
+                else -> calculated =  "${days}d ${hours}h ${minutes}m"
             }
+
+            //TODO
+//             when (hours) {
+//                0 -> calculated = "${minutes}m ${seconds}m "
+//                else -> calculated =  "${hours}h ${minutes}m"
+//            }
+
             return calculated
         }
     }
 
+
+
     fun saveTimesToDb(){
-        //TODO musze zapisac te sekundy, aby moc posortowac recycler view
+        /**
+        todo musze zapisac te sekundy, aby moc posortowac recycler view
+         UPDATE: jednak to jest bez sensu bo bedzie zbyt duzo operacji na DB (zapisow i odczytow).
+         Musze wyciagnac te czasy z textView
+         **/
         val secondsPassed = getSecondsPassed()
         val secondsTo = getSecondsTo()
 

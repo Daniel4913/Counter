@@ -156,10 +156,6 @@ class OccurenceFragment : Fragment() {
         serviceIntent = Intent(context?.applicationContext, TimerService::class.java)
         context?.registerReceiver(updateTime, IntentFilter(TimerService.TIMER_UPDATED))
 
-
-
-
-
     }
 
     private fun updateTimeColor(timeString: CharSequence){
@@ -177,6 +173,7 @@ class OccurenceFragment : Fragment() {
                 )
             )
         } else {
+            bindingOccurence.occurencyTimeToLabel.text = "You're late!"
             bindingOccurence.occurencyTimeToLabel.setTextColor(
                 ContextCompat.getColor(
                     requireContext(),
