@@ -1,5 +1,7 @@
 package com.example.counter.viewmodels
 
+import android.util.Log
+import androidx.lifecycle.ViewModel
 import com.example.counter.Constants
 import com.example.counter.data.DateTime
 import com.example.counter.data.Occurence
@@ -8,7 +10,7 @@ import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 import kotlin.time.Duration.Companion.seconds
 
-open class TimeCounter(occurence: Occurence, dateTime: DateTime) {
+class TimeCounter(occurence: Occurence, dateTime: DateTime) {
 
     private val occurrence = occurence
     private val lastDateTime = dateTime.fullDate
@@ -43,7 +45,7 @@ open class TimeCounter(occurence: Occurence, dateTime: DateTime) {
     }
 
 
-    private fun calculateSecondsTo(secondsTo: Long): Long {
+    fun calculateSecondsTo(secondsTo: Long): Long {
         val timeFrom = lastDateTime
         val timeTo = secondsTo
         val pattern = "HH:mm:ss dd.MM.yyyy"
@@ -51,10 +53,11 @@ open class TimeCounter(occurence: Occurence, dateTime: DateTime) {
         val lastDate = LocalDateTime.parse(timeFrom, formatter)
         val calculatedToDay = lastDate.plusSeconds(timeTo)
         val secondsTo = ChronoUnit.SECONDS.between(
-            calculatedToDay,
             LocalDateTime.now(),
+            calculatedToDay,
         )
         return secondsTo
+
     }
 
 
@@ -71,14 +74,24 @@ open class TimeCounter(occurence: Occurence, dateTime: DateTime) {
     }
 
 
-    private fun secondsToComponents(secondsPassed: Long): String {
+    fun secondsToComponents(secondsPassed: Long): String {
         secondsPassed.seconds.toComponents { days, hours, minutes, seconds, nanoseconds ->
             val calculated = when (days) {
-                0L -> "${hours}h ${minutes}m ${seconds}s"
-                else -> "${days}d ${hours}h ${minutes}m ${seconds}s"
+                0L -> "${hours}h ${minutes}m"
+                else -> "${days}d ${hours}h"
             }
             return calculated
         }
+    }
+
+    fun saveTimesToDb(){
+        //TODO musze zapisac te sekundy, aby moc posortowac recycler view
+        val secondsPassed = getSecondsPassed()
+        val secondsTo = getSecondsTo()
+
+
+
+
     }
 
 }

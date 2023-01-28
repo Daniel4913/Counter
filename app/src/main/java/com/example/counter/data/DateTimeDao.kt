@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface DateTimeDao {
     @Transaction
-    @Query("SELECT * from dateTime WHERE occurence_owner_id = :id ORDER BY date_time_id DESC")
+    @Query("SELECT * from dateTime WHERE occurence_owner_id = :id ORDER BY full_date DESC")
     fun getOccurenceWithDatesTimes(id:Int): Flow<List<DateTime>>
 
 //    @Query("SELECT date_time_id, full_date from dateTime WHERE occurence_owner_id = :id")

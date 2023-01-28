@@ -30,13 +30,14 @@ class CounterHomeFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentCounterHomeBinding.inflate(inflater, container, false)
+
+//        viewModel.updateOccurrenceDateTime()
+
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-
 
         val adapter = OccurrenceWithDateTimeAdapter {
             val action =
@@ -50,8 +51,9 @@ class CounterHomeFragment : Fragment() {
                 adapter.submitList(it)
             }
         }
-        binding.occurenciesRecyclerView.layoutManager = LinearLayoutManager(this.context)
 
+
+        binding.occurenciesRecyclerView.layoutManager = LinearLayoutManager(this.context)
 
         binding.newOccurency.setOnClickListener {
             val action = CounterHomeFragmentDirections.actionCounterHomeFragmentToNewFragment("Create new occurence")

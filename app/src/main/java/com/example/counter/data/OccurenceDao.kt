@@ -17,7 +17,7 @@ interface OccurenceDao {
     fun getOccurenceId(id: Int): Int
 
     @Transaction
-    @Query("SELECT * from occurence ")
+    @Query("SELECT * from occurence")
     fun getOccurrencesWithDatesTimes(): Flow<List<OccurrenceWithDatesTimes>>
 
     @Transaction
@@ -29,6 +29,9 @@ interface OccurenceDao {
 
     @Update
     suspend fun update(occurence: Occurence)
+
+//    @Update
+//    suspend fun updateOccurrenceWithDateTime(occurrenceWithDatesTimes: OccurrenceWithDatesTimes)
 
     @Delete
     suspend fun delete(occurence: Occurence)

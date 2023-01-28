@@ -3,9 +3,6 @@ package com.example.counter.data
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
-import java.time.temporal.ChronoUnit
 
 @Entity
 data class DateTime(
@@ -19,27 +16,13 @@ data class DateTime(
     @ColumnInfo(name="full_date")
     val fullDate: String,
 
-    @ColumnInfo(name= "time_start")
-    val timeStart: String?,
+    @ColumnInfo(name= "time_spend")
+    val timeSpend: String?,
 
-    @ColumnInfo(name="time_stop")
-    val timeStop: String?,
+    @ColumnInfo(name="seconds_from_last")
+    val secondsFromLast: Long?,
 
-    @ColumnInfo(name="total_time")
-    val totalTime: String?,
+    @ColumnInfo(name="seconds_to_next")
+    val secondsToNext: Long?,
 ){
-//    fun getLastDateTime(): Long {
-//        val today = LocalDateTime.now()
-//        val pattern = "HH:mm:ss dd.MM.yyyy"
-//        val formatter = DateTimeFormatter.ofPattern(pattern)
-//        val lastDate = LocalDateTime.parse(lastDateTime, formatter)
-//        val hoursPassed = ChronoUnit.SECONDS.between(
-//            lastDate,
-//            today
-//        )
-//        return hoursPassed
-//        //    fun corutine(){
-//        //        GlobalScope.
-//        //    }
-//    }
 }

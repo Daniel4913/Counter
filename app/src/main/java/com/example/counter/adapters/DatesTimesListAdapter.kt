@@ -13,7 +13,7 @@ class DatesTimesListAdapter(private val onItemClicked: (DateTime) -> Unit):
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DatesTimesViewHolder {
         return DatesTimesViewHolder(
-            DatesTimesItemBinding.inflate(LayoutInflater.from(parent.context))
+            DatesTimesItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         )
     }
 
@@ -30,9 +30,9 @@ class DatesTimesListAdapter(private val onItemClicked: (DateTime) -> Unit):
         fun bind(dateTime: DateTime){
             binding.apply {
                 dateFull.text = dateTime.fullDate
-                timeFrom.text = dateTime.timeStart
-                timeLast.text = dateTime.occurenceOwnerId.toString()
-                timeSpentWithTimer.text = dateTime.totalTime
+                timeFrom.text =  dateTime.secondsToNext.toString()
+                timeLast.text = dateTime.secondsFromLast.toString()
+                timeSpentWithTimer.text = dateTime.timeSpend.toString()
             }
         }
     }

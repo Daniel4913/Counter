@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -73,6 +74,7 @@ class OccurenceFragment : Fragment() {
         }
     }
 
+
     private fun getOccurIcon(): Int {
         val occurMore: Boolean = occurence.occurMore
         return if (occurMore) {
@@ -88,8 +90,13 @@ class OccurenceFragment : Fragment() {
     ): View? {
         viewModel.getOccurrenceWithDatesTimes()
         _bindingOccurence = FragmentOccurenceBinding.inflate(inflater, container, false)
+
+
+
         return bindingOccurence.root
     }
+
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -125,6 +132,10 @@ class OccurenceFragment : Fragment() {
                 val datesTimesSize = selectedOccurenceList.size
                 bindingOccurence.listSizeTextView.text =
                     datesTimesSize.toString()
+
+                val timeString = bindingOccurence.occurencyTimeTo.text
+
+                updateTimeColor(timeString)
             }
         }
 
@@ -145,10 +156,40 @@ class OccurenceFragment : Fragment() {
         serviceIntent = Intent(context?.applicationContext, TimerService::class.java)
         context?.registerReceiver(updateTime, IntentFilter(TimerService.TIMER_UPDATED))
 
-        //TO NIE DZIALA
-        val datesTimesSize = adapter.currentList.size + 1
-        bindingOccurence.occurencyTimeTo.text = datesTimesSize.toString()
 
+
+
+
+    }
+
+    private fun updateTimeColor(timeString: CharSequence){
+        if (timeString.contains("-")) {
+            bindingOccurence.occurencyTimeToLabel.setTextColor(
+                ContextCompat.getColor(
+                    requireContext(),
+                    R.color.green
+                )
+            )
+            bindingOccurence.occurencyTimeTo.setTextColor(
+                ContextCompat.getColor(
+                    requireContext(),
+                    R.color.green
+                )
+            )
+        } else {
+            bindingOccurence.occurencyTimeToLabel.setTextColor(
+                ContextCompat.getColor(
+                    requireContext(),
+                    R.color.red
+                )
+            )
+            bindingOccurence.occurencyTimeTo.setTextColor(
+                ContextCompat.getColor(
+                    requireContext(),
+                    R.color.red
+                )
+            )
+        }
     }
 
     // CALCULATING BLOK
@@ -168,7 +209,6 @@ class OccurenceFragment : Fragment() {
             }
             DAYS -> {
                 toSecondsTo = 86400 * intervalValue
-
             }
             WEEKS -> {
                 toSecondsTo = 604800 * intervalValue
@@ -200,12 +240,16 @@ class OccurenceFragment : Fragment() {
         val today = LocalDateTime.now()
         val pattern = "HH:mm:ss dd.MM.yyyy"
         val formatter = DateTimeFormatter.ofPattern(pattern)
+
+        if (this::lastDateTime.isInitialized){
         val lastDate = LocalDateTime.parse(lastDateTime, formatter)
         val secondsPassed = ChronoUnit.SECONDS.between(
             lastDate,
             today
         )
         return secondsPassed
+        }
+        return 0
     }
 
 
@@ -226,8 +270,8 @@ class OccurenceFragment : Fragment() {
             navigationArgs.id,
             getDate(),
             getHour(),
-            getHour(),
-            timerValue
+            getSecondsPassed(),
+            getSecondsTo()
         )
     }
 

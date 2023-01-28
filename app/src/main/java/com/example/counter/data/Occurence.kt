@@ -29,4 +29,13 @@ data class Occurence(
     @ColumnInfo(name = "interval_frequency")
     val intervalFrequency: String = "hours"
 
-    )
+    ){
+    companion object{
+
+        fun sortByDateTime(): Comparator<DateTime> = object :Comparator<DateTime>{
+            override fun compare(p0: DateTime?, p1: DateTime?): Int {
+                 return p0!!.secondsToNext!!.compareTo(p1!!.secondsToNext!!)
+            }
+        }
+    }
+}

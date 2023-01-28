@@ -128,7 +128,7 @@
         style="@style/Widget.Counter.TextView"
         android:layout_width="wrap_content"
         android:layout_marginStart="24dp"
-        android:text="000"
+        android:text="-000"
         app:layout_constraintBottom_toBottomOf="@+id/occurency_time_to_label"
         app:layout_constraintStart_toEndOf="@+id/occurency_time_to_label"
         app:layout_constraintTop_toTopOf="@+id/occurency_time_to_label" />

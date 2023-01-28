@@ -3,7 +3,6 @@ package com.example.counter.viewmodels
 import androidx.lifecycle.*
 import com.example.counter.data.*
 import com.example.counter.data.relations.OccurrenceWithDatesTimes
-import com.example.counter.data.relations.OccurrenceWithDescripion
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -31,6 +30,10 @@ class CounterViewModel(
         return occurenceDao.getOccurrencesWithDatesTimes().asLiveData()
     }
 
+//    fun updateOccurrenceDateTime() {
+//        return occurenceDao.getOccurrencesWithDatesTimes()
+//    }
+
     fun retrieveDescriptions(id: Int): LiveData<List<Description>> {
         return occurenceDao.getOccurrencesWithDescriptions(id).asLiveData()
     }
@@ -53,6 +56,12 @@ class CounterViewModel(
             occurenceDao.update(occurence)
         }
     }
+
+//    fun updateDateTime(dateTime: OccurrenceWithDatesTimes){
+//        viewModelScope.launch {
+//            occurenceDao.updateOccurrenceWithDateTime(dateTime)
+//        }
+//    }
 
     //  function that takes in strings and boolean and returns an Occurence instance.
     private fun getNewOccurenceEntry(
@@ -145,16 +154,16 @@ class CounterViewModel(
         occurenceOwnerId: Int,
         fullDate: String,
         timeStart: String,
-        timeStop: String,
-        totalTime: String,
+        secondsFromLast: Long,
+        secondsToNext: Long,
 
         ): DateTime {
         return DateTime(
             occurenceOwnerId = occurenceOwnerId,
             fullDate = fullDate,
-            timeStart = timeStart,
-            timeStop = timeStop,
-            totalTime = totalTime
+            timeSpend = timeStart,
+            secondsFromLast = secondsFromLast,
+            secondsToNext = secondsToNext
         )
     }
 
@@ -162,13 +171,13 @@ class CounterViewModel(
         occurenceOwnerId: Int,
         fullDate: String,
         timeStart: String,
-        timeStop: String,
-        totalTime: String,
+        secondsFromLast: Long,
+        secondsToNext: Long,
     ) {
         val newDateTime = getNewDateTimeEntry(
             occurenceOwnerId, fullDate, timeStart,
-            timeStop,
-            totalTime
+            secondsFromLast,
+            secondsToNext
         )
         insertDateTime(newDateTime)
     }

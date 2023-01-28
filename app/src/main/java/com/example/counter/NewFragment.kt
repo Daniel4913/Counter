@@ -16,6 +16,7 @@ import com.example.counter.Constants.Companion.DAYS
 import com.example.counter.Constants.Companion.DEFAULT_HOURS
 import com.example.counter.Constants.Companion.DEFAULT_MAX_DAYS
 import com.example.counter.Constants.Companion.DEFAULT_MAX_HOURS
+import com.example.counter.Constants.Companion.MINUTES
 import com.example.counter.data.Occurence
 import com.example.counter.databinding.FragmentNewBinding
 import com.example.counter.pickers.DatePickerFragment
@@ -40,7 +41,7 @@ class NewFragment : Fragment() {
     }
 
 
-    private var intervalFrequencyChip = DAYS
+    private var intervalFrequencyChip = MINUTES
     private var intervalFrequencyChipId = 0
     private var intervalValue = DEFAULT_HOURS
 
