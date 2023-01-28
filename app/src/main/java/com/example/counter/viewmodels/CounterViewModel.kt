@@ -22,6 +22,10 @@ class CounterViewModel(
         return occurenceDao.getOccurence(id).asLiveData()
     }
 
+    fun retrieveOccurenceWithCategory(category: String): LiveData<List<OccurrenceWithDatesTimes>>{
+        return occurenceDao.getOccurrencesWithCategory(category).asLiveData()
+    }
+
     fun retrieveDatesTimes(id: Int): LiveData<List<DateTime>> {
         return dateTimeDao.getOccurenceWithDatesTimes(id).asLiveData()
     }

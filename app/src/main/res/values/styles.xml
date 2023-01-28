@@ -28,6 +28,12 @@
         <item name="checkedIconTint">@color/chipTextColor</item>
 
     </style>
+    <style name="CategoryChipStyle" parent="Widget.MaterialComponents.Chip.Filter">
+        <item name="chipBackgroundColor">@color/chip_background_color</item>
+        <item name="android:textColor">@color/chipTextColor</item>
+        <item name="checkedIconTint">@color/chipTextColor</item>
+
+    </style>
 
     <style name="Widget.Counter.ListItemTextView" parent="Widget.MaterialComponents.TextView">
         <item name="android:gravity">center_vertical</item>

@@ -25,8 +25,8 @@
     <!--light theme-->
     // Custom chip style
     <color name="checkedChipBgColor">#206200EA</color>
-    <color name="chipBgColor">@color/lightGray</color>
-    <color name="checkedChipTextColor">@color/purple_500</color>
+    <color name="chipBgColor">#95FFFFFF</color>
+    <color name="checkedChipTextColor">#D028ED</color>
     <color name="chipTextColor">@color/darkGray</color>
 
     // CUSTOM CARD VIEW STYLE

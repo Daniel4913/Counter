@@ -22,6 +22,8 @@ class CounterHomeFragment : Fragment() {
         )
     }
 
+    private var selectedChip = "Relacje"
+
     private var _binding: FragmentCounterHomeBinding? = null
     private val binding get() = _binding!!
 
@@ -30,8 +32,6 @@ class CounterHomeFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentCounterHomeBinding.inflate(inflater, container, false)
-
-//        viewModel.updateOccurrenceDateTime()
 
         return binding.root
     }
@@ -45,12 +45,23 @@ class CounterHomeFragment : Fragment() {
             this.findNavController().navigate(action)
         }
 
+
+
         binding.occurenciesRecyclerView.adapter = adapter
+
         viewModel.allOccurences.observe(this.viewLifecycleOwner) { items ->
             items.let {
+                it as MutableList
+
                 adapter.submitList(it)
             }
         }
+
+//        viewModel.retrieveOccurenceWithCategory(selectedChip).observe(this.viewLifecycleOwner){ items ->
+//        items.let {
+//            adapter.submitList(it)
+//        }
+//        }
 
 
         binding.occurenciesRecyclerView.layoutManager = LinearLayoutManager(this.context)

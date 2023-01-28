@@ -21,8 +21,14 @@ interface OccurenceDao {
     fun getOccurrencesWithDatesTimes(): Flow<List<OccurrenceWithDatesTimes>>
 
     @Transaction
+    @Query("SELECT * from occurence WHERE category = :category")
+    fun getOccurrencesWithCategory(category: String): Flow<List<OccurrenceWithDatesTimes>>
+
+    @Transaction
     @Query("SELECT * from description WHERE occurence_owner_id = :id")
     fun getOccurrencesWithDescriptions(id: Int): Flow<List<Description>>
+
+
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertOccurence(occurence: Occurence)

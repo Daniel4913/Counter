@@ -1,5 +1,6 @@
 package com.example.counter.adapters
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
@@ -14,18 +15,20 @@ import com.example.counter.viewmodels.CounterViewModel
 import com.example.counter.viewmodels.TimeCounter
 
 class OccurrenceWithDateTimeAdapter(private val onItemClicked: (OccurrenceWithDatesTimes) -> Unit):
-    ListAdapter<OccurrenceWithDatesTimes, OccurrenceWithDateTimeAdapter.OccdtViewHolder>(DiffCallback)
+    ListAdapter<OccurrenceWithDatesTimes, OccurrenceWithDateTimeAdapter.OccurrenceViewHolder>(DiffCallback)
 {
 
     private lateinit var viewModel: CounterViewModel
 
     private var datesTimes = emptyList<DateTime>()
 
-    class OccdtViewHolder(private val binding: OccurenceHomeItemBinding):
+    class OccurrenceViewHolder(private val binding: OccurenceHomeItemBinding):
         RecyclerView.ViewHolder(binding.root) {
         fun bind(occ: OccurrenceWithDatesTimes){
-
+            Log.d("pierwsza literka?", "${occ.occurence.occurenceName} -- ${occ.occurence.occurenceName[1]}")
             binding.apply {
+                icCategory.text = occ.occurence.occurenceName[1].toString()
+
                 occurenceName.text = occ.occurence.occurenceName
                 occurenceName.isSelected = true
                 occurenceName.setSingleLine()
@@ -47,13 +50,16 @@ class OccurrenceWithDateTimeAdapter(private val onItemClicked: (OccurrenceWithDa
                     timeToNext.text = "-"
                 }
             }
+
         }
+
+
 
         private fun applyOrangeTimeColor(timeString: String) {
             val context = binding.timeToNext.context
                 if(
                     !timeString.contains("-") &&
-                    timeString.contains("1h") &&
+                    timeString.contains("1h") ||
                     timeString.contains("0h")
                 ){
                     binding.timeToNext.setTextColor(
@@ -87,15 +93,15 @@ class OccurrenceWithDateTimeAdapter(private val onItemClicked: (OccurrenceWithDa
 
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): OccdtViewHolder {
-        return OccdtViewHolder(
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): OccurrenceViewHolder {
+        return OccurrenceViewHolder(
             OccurenceHomeItemBinding.inflate(
                 LayoutInflater.from(parent.context), parent, false
             )
         )
     }
 
-    override fun onBindViewHolder(holder: OccdtViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: OccurrenceViewHolder, position: Int) {
         val current = getItem(position)
         holder.itemView.setOnClickListener {
             onItemClicked(current)

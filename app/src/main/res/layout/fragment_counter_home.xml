@@ -112,11 +112,13 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </com.google.android.material.card.MaterialCardView>
+
     <HorizontalScrollView
         android:id="@+id/category_scrollView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:scrollbars="none"
+
         app:layout_constraintBottom_toTopOf="@+id/occurrence_name_label"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -134,51 +136,58 @@
                 android:id="@+id/category_chipGroup"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:text="substancje">
+                app:checkedChip="@+id/all_chip"
+                app:selectionRequired="true">
 
                 <com.google.android.material.chip.Chip
                     android:id="@+id/all_chip"
-                    app:chipBackgroundColor="#45E91E63"
+                    style="@style/CategoryChipStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="all" />
 
                 <com.google.android.material.chip.Chip
                     android:id="@+id/chip4"
-                    app:chipBackgroundColor="#45E91E63"
+                    style="@style/CategoryChipStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="zdrowie" />
 
                 <com.google.android.material.chip.Chip
                     android:id="@+id/chip1"
+                    style="@style/CategoryChipStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="jedzenie" />
 
                 <com.google.android.material.chip.Chip
                     android:id="@+id/chip2"
+                    style="@style/CategoryChipStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="trening" />
 
                 <com.google.android.material.chip.Chip
                     android:id="@+id/chip3"
+                    style="@style/CategoryChipStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="relacje" />
 
                 <com.google.android.material.chip.Chip
                     android:id="@+id/chip5"
+                    style="@style/CategoryChipStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="substancje" />
 
                 <com.google.android.material.chip.Chip
                     android:id="@+id/chip6"
+                    style="@style/CategoryChipStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="substancje" />
+
             </com.google.android.material.chip.ChipGroup>
         </LinearLayout>
     </HorizontalScrollView>
