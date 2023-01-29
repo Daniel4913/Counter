@@ -6,19 +6,21 @@ import android.view.*
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.counter.CounterApplication
 import com.example.counter.R
-import com.example.counter.adapters.DescriptionListAdapter
+import com.example.counter.adapters.DescriptionsListAdapter
 import com.example.counter.data.Description
 import com.example.counter.databinding.FragmentDescriptionBinding
 import com.example.counter.viewmodels.CounterViewModel
-import com.example.counter.viewmodels.DateTimeViewModelFactory
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 
+@ExperimentalCoroutinesApi
+@AndroidEntryPoint
 class DescriptionFragment : Fragment() {
 
     private val navigationArgs: DescriptionFragmentArgs by navArgs()
@@ -29,12 +31,10 @@ class DescriptionFragment : Fragment() {
     private val binding get() = _binding!!
 
 
-    private val viewModel: CounterViewModel by viewModels {
-        DateTimeViewModelFactory(
-            (activity?.application as CounterApplication).database.occurenceDao(),
-            (activity?.application as CounterApplication).database.dateTimeDao(),
-            (activity?.application as CounterApplication).database.descriptionDao()
-        )
+    private lateinit var viewModel:CounterViewModel
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        viewModel = ViewModelProvider(requireActivity())[CounterViewModel::class.java]
     }
 
     override fun onCreateView(
@@ -65,7 +65,7 @@ class DescriptionFragment : Fragment() {
             addNewDescription()
         }
 
-        val adapter = DescriptionListAdapter {
+        val adapter = DescriptionsListAdapter {
             description = it
             showConfirmationDialog()
         }
@@ -73,7 +73,7 @@ class DescriptionFragment : Fragment() {
         binding.descriptionsRecyclerView.adapter = adapter
 
         val id = navigationArgs.id
-        viewModel.retrieveDescriptions(id).observe(this.viewLifecycleOwner) { selectedOcurence ->
+        viewModel.getDescriptions(id).observe(this.viewLifecycleOwner) { selectedOcurence ->
             selectedOcurence.let {
                 adapter.submitList(it)
             }

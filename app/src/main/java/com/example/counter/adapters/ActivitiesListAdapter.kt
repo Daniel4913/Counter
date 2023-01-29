@@ -5,11 +5,11 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.counter.data.DateTime
+import com.example.counter.data.Activity
 import com.example.counter.databinding.DatesTimesItemBinding
 
-class DatesTimesListAdapter(private val onItemClicked: (DateTime) -> Unit):
-    ListAdapter<DateTime, DatesTimesListAdapter.DatesTimesViewHolder>(DiffCallback) {
+class ActivitiesListAdapter(private val onItemClicked: (Activity) -> Unit):
+    ListAdapter<Activity, ActivitiesListAdapter.DatesTimesViewHolder>(DiffCallback) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DatesTimesViewHolder {
         return DatesTimesViewHolder(
@@ -27,23 +27,23 @@ class DatesTimesListAdapter(private val onItemClicked: (DateTime) -> Unit):
 
     class DatesTimesViewHolder(private var binding: DatesTimesItemBinding) :
         RecyclerView.ViewHolder(binding.root){
-        fun bind(dateTime: DateTime){
+        fun bind(activity: Activity){
             binding.apply {
-                dateFull.text = dateTime.fullDate
-                timeFrom.text =  dateTime.secondsToNext.toString()
-                timeLast.text = dateTime.secondsFromLast.toString()
-                timeSpentWithTimer.text = dateTime.timeSpend.toString()
+                dateFull.text = activity.fullDate
+                timeFrom.text =  activity.secondsToNext.toString()
+                timeLast.text = activity.secondsFromLast.toString()
+                timeSpentWithTimer.text = activity.timeSpend.toString()
             }
         }
     }
 
     companion object {
-        private val DiffCallback = object : DiffUtil.ItemCallback<DateTime>(){
-            override fun areItemsTheSame(oldItem: DateTime, newItem: DateTime): Boolean {
+        private val DiffCallback = object : DiffUtil.ItemCallback<Activity>(){
+            override fun areItemsTheSame(oldItem: Activity, newItem: Activity): Boolean {
                 return oldItem === newItem
             }
 
-            override fun areContentsTheSame(oldItem: DateTime, newItem: DateTime): Boolean {
+            override fun areContentsTheSame(oldItem: Activity, newItem: Activity): Boolean {
                 return oldItem.dateTimeId == newItem.dateTimeId
             }
 

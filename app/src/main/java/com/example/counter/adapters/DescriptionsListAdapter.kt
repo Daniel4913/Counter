@@ -1,37 +1,29 @@
 package com.example.counter.adapters
 
-import android.R.attr.label
-import android.annotation.SuppressLint
-import android.content.ClipData
-import android.content.ClipboardManager
-import android.content.Context
-import android.content.Context.CLIPBOARD_SERVICE
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
-import androidx.core.content.ContextCompat
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.counter.data.Description
+import com.example.counter.data.relations.OccurrenceWithDescripion
 import com.example.counter.databinding.DescriptionItemBinding
 
 
-class DescriptionListAdapter(private val onItemClicked: (Description) -> Unit) :
-    ListAdapter<Description, DescriptionListAdapter.DescriptionViewHolder>(DiffCallback) {
+class DescriptionsListAdapter(private val onItemClicked: (Description) -> Unit) :
+    ListAdapter<Description, DescriptionsListAdapter.DescriptionsViewHolder>(DiffCallback) {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DescriptionViewHolder {
-        return DescriptionViewHolder(
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DescriptionsViewHolder {
+        return DescriptionsViewHolder(
             DescriptionItemBinding.inflate(
                 LayoutInflater.from(
                     parent.context))
         )
     }
 
-    override fun onBindViewHolder(holder: DescriptionViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: DescriptionsViewHolder, position: Int) {
         val current = getItem(position)
         holder.itemView.setOnClickListener {
             onItemClicked(current)
@@ -39,7 +31,7 @@ class DescriptionListAdapter(private val onItemClicked: (Description) -> Unit) :
         holder.bind(current)
     }
 
-    class DescriptionViewHolder(private val binding: DescriptionItemBinding) :
+    class DescriptionsViewHolder(private val binding: DescriptionItemBinding) :
         RecyclerView.ViewHolder(binding.root), View.OnLongClickListener {
         fun bind(description: Description) {
             binding.apply {

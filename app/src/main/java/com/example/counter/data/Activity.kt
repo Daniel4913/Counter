@@ -3,15 +3,16 @@ package com.example.counter.data
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.example.counter.util.Constants.Companion.ACTIVITIES_TABLE
 
-@Entity
-data class DateTime(
+@Entity(tableName = ACTIVITIES_TABLE)
+data class Activity(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name="date_time_id")
     val dateTimeId: Int = 0,
 
-    @ColumnInfo(name="occurence_owner_id")
-    val occurenceOwnerId: Int =0,
+    @ColumnInfo(name="occurrence_owner_id")
+    val occurrenceOwnerId: Int =0,
 
     @ColumnInfo(name="full_date")
     val fullDate: String,

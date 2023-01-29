@@ -11,6 +11,9 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface DescriptionDao {
+    @Transaction
+    @Query("SELECT * from descriptions_table WHERE occurrence_owner_id = :id")
+    fun getDescriptions(id: Int): Flow<List<Description>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertDescription(description: Description)
@@ -20,4 +23,8 @@ interface DescriptionDao {
 
     @Delete
     suspend fun deleteDescription(description: Description)
+
+    @Query("DELETE from descriptions_table")
+        suspend fun deleteAll()
+
 }

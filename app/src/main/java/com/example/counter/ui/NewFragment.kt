@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.counter.util.Constants.Companion.DEFAULT_HOURS
@@ -18,28 +19,24 @@ import com.example.counter.util.Constants.Companion.DEFAULT_MAX_HOURS
 import com.example.counter.util.Constants.Companion.MINUTES
 import com.example.counter.CounterApplication
 import com.example.counter.R
-import com.example.counter.data.Occurence
+import com.example.counter.data.Occurrence
 import com.example.counter.databinding.FragmentNewBinding
 import com.example.counter.pickers.DatePickerFragment
 import com.example.counter.pickers.TimePickerFragment
 import com.example.counter.viewmodels.CounterViewModel
-import com.example.counter.viewmodels.DateTimeViewModelFactory
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 import com.vanniktech.emoji.installForceSingleEmoji
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import java.util.*
 
-
+@ExperimentalCoroutinesApi
+@AndroidEntryPoint
 class NewFragment : Fragment() {
     val navigationArgs: NewFragmentArgs by navArgs()
 
-    private val viewModel: CounterViewModel by viewModels {
-        DateTimeViewModelFactory(
-            (activity?.application as CounterApplication).database.occurenceDao(),
-            (activity?.application as CounterApplication).database.dateTimeDao(),
-            (activity?.application as CounterApplication).database.descriptionDao()
-        )
-    }
+    private lateinit var viewModel: CounterViewModel
 
 
     private var intervalFrequencyChip = MINUTES
@@ -48,17 +45,21 @@ class NewFragment : Fragment() {
 
 //    lateinit var emojiProvider: EmojiProvider
 
-    lateinit var occurence: Occurence
+    lateinit var occurrence: Occurrence
 //    private var currentOccurence: Occurence? = occurence
 
     private var _binding: FragmentNewBinding? = null
     private val binding get() = _binding!!
     private var emojiIcon = ""
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        viewModel = ViewModelProvider(requireActivity())[CounterViewModel::class.java]
+    }
 
-    private fun bind(occurence: Occurence) {
+    private fun bind(occurrence: Occurrence) {
         binding.apply {
-            occurenceName.setText(occurence.occurenceName, TextView.BufferType.SPANNABLE)
-            categoryDropdown.setText(occurence.category, TextView.BufferType.SPANNABLE)
+            occurenceName.setText(occurrence.occurrenceName, TextView.BufferType.SPANNABLE)
+            categoryDropdown.setText(occurrence.category, TextView.BufferType.SPANNABLE)
             addBtn.setOnClickListener { updateOccurence() }
             tvDate.setText(splitCreateDate()[0])
             tvTime.setText(splitCreateDate()[1])
@@ -88,9 +89,9 @@ class NewFragment : Fragment() {
 
         val id = navigationArgs.occurenceId
         if (id > 0) {
-            viewModel.retrieveOccurence(id).observe(this.viewLifecycleOwner) { selectedOccurence ->
-                occurence = selectedOccurence
-                bind(occurence)
+            viewModel.retrieveOccurrence(id).observe(this.viewLifecycleOwner) { selectedOccurence ->
+                occurrence = selectedOccurence
+                bind(occurrence)
             }
         } else {
             binding.addBtn.setOnClickListener { addNewOccurence() }
@@ -186,7 +187,7 @@ class NewFragment : Fragment() {
     }
 
     private fun splitCreateDate(): List<String> {
-        val fullCreateDate = occurence.createDate
+        val fullCreateDate = occurrence.createDate
         val delim = " "
         return fullCreateDate.split(delim)
     }
@@ -265,7 +266,7 @@ class NewFragment : Fragment() {
                 getNewDateTime(binding.tvDate.text.toString(), binding.tvTime.text.toString())
 
             viewModel.updateOccurence(
-                occurence.occurenceId,
+                occurrence.occurrenceId,
                 binding.occurenceName.text.toString(),
                 createDate,
                 binding.frequencySwitch.isChecked,

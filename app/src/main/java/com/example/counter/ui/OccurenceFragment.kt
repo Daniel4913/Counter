@@ -11,16 +11,16 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.counter.util.Constants.Companion.DAYS
 import com.example.counter.util.Constants.Companion.HOURS
-import com.example.counter.adapters.DatesTimesListAdapter
+import com.example.counter.adapters.ActivitiesListAdapter
 import com.example.counter.R.string
-import com.example.counter.data.DateTime
-import com.example.counter.data.Occurence
+import com.example.counter.data.Activity
+import com.example.counter.data.Occurrence
 import com.example.counter.databinding.FragmentOccurenceBinding
 import com.example.counter.services.TimerService
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -32,20 +32,24 @@ import kotlin.time.Duration.Companion.seconds
 import com.example.counter.util.Constants.Companion.MINUTES
 import com.example.counter.util.Constants.Companion.MONTHS
 import com.example.counter.util.Constants.Companion.WEEKS
-import com.example.counter.CounterApplication
 import com.example.counter.R
 import com.example.counter.viewmodels.CounterViewModel
-import com.example.counter.viewmodels.DateTimeViewModelFactory
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 
+@ExperimentalCoroutinesApi
+@AndroidEntryPoint
 class OccurenceFragment : Fragment() {
 
     private val navigationArgs: OccurenceFragmentArgs by navArgs()
 
-    lateinit var occurence: Occurence
+    private lateinit var viewModel: CounterViewModel
+
+    lateinit var occurrence: Occurrence
 
     private lateinit var serviceIntent: Intent
 
-    lateinit var dateTime: DateTime
+    lateinit var activity: Activity
     lateinit var timePassed: String
     lateinit var lastDateTime: String
 
@@ -53,32 +57,28 @@ class OccurenceFragment : Fragment() {
     private var time = 0.0
     private var _bindingOccurence: FragmentOccurenceBinding? = null
     private val bindingOccurence get() = _bindingOccurence!!
-
-    private val viewModel: CounterViewModel by viewModels {
-        DateTimeViewModelFactory(
-            (activity?.application as CounterApplication).database.occurenceDao(),
-            (activity?.application as CounterApplication).database.dateTimeDao(),
-            (activity?.application as CounterApplication).database.descriptionDao()
-        )
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        viewModel = ViewModelProvider(requireActivity())[CounterViewModel::class.java]
     }
 
-    private fun bind(occurence: Occurence) {
+    private fun bind(occurrence: Occurrence) {
         bindingOccurence.apply {
-            occurencyName.text = occurence.occurenceName
-            occurenceCreateDate.text = occurence.createDate
-            occurencyCategory.text = occurence.category
+            occurencyName.text = occurrence.occurrenceName
+            occurenceCreateDate.text = occurrence.createDate
+            occurencyCategory.text = occurrence.category
             occurIcon.setImageResource(getOccurIcon())
             deleteBtn.setOnClickListener { showConfirmationDialog() }
             editBtn.setOnClickListener { editOccurence() }
             startTimer.setOnClickListener { startStopTimer() }
             resetTimer.setOnClickListener { resetTimer() }
-            intervalTextView.text = occurence.intervalFrequency
+            intervalTextView.text = occurrence.intervalFrequency
         }
     }
 
 
     private fun getOccurIcon(): Int {
-        val occurMore: Boolean = occurence.occurMore
+        val occurMore: Boolean = occurrence.occurMore
         return if (occurMore) {
             R.drawable.ic_expand_more
         } else {
@@ -99,54 +99,55 @@ class OccurenceFragment : Fragment() {
     }
 
 
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val id = navigationArgs.id
-        viewModel.retrieveOccurence(id).observe(this.viewLifecycleOwner) { selectedOccurence ->
-            occurence = selectedOccurence
-            bind(occurence)
+
+        viewModel.retrieveOccurrence(id).observe(this.viewLifecycleOwner) { selectedOccurence ->
+            occurrence = selectedOccurence
+            bind(occurrence)
         }
 
-        val adapter = DatesTimesListAdapter {
-            dateTime = it
+        val adapter = ActivitiesListAdapter {
+            activity = it
             showConfirmationDialogDeleteDateTime()
         }
 
         bindingOccurence.occurenceDetailRecyclerView.adapter = adapter
 
-        viewModel.retrieveDatesTimes(id).observe(this.viewLifecycleOwner) { selectedOccurenceList ->
+        viewModel.readOccurrencesWithActivities.observe(this.viewLifecycleOwner) { selectedOccurenceList ->
             selectedOccurenceList.let {
-                adapter.submitList(it as MutableList<DateTime>)
+                adapter.submitList(it as MutableList<Activity>)
             }
         }
 
-        viewModel.retrieveDatesTimes(id).observe(this.viewLifecycleOwner) { selectedOccurenceList ->
-            if (selectedOccurenceList.isEmpty()) {
-            } else {
-                lastDateTime = selectedOccurenceList[0].fullDate
-                bindingOccurence.occurencyTimeFrom.text =
-                    secondsToComponents(getSecondsPassed())
+//        viewModel.readOccurrencesWithActivities.observe(this.viewLifecycleOwner) { selectedOccurenceList ->
+//            if (selectedOccurenceList.isEmpty()) {
+//
+//            } else {
+//                lastDateTime = selectedOccurenceList[0].occurrenceActivities[0].fullDate
+//                bindingOccurence.occurencyTimeFrom.text =
+//                    secondsToComponents(getSecondsPassed())
+//
+//                bindingOccurence.occurencyTimeTo.text =
+//                    secondsToComponents(calculateSecondsTo(getSecondsTo()))
+//
+//                val datesTimesSize = selectedOccurenceList.size
+//                bindingOccurence.listSizeTextView.text =
+//                    datesTimesSize.toString()
+//
+//                val timeString = bindingOccurence.occurencyTimeTo.text
+//
+//                updateTimeColor(timeString)
+//            }
+//        }
 
-                bindingOccurence.occurencyTimeTo.text =
-                    secondsToComponents(calculateSecondsTo(getSecondsTo()))
-
-                val datesTimesSize = selectedOccurenceList.size
-                bindingOccurence.listSizeTextView.text =
-                    datesTimesSize.toString()
-
-                val timeString = bindingOccurence.occurencyTimeTo.text
-
-                updateTimeColor(timeString)
-            }
-        }
-
-        bindingOccurence.descriptionsHolder.setOnClickListener {
-            val idOccurence = navigationArgs.id
-            val action =
-                OccurenceFragmentDirections.actionOccurenceFragmentToDescriptionFragment(idOccurence)
-            this.findNavController().navigate(action)
-        }
+//        bindingOccurence.descriptionsHolder.setOnClickListener {
+//            val idOccurence = navigationArgs.id
+//            val action =
+//                OccurenceFragmentDirections.actionOccurenceFragmentToDescriptionFragment(idOccurence)
+//            this.findNavController().navigate(action)
+//        }
 
         bindingOccurence.occurenceDetailRecyclerView.layoutManager =
             LinearLayoutManager(this.context)
@@ -160,7 +161,7 @@ class OccurenceFragment : Fragment() {
 
     }
 
-    private fun updateTimeColor(timeString: CharSequence){
+    private fun updateTimeColor(timeString: CharSequence) {
         if (timeString.contains("-")) {
             bindingOccurence.occurencyTimeToLabel.setTextColor(
                 ContextCompat.getColor(
@@ -194,7 +195,7 @@ class OccurenceFragment : Fragment() {
     // CALCULATING BLOK
 
     fun getSecondsTo(): Long {
-        val interval = occurence.intervalFrequency
+        val interval = occurrence.intervalFrequency
 
         val intervalValue = interval.split(" ")[0].toLong()
         val intervalFrequency = interval.split(" ")[1]
@@ -240,13 +241,13 @@ class OccurenceFragment : Fragment() {
         val pattern = "HH:mm:ss dd.MM.yyyy"
         val formatter = DateTimeFormatter.ofPattern(pattern)
 
-        if (this::lastDateTime.isInitialized){
-        val lastDate = LocalDateTime.parse(lastDateTime, formatter)
-        val secondsPassed = ChronoUnit.SECONDS.between(
-            lastDate,
-            today
-        )
-        return secondsPassed
+        if (this::lastDateTime.isInitialized) {
+            val lastDate = LocalDateTime.parse(lastDateTime, formatter)
+            val secondsPassed = ChronoUnit.SECONDS.between(
+                lastDate,
+                today
+            )
+            return secondsPassed
         }
         return 0
     }
@@ -286,21 +287,21 @@ class OccurenceFragment : Fragment() {
      * Deletes tapped date time item on recycler view
      */
     private fun deleteDateTime() {
-        viewModel.deleteDateTime(dateTime)
+        viewModel.deleteActivity(activity)
     }
 
     /**
      * Deletes the current occurence and navigates to the home fragment.
      */
     private fun deleteOccurence() {
-        viewModel.deleteOccurence(occurence)
+        viewModel.deleteOccurence(occurrence)
         findNavController().navigateUp()
     }
 
     private fun editOccurence() {
         val action = OccurenceFragmentDirections.actionOccurenceFragmentToNewFragment(
             "Edit occurence",
-            occurence.occurenceId
+            occurrence.occurrenceId
         )
         this.findNavController().navigate(action)
     }

@@ -4,8 +4,13 @@ class Constants {
 
     companion object {
 
-        // Number Picker
+        // DB
+        const val DATABASE_NAME = "counter_database"
+        const val OCCURRENCES_TABLE = "occurrences_table"
+        const val ACTIVITIES_TABLE = "activities_table"
+        const val DESCRIPTIONS_TABLE = "descriptions_table"
 
+        // Number Picker
         const val DEFAULT_DAYS = 0
         const val DEFAULT_MAX_DAYS = 365
 

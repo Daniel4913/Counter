@@ -4,15 +4,16 @@ package com.example.counter.data
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.example.counter.util.Constants.Companion.OCCURRENCES_TABLE
 
-@Entity
-data class Occurence(
+@Entity(tableName = OCCURRENCES_TABLE)
+data class Occurrence(
     @PrimaryKey(autoGenerate = true)
-    @ColumnInfo(name="occurence_id")
-    val occurenceId: Int = 0,
+    @ColumnInfo(name="occurrence_id")
+    val occurrenceId: Int = 0,
 
-    @ColumnInfo(name = "occurence_name")
-    val occurenceName: String,
+    @ColumnInfo(name = "occurrence_name")
+    val occurrenceName: String,
 
     @ColumnInfo(name = "create_date")
     val createDate: String,
@@ -32,8 +33,8 @@ data class Occurence(
     ){
     companion object{
 
-        fun sortByDateTime(): Comparator<DateTime> = object :Comparator<DateTime>{
-            override fun compare(p0: DateTime?, p1: DateTime?): Int {
+        fun sortByDateTime(): Comparator<Activity> = object :Comparator<Activity>{
+            override fun compare(p0: Activity?, p1: Activity?): Int {
                  return p0!!.secondsToNext!!.compareTo(p1!!.secondsToNext!!)
             }
         }

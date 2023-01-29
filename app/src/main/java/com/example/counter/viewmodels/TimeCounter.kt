@@ -1,17 +1,17 @@
 package com.example.counter.viewmodels
 
 import com.example.counter.util.Constants
-import com.example.counter.data.DateTime
-import com.example.counter.data.Occurence
+import com.example.counter.data.Activity
+import com.example.counter.data.Occurrence
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 import kotlin.time.Duration.Companion.seconds
 
-class TimeCounter(occurence: Occurence, dateTime: DateTime) {
+class TimeCounter(occurrence: Occurrence, activity: Activity) {
 
-    private val occurrence = occurence
-    private val lastDateTime = dateTime.fullDate
+    private val occurrence = occurrence
+    private val lastDateTime = activity.fullDate
 
     // CALCULATING BLOK
 

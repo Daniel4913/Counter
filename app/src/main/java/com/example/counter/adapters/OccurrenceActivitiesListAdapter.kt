@@ -8,33 +8,28 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.counter.R
-import com.example.counter.data.DateTime
-import com.example.counter.data.relations.OccurrenceWithDatesTimes
+import com.example.counter.data.Activity
+import com.example.counter.data.relations.OccurrenceWithActivities
 import com.example.counter.databinding.OccurenceHomeItemBinding
 import com.example.counter.viewmodels.CounterViewModel
 import com.example.counter.viewmodels.TimeCounter
 
-class OccurrenceWithDateTimeAdapter(private val onItemClicked: (OccurrenceWithDatesTimes) -> Unit):
-    ListAdapter<OccurrenceWithDatesTimes, OccurrenceWithDateTimeAdapter.OccurrenceViewHolder>(DiffCallback)
+class OccurrenceActivitiesListAdapter(private val onItemClicked: (OccurrenceWithActivities) -> Unit):
+    ListAdapter<OccurrenceWithActivities, OccurrenceActivitiesListAdapter.OccurrenceViewHolder>(DiffCallback)
 {
-
-    private lateinit var viewModel: CounterViewModel
-
-    private var datesTimes = emptyList<DateTime>()
 
     class OccurrenceViewHolder(private val binding: OccurenceHomeItemBinding):
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(occ: OccurrenceWithDatesTimes){
-            Log.d("pierwsza literka?", "${occ.occurence.occurenceName} -- ${occ.occurence.occurenceName[1]}")
+        fun bind(occ: OccurrenceWithActivities){
             binding.apply {
-                icCategory.text = occ.occurence.occurenceName[1].toString()
+                icCategory.text = occ.occurrence.occurrenceName[1].toString()
 
-                occurenceName.text = occ.occurence.occurenceName
+                occurenceName.text = occ.occurrence.occurrenceName
                 occurenceName.isSelected = true
                 occurenceName.setSingleLine()
 
-                if(occ.occurrenceDatesTimes.isNotEmpty()){
-                    val time = TimeCounter(occ.occurence,occ.occurrenceDatesTimes[0])
+                if(occ.occurrenceActivities.isNotEmpty()){
+                    val time = TimeCounter(occ.occurrence,occ.occurrenceActivities[0])
                     val secondsFrom = time.getSecondsPassed()
                     val secondsTo = time.getSecondsTo()
                     val calculatedSecondsTo = time.calculateSecondsTo(secondsTo)
@@ -110,13 +105,13 @@ class OccurrenceWithDateTimeAdapter(private val onItemClicked: (OccurrenceWithDa
     }
 
     companion object {
-        private val DiffCallback = object : DiffUtil.ItemCallback<OccurrenceWithDatesTimes>() {
-            override fun areItemsTheSame(oldItem: OccurrenceWithDatesTimes, newItem: OccurrenceWithDatesTimes): Boolean {
+        private val DiffCallback = object : DiffUtil.ItemCallback<OccurrenceWithActivities>() {
+            override fun areItemsTheSame(oldItem: OccurrenceWithActivities, newItem: OccurrenceWithActivities): Boolean {
                 return oldItem === newItem
             }
 
-            override fun areContentsTheSame(oldItem: OccurrenceWithDatesTimes, newItem: OccurrenceWithDatesTimes): Boolean {
-                return oldItem.occurence.occurenceName == newItem.occurence.occurenceName
+            override fun areContentsTheSame(oldItem: OccurrenceWithActivities, newItem: OccurrenceWithActivities): Boolean {
+                return oldItem.occurrence.occurrenceName == newItem.occurrence.occurrenceName
             }
         }
     }

@@ -1,63 +1,63 @@
 package com.example.counter.viewmodels
 
+import android.app.Application
 import androidx.lifecycle.*
 import com.example.counter.data.*
-import com.example.counter.data.relations.OccurrenceWithDatesTimes
+import com.example.counter.data.relations.OccurrenceWithActivities
+import com.example.counter.data.relations.OccurrenceWithDescripion
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import java.util.*
+import javax.inject.Inject
 
-class CounterViewModel(
-    private val occurenceDao: OccurenceDao,
-    private val dateTimeDao: DateTimeDao,
-    private val descriptionDao: DescriptionDao
-) : ViewModel() {
+@HiltViewModel
+class CounterViewModel @Inject constructor(
+    private val repository: Repository,
+    application: Application
 
-    val allOccurences: LiveData<List<OccurrenceWithDatesTimes>> =
-        occurenceDao.getOccurrencesWithDatesTimes().asLiveData()
+) : AndroidViewModel(application) {
+
+    val readOccurrencesWithActivities: LiveData<List<OccurrenceWithActivities>> =
+        repository.dataSource.getOccurrencesWithActivities().asLiveData()
 
 
-    fun retrieveOccurence(id: Int): LiveData<Occurence> {
-        return occurenceDao.getOccurence(id).asLiveData()
+    fun retrieveOccurrence(id: Int): LiveData<Occurrence> {
+        return repository.dataSource.getOccurrence(id).asLiveData()
     }
 
-    fun retrieveOccurenceWithCategory(category: String): LiveData<List<OccurrenceWithDatesTimes>>{
-        return occurenceDao.getOccurrencesWithCategory(category).asLiveData()
+    fun retrieveOccurrenceWithCategory(category: String): LiveData<List<OccurrenceWithActivities>> {
+        return repository.dataSource.getOccurrencesWithCategory(category).asLiveData()
     }
 
-    fun retrieveDatesTimes(id: Int): LiveData<List<DateTime>> {
-        return dateTimeDao.getOccurenceWithDatesTimes(id).asLiveData()
+    fun getOccurrenceWithDatesTimes(): LiveData<List<OccurrenceWithActivities>> {
+        return repository.dataSource.getOccurrencesWithActivities().asLiveData()
     }
 
-    fun getOccurrenceWithDatesTimes(): LiveData<List<OccurrenceWithDatesTimes>> {
-        return occurenceDao.getOccurrencesWithDatesTimes().asLiveData()
+    fun retrieveOccurrenceWithDescriptions(): LiveData<List<OccurrenceWithDescripion>> {
+        return repository.dataSource.getOccurrenceWithDescriptions().asLiveData()
     }
 
-//    fun updateOccurrenceDateTime() {
-//        return occurenceDao.getOccurrencesWithDatesTimes()
-//    }
-
-    fun retrieveDescriptions(id: Int): LiveData<List<Description>> {
-        return occurenceDao.getOccurrencesWithDescriptions(id).asLiveData()
+    fun getDescriptions(id: Int): LiveData<List<Description>>{
+        return repository.dataSource.getDescriptions(id).asLiveData()
     }
 
     //    To interact with the database off the main thread, start a coroutine and call the DAO method within it
-    private fun insertOccurence(occurence: Occurence) {
+    private fun insertOccurence(occurrence: Occurrence) {
         viewModelScope.launch {
-            occurenceDao.insertOccurence(occurence)
+            repository.dataSource.insertOccurrence(occurrence)
         }
     }
 
-    fun deleteOccurence(occurence: Occurence) {
+    fun deleteOccurence(occurrence: Occurrence) {
         viewModelScope.launch {
-            occurenceDao.delete(occurence)
+            repository.dataSource.deleteOccurrence(occurrence)
         }
     }
 
-    fun updateOccurence(occurence: Occurence) {
+    fun updateOccurence(occurrence: Occurrence) {
         viewModelScope.launch {
-            occurenceDao.update(occurence)
+            repository.dataSource.updateOccurrence(occurrence)
         }
     }
 
@@ -74,9 +74,9 @@ class CounterViewModel(
         occurMore: Boolean,
         category: String,
         intervalFrequency: String
-    ): Occurence {
-        return Occurence(
-            occurenceName = occurenceName,
+    ): Occurrence {
+        return Occurrence(
+            occurrenceName = occurenceName,
             createDate = createDate,
             occurMore = occurMore,
             category = category,
@@ -123,10 +123,10 @@ class CounterViewModel(
         occurMore: Boolean,
         category: String,
         intervalFrequency: String
-    ): Occurence {
-        return Occurence(
-            occurenceId = occurenceId,
-            occurenceName = occurenceName,
+    ): Occurrence {
+        return Occurrence(
+            occurrenceId = occurenceId,
+            occurrenceName = occurenceName,
             createDate = createDate,
             occurMore = occurMore,
             category = category,
@@ -142,15 +142,15 @@ class CounterViewModel(
     }
 
     // DATES TIMES BLOCK
-    private fun insertDateTime(dateTime: DateTime) {
+    private fun insertActivity(activity: Activity) {
         viewModelScope.launch {
-            dateTimeDao.insertDateTime(dateTime)
+            repository.dataSource.insertActivity(activity)
         }
     }
 
-    fun deleteDateTime(dateTime: DateTime) {
+    fun deleteActivity(activity: Activity) {
         viewModelScope.launch {
-            dateTimeDao.delete(dateTime)
+            repository.dataSource.deleteActivity(activity)
         }
     }
 
@@ -161,9 +161,9 @@ class CounterViewModel(
         secondsFromLast: Long,
         secondsToNext: Long,
 
-        ): DateTime {
-        return DateTime(
-            occurenceOwnerId = occurenceOwnerId,
+        ): Activity {
+        return Activity(
+            occurrenceOwnerId = occurenceOwnerId,
             fullDate = fullDate,
             timeSpend = timeStart,
             secondsFromLast = secondsFromLast,
@@ -183,7 +183,7 @@ class CounterViewModel(
             secondsFromLast,
             secondsToNext
         )
-        insertDateTime(newDateTime)
+        insertActivity(newDateTime)
     }
 
     fun getDate(): String {
@@ -202,13 +202,13 @@ class CounterViewModel(
 
     private fun insertDescription(description: Description) {
         viewModelScope.launch {
-            descriptionDao.insertDescription(description)
+            repository.dataSource.insertDescription(description)
         }
     }
 
     fun deleteDescription(description: Description) {
         viewModelScope.launch {
-            descriptionDao.deleteDescription(description)
+            repository.dataSource.deleteDescription(description)
         }
     }
 
@@ -219,7 +219,7 @@ class CounterViewModel(
         return Description(
             descriptionDate = LocalDateTime.now().toString(),
             descriptionNote = descriptionNote,
-            occurenceOwnerId = occurenceOwnerId
+            occurrenceOwnerId = occurenceOwnerId
         )
     }
 
@@ -250,25 +250,4 @@ class CounterViewModel(
 //        println("Duration.between(date1, date2).toDays() ${Duration.between(date1, date2).toDays()}")
 //        println("date1.until(date2, ChronoUnit.DAYS) ${date1.until(date2, ChronoUnit.DAYS)}")
 //        println()
-}
-
-
-/**
- * Factory class to instantiate the [ViewModel] instance.
- */
-
-class DateTimeViewModelFactory(
-    private val occurenceDao: OccurenceDao,
-    private val dateTimeDao: DateTimeDao,
-    private val descriptionDao: DescriptionDao
-) : ViewModelProvider.Factory {
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(CounterViewModel::class.java)) {
-            @Suppress("UNCHECKED_CAST")
-            return CounterViewModel(occurenceDao, dateTimeDao, descriptionDao) as T
-        }
-        throw IllegalArgumentException("Unknow view model classs////////////")
-    }
-
-
 }
