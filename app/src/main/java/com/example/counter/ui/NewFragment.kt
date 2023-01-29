@@ -1,4 +1,4 @@
-package com.example.counter
+package com.example.counter.ui
 
 import android.content.Context.INPUT_METHOD_SERVICE
 import android.os.Bundle
@@ -12,11 +12,12 @@ import android.widget.*
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import com.example.counter.Constants.Companion.DAYS
-import com.example.counter.Constants.Companion.DEFAULT_HOURS
-import com.example.counter.Constants.Companion.DEFAULT_MAX_DAYS
-import com.example.counter.Constants.Companion.DEFAULT_MAX_HOURS
-import com.example.counter.Constants.Companion.MINUTES
+import com.example.counter.util.Constants.Companion.DEFAULT_HOURS
+import com.example.counter.util.Constants.Companion.DEFAULT_MAX_DAYS
+import com.example.counter.util.Constants.Companion.DEFAULT_MAX_HOURS
+import com.example.counter.util.Constants.Companion.MINUTES
+import com.example.counter.CounterApplication
+import com.example.counter.R
 import com.example.counter.data.Occurence
 import com.example.counter.databinding.FragmentNewBinding
 import com.example.counter.pickers.DatePickerFragment

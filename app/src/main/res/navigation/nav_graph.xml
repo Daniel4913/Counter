@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/newFragment"
-        android:name="com.example.counter.NewFragment"
+        android:name="com.example.counter.ui.NewFragment"
         android:label="Create New Occurrence"
         tools:layout="@layout/fragment_new">
 
@@ -24,7 +24,7 @@
     </fragment>
     <fragment
         android:id="@+id/occurenceFragment"
-        android:name="com.example.counter.OccurenceFragment"
+        android:name="com.example.counter.ui.OccurenceFragment"
         android:label="Occurence"
         tools:layout="@layout/fragment_occurence">
         <argument
@@ -42,7 +42,7 @@
     </fragment>
     <fragment
         android:id="@+id/counterHomeFragment"
-        android:name="com.example.counter.CounterHomeFragment"
+        android:name="com.example.counter.ui.CounterHomeFragment"
         android:label="Counter Home">
         <action
             android:id="@+id/action_counterHomeFragment_to_newFragment"
@@ -53,7 +53,7 @@
     </fragment>
     <fragment
         android:id="@+id/descriptionFragment"
-        android:name="com.example.counter.DescriptionFragment"
+        android:name="com.example.counter.ui.DescriptionFragment"
         android:label="Descriptions"
         tools:layout="@layout/fragment_description">
         <action

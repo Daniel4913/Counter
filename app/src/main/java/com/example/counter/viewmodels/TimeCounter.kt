@@ -1,8 +1,6 @@
 package com.example.counter.viewmodels
 
-import android.util.Log
-import androidx.lifecycle.ViewModel
-import com.example.counter.Constants
+import com.example.counter.util.Constants
 import com.example.counter.data.DateTime
 import com.example.counter.data.Occurence
 import java.time.LocalDateTime

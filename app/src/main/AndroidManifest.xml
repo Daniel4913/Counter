@@ -12,7 +12,7 @@
         android:theme="@style/Theme.Counter"
          >
         <activity
-            android:name="com.example.counter.MainActivity"
+            android:name="com.example.counter.ui.MainActivity"
             android:exported="true" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

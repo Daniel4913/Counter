@@ -271,15 +271,4 @@ class DateTimeViewModelFactory(
     }
 
 
-    //jakies logi
-//    private fun getIntervalValueAndFrequency(currentOccurence: Occurence) {
-//        if (currentOccurence != null){
-//            val occurence = retrieveOccurence(currentOccurence.occurenceId) as Occurence
-//            val valueAndFrequency =  occurence.intervalFrequency.split(" ")
-//            val value = valueAndFrequency[0]
-//            val frequency = valueAndFrequency[1]
-//            Log.d("getIntervalValueAndFrequency", "$value $frequency")
-//        }
-//    }
-
 }

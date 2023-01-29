@@ -1,4 +1,4 @@
-package com.example.counter
+package com.example.counter.ui
 
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -15,8 +15,8 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.counter.Constants.Companion.DAYS
-import com.example.counter.Constants.Companion.HOURS
+import com.example.counter.util.Constants.Companion.DAYS
+import com.example.counter.util.Constants.Companion.HOURS
 import com.example.counter.adapters.DatesTimesListAdapter
 import com.example.counter.R.string
 import com.example.counter.data.DateTime
@@ -29,9 +29,11 @@ import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 import kotlin.math.roundToInt
 import kotlin.time.Duration.Companion.seconds
-import com.example.counter.Constants.Companion.MINUTES
-import com.example.counter.Constants.Companion.MONTHS
-import com.example.counter.Constants.Companion.WEEKS
+import com.example.counter.util.Constants.Companion.MINUTES
+import com.example.counter.util.Constants.Companion.MONTHS
+import com.example.counter.util.Constants.Companion.WEEKS
+import com.example.counter.CounterApplication
+import com.example.counter.R
 import com.example.counter.viewmodels.CounterViewModel
 import com.example.counter.viewmodels.DateTimeViewModelFactory
 
@@ -317,7 +319,7 @@ class OccurenceFragment : Fragment() {
     private fun showConfirmationDialog() {
         MaterialAlertDialogBuilder(requireContext())
             .setTitle(getString(android.R.string.dialog_alert_title))
-            .setMessage(getString(com.example.counter.R.string.delete_question))
+            .setMessage(getString(R.string.delete_question))
             .setCancelable(false)
             .setNegativeButton(getString(string.no)) { _, _ -> }
             .setPositiveButton(getString(string.yes)) { _, _ ->

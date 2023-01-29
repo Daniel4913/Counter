@@ -1,10 +1,11 @@
-package com.example.counter
+package com.example.counter.ui
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.NavigationUI.setupActionBarWithNavController
+import com.example.counter.R
 
 class MainActivity : AppCompatActivity(R.layout.activity_main) {
 

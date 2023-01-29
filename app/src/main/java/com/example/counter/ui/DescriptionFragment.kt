@@ -1,4 +1,4 @@
-package com.example.counter
+package com.example.counter.ui
 
 import android.content.Context
 import android.os.Bundle
@@ -10,6 +10,8 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.counter.CounterApplication
+import com.example.counter.R
 import com.example.counter.adapters.DescriptionListAdapter
 import com.example.counter.data.Description
 import com.example.counter.databinding.FragmentDescriptionBinding
