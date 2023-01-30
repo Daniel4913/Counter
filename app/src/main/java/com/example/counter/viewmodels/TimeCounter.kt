@@ -1,8 +1,8 @@
 package com.example.counter.viewmodels
 
 import com.example.counter.util.Constants
-import com.example.counter.data.Activity
-import com.example.counter.data.Occurrence
+import com.example.counter.data.modelentity.Activity
+import com.example.counter.data.modelentity.Occurrence
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit

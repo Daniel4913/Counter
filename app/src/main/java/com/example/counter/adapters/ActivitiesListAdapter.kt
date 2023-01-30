@@ -5,7 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.counter.data.Activity
+import com.example.counter.data.modelentity.Activity
 import com.example.counter.databinding.DatesTimesItemBinding
 
 class ActivitiesListAdapter(private val onItemClicked: (Activity) -> Unit):

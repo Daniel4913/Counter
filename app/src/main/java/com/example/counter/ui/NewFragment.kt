@@ -9,7 +9,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -17,9 +16,8 @@ import com.example.counter.util.Constants.Companion.DEFAULT_HOURS
 import com.example.counter.util.Constants.Companion.DEFAULT_MAX_DAYS
 import com.example.counter.util.Constants.Companion.DEFAULT_MAX_HOURS
 import com.example.counter.util.Constants.Companion.MINUTES
-import com.example.counter.CounterApplication
 import com.example.counter.R
-import com.example.counter.data.Occurrence
+import com.example.counter.data.modelentity.Occurrence
 import com.example.counter.databinding.FragmentNewBinding
 import com.example.counter.pickers.DatePickerFragment
 import com.example.counter.pickers.TimePickerFragment
@@ -89,7 +87,7 @@ class NewFragment : Fragment() {
 
         val id = navigationArgs.occurenceId
         if (id > 0) {
-            viewModel.retrieveOccurrence(id).observe(this.viewLifecycleOwner) { selectedOccurence ->
+            viewModel.getOccurrence(id).observe(this.viewLifecycleOwner) { selectedOccurence ->
                 occurrence = selectedOccurence
                 bind(occurrence)
             }

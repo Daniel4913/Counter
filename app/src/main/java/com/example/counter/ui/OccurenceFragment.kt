@@ -19,8 +19,8 @@ import com.example.counter.util.Constants.Companion.DAYS
 import com.example.counter.util.Constants.Companion.HOURS
 import com.example.counter.adapters.ActivitiesListAdapter
 import com.example.counter.R.string
-import com.example.counter.data.Activity
-import com.example.counter.data.Occurrence
+import com.example.counter.data.modelentity.Activity
+import com.example.counter.data.modelentity.Occurrence
 import com.example.counter.databinding.FragmentOccurenceBinding
 import com.example.counter.services.TimerService
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -90,7 +90,7 @@ class OccurenceFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        viewModel.getOccurrenceWithDatesTimes()
+        viewModel.getOccurrenceWithActivities()
         _bindingOccurence = FragmentOccurenceBinding.inflate(inflater, container, false)
 
 
@@ -103,7 +103,7 @@ class OccurenceFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val id = navigationArgs.id
 
-        viewModel.retrieveOccurrence(id).observe(this.viewLifecycleOwner) { selectedOccurence ->
+        viewModel.getOccurrence(id).observe(this.viewLifecycleOwner) { selectedOccurence ->
             occurrence = selectedOccurence
             bind(occurrence)
         }
@@ -115,32 +115,28 @@ class OccurenceFragment : Fragment() {
 
         bindingOccurence.occurenceDetailRecyclerView.adapter = adapter
 
-        viewModel.readOccurrencesWithActivities.observe(this.viewLifecycleOwner) { selectedOccurenceList ->
+        viewModel.getActivities(id).observe(this.viewLifecycleOwner) { selectedOccurenceList ->
             selectedOccurenceList.let {
                 adapter.submitList(it as MutableList<Activity>)
             }
-        }
+            if (selectedOccurenceList.isNotEmpty()) {
 
-//        viewModel.readOccurrencesWithActivities.observe(this.viewLifecycleOwner) { selectedOccurenceList ->
-//            if (selectedOccurenceList.isEmpty()) {
-//
-//            } else {
-//                lastDateTime = selectedOccurenceList[0].occurrenceActivities[0].fullDate
-//                bindingOccurence.occurencyTimeFrom.text =
-//                    secondsToComponents(getSecondsPassed())
-//
-//                bindingOccurence.occurencyTimeTo.text =
-//                    secondsToComponents(calculateSecondsTo(getSecondsTo()))
-//
-//                val datesTimesSize = selectedOccurenceList.size
-//                bindingOccurence.listSizeTextView.text =
-//                    datesTimesSize.toString()
-//
-//                val timeString = bindingOccurence.occurencyTimeTo.text
-//
-//                updateTimeColor(timeString)
-//            }
-//        }
+                lastDateTime = selectedOccurenceList[0].fullDate
+                bindingOccurence.occurencyTimeFrom.text =
+                    secondsToComponents(getSecondsPassed())
+
+                bindingOccurence.occurencyTimeTo.text =
+                    secondsToComponents(calculateSecondsTo(getSecondsTo()))
+
+                val datesTimesSize = selectedOccurenceList.size
+                bindingOccurence.listSizeTextView.text =
+                    datesTimesSize.toString()
+
+                val timeString = bindingOccurence.occurencyTimeTo.text
+
+                updateTimeColor(timeString)
+            }
+        }
 
 //        bindingOccurence.descriptionsHolder.setOnClickListener {
 //            val idOccurence = navigationArgs.id

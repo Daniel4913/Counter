@@ -3,6 +3,9 @@ package com.example.counter.viewmodels
 import android.app.Application
 import androidx.lifecycle.*
 import com.example.counter.data.*
+import com.example.counter.data.modelentity.Activity
+import com.example.counter.data.modelentity.Description
+import com.example.counter.data.modelentity.Occurrence
 import com.example.counter.data.relations.OccurrenceWithActivities
 import com.example.counter.data.relations.OccurrenceWithDescripion
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -22,16 +25,20 @@ class CounterViewModel @Inject constructor(
         repository.dataSource.getOccurrencesWithActivities().asLiveData()
 
 
-    fun retrieveOccurrence(id: Int): LiveData<Occurrence> {
+    fun getOccurrence(id: Int): LiveData<Occurrence> {
         return repository.dataSource.getOccurrence(id).asLiveData()
     }
 
-    fun retrieveOccurrenceWithCategory(category: String): LiveData<List<OccurrenceWithActivities>> {
-        return repository.dataSource.getOccurrencesWithCategory(category).asLiveData()
+    fun getOccurrencesByCategory(category: String): LiveData<List<OccurrenceWithActivities>> {
+        return repository.dataSource.getOccurrencesByCategory(category).asLiveData()
     }
 
-    fun getOccurrenceWithDatesTimes(): LiveData<List<OccurrenceWithActivities>> {
+    fun getOccurrenceWithActivities(): LiveData<List<OccurrenceWithActivities>> {
         return repository.dataSource.getOccurrencesWithActivities().asLiveData()
+    }
+
+    fun getActivities(id: Int): LiveData<List<Activity>>{
+        return repository.dataSource.getOccurrenceActivities(id).asLiveData()
     }
 
     fun retrieveOccurrenceWithDescriptions(): LiveData<List<OccurrenceWithDescripion>> {
@@ -42,7 +49,6 @@ class CounterViewModel @Inject constructor(
         return repository.dataSource.getDescriptions(id).asLiveData()
     }
 
-    //    To interact with the database off the main thread, start a coroutine and call the DAO method within it
     private fun insertOccurence(occurrence: Occurrence) {
         viewModelScope.launch {
             repository.dataSource.insertOccurrence(occurrence)
@@ -67,7 +73,7 @@ class CounterViewModel @Inject constructor(
 //        }
 //    }
 
-    //  function that takes in strings and boolean and returns an Occurence instance.
+
     private fun getNewOccurenceEntry(
         occurenceName: String,
         createDate: String,
@@ -84,7 +90,6 @@ class CounterViewModel @Inject constructor(
         )
     }
 
-    // fn to acquire data from newfragment
     fun addNewOccurence(
         occurenceName: String,
         createDate: String,

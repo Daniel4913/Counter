@@ -1,6 +1,7 @@
 package com.example.counter.data
 
 import androidx.room.*
+import com.example.counter.data.modelentity.Occurrence
 import com.example.counter.data.relations.OccurrenceWithActivities
 import com.example.counter.data.relations.OccurrenceWithDescripion
 import kotlinx.coroutines.flow.Flow
@@ -19,7 +20,7 @@ interface OccurrenceDao {
 
     @Transaction
     @Query("SELECT * from occurrences_table WHERE category = :category")
-    fun getOccurrencesWithCategory(category: String): Flow<List<OccurrenceWithActivities>>
+    fun getOccurrencesByCategory(category: String): Flow<List<OccurrenceWithActivities>>
 
     @Transaction
     @Query("SELECT * from occurrences_table")

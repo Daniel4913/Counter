@@ -1,5 +1,8 @@
 package com.example.counter.data
 
+import com.example.counter.data.modelentity.Activity
+import com.example.counter.data.modelentity.Description
+import com.example.counter.data.modelentity.Occurrence
 import com.example.counter.data.relations.OccurrenceWithActivities
 import com.example.counter.data.relations.OccurrenceWithDescripion
 import kotlinx.coroutines.flow.Flow
@@ -23,8 +26,8 @@ class DataSource @Inject constructor(
         return occurrenceDao.getOccurrencesWithActivities()
     }
 
-    fun getOccurrencesWithCategory(category: String): Flow<List<OccurrenceWithActivities>> {
-        return occurrenceDao.getOccurrencesWithCategory(category)
+    fun getOccurrencesByCategory(category: String): Flow<List<OccurrenceWithActivities>> {
+        return occurrenceDao.getOccurrencesByCategory(category)
     }
 
     fun getOccurrenceWithDescriptions(): Flow<List<OccurrenceWithDescripion>> {

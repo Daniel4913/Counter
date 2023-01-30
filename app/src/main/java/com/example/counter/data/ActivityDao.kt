@@ -7,6 +7,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Update
+import com.example.counter.data.modelentity.Activity
 import kotlinx.coroutines.flow.Flow
 
 @Dao

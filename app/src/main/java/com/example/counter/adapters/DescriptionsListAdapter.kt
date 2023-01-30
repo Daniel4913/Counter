@@ -7,8 +7,7 @@ import android.widget.Toast
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.counter.data.Description
-import com.example.counter.data.relations.OccurrenceWithDescripion
+import com.example.counter.data.modelentity.Description
 import com.example.counter.databinding.DescriptionItemBinding
 
 

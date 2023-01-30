@@ -77,7 +77,7 @@ class CounterHomeFragment : Fragment() {
                     }
                 }
                 else -> {
-                    viewModel.retrieveOccurrenceWithCategory(selectedCategoryChip)
+                    viewModel.getOccurrencesByCategory(selectedCategoryChip)
                         .observe(this.viewLifecycleOwner) { items ->
                             items.let {
                                 adapter.submitList(it)

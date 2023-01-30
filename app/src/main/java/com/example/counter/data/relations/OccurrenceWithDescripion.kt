@@ -2,8 +2,8 @@ package com.example.counter.data.relations
 
 import androidx.room.Embedded
 import androidx.room.Relation
-import com.example.counter.data.Description
-import com.example.counter.data.Occurrence
+import com.example.counter.data.modelentity.Description
+import com.example.counter.data.modelentity.Occurrence
 
 data class OccurrenceWithDescripion (
     @Embedded

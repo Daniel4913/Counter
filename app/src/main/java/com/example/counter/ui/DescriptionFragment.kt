@@ -12,7 +12,7 @@ import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.counter.R
 import com.example.counter.adapters.DescriptionsListAdapter
-import com.example.counter.data.Description
+import com.example.counter.data.modelentity.Description
 import com.example.counter.databinding.FragmentDescriptionBinding
 import com.example.counter.viewmodels.CounterViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder

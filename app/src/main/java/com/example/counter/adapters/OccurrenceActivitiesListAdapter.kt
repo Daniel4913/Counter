@@ -1,6 +1,5 @@
 package com.example.counter.adapters
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
@@ -8,66 +7,56 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.counter.R
-import com.example.counter.data.Activity
 import com.example.counter.data.relations.OccurrenceWithActivities
 import com.example.counter.databinding.OccurenceHomeItemBinding
-import com.example.counter.viewmodels.CounterViewModel
 import com.example.counter.viewmodels.TimeCounter
 
-class OccurrenceActivitiesListAdapter(private val onItemClicked: (OccurrenceWithActivities) -> Unit):
-    ListAdapter<OccurrenceWithActivities, OccurrenceActivitiesListAdapter.OccurrenceViewHolder>(DiffCallback)
-{
+class OccurrenceActivitiesListAdapter(private val onItemClicked: (OccurrenceWithActivities) -> Unit) :
+    ListAdapter<OccurrenceWithActivities, OccurrenceActivitiesListAdapter.OccurrenceViewHolder>(
+        DiffCallback
+    ) {
 
-    class OccurrenceViewHolder(private val binding: OccurenceHomeItemBinding):
+    class OccurrenceViewHolder(private val binding: OccurenceHomeItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(occ: OccurrenceWithActivities){
+        fun bind(occ: OccurrenceWithActivities) {
             binding.apply {
                 icCategory.text = occ.occurrence.occurrenceName[1].toString()
-
                 occurenceName.text = occ.occurrence.occurrenceName
                 occurenceName.isSelected = true
                 occurenceName.setSingleLine()
 
-                if(occ.occurrenceActivities.isNotEmpty()){
-                    val time = TimeCounter(occ.occurrence,occ.occurrenceActivities[0])
+                if (occ.occurrenceActivities.isNotEmpty()) {
+                    val time = TimeCounter(occ.occurrence, occ.occurrenceActivities[0])
                     val secondsFrom = time.getSecondsPassed()
                     val secondsTo = time.getSecondsTo()
                     val calculatedSecondsTo = time.calculateSecondsTo(secondsTo)
 
                     timeToNext.text = time.secondsToComponents(calculatedSecondsTo)
                     timeFromLast.text = time.secondsToComponents(secondsFrom)
-
-                    applyRedTimeColor(time.secondsToComponents(calculatedSecondsTo))
-                    applyOrangeTimeColor(time.secondsToComponents(calculatedSecondsTo))
+                    applyTimeColor(time.secondsToComponents(calculatedSecondsTo))
 
                 } else {
                     timeFromLast.text = "-"
                     timeToNext.text = "-"
                 }
             }
-
         }
 
-
-
-        private fun applyOrangeTimeColor(timeString: String) {
+        private fun applyTimeColor(timeString: String) {
             val context = binding.timeToNext.context
-                if(
-                    !timeString.contains("-") &&
-                    timeString.contains("1h") ||
-                    timeString.contains("0h")
-                ){
-                    binding.timeToNext.setTextColor(
-                        ContextCompat.getColor(
-                            context,
-                            R.color.orange
-                        )
+            if (
+                !timeString.contains("-") &&
+                timeString.contains("0h") ||
+                timeString.contains("1h")
+
+            ) {
+                binding.timeToNext.setTextColor(
+                    ContextCompat.getColor(
+                        context,
+                        R.color.orange
                     )
-                }
-        }
-
-        private fun applyRedTimeColor(timeString: CharSequence){
-            val context = binding.timeToNext.context
+                )
+            }
             if (timeString.contains("-")) {
                 binding.timeToNext.setTextColor(
                     ContextCompat.getColor(
@@ -85,7 +74,6 @@ class OccurrenceActivitiesListAdapter(private val onItemClicked: (OccurrenceWith
                 )
             }
         }
-
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): OccurrenceViewHolder {
@@ -106,11 +94,17 @@ class OccurrenceActivitiesListAdapter(private val onItemClicked: (OccurrenceWith
 
     companion object {
         private val DiffCallback = object : DiffUtil.ItemCallback<OccurrenceWithActivities>() {
-            override fun areItemsTheSame(oldItem: OccurrenceWithActivities, newItem: OccurrenceWithActivities): Boolean {
+            override fun areItemsTheSame(
+                oldItem: OccurrenceWithActivities,
+                newItem: OccurrenceWithActivities
+            ): Boolean {
                 return oldItem === newItem
             }
 
-            override fun areContentsTheSame(oldItem: OccurrenceWithActivities, newItem: OccurrenceWithActivities): Boolean {
+            override fun areContentsTheSame(
+                oldItem: OccurrenceWithActivities,
+                newItem: OccurrenceWithActivities
+            ): Boolean {
                 return oldItem.occurrence.occurrenceName == newItem.occurrence.occurrenceName
             }
         }

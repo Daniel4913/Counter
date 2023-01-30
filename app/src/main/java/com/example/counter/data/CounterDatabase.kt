@@ -3,6 +3,9 @@ package com.example.counter.data
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
+import com.example.counter.data.modelentity.Activity
+import com.example.counter.data.modelentity.Description
+import com.example.counter.data.modelentity.Occurrence
 
 @Database(
     entities = [
