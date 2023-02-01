@@ -52,12 +52,22 @@ class DataSource @Inject constructor(
 
     // Activity access
 
+    fun getAllActivities(): Flow<List<Activity>>{
+      return  activityDao.getAllActivities()
+    }
+
     fun getOccurrenceActivities(occurrenceId: Int): Flow<List<Activity>>{
         return activityDao.getOccurenceWithActivities(occurrenceId)
     }
 
     suspend fun insertActivity(activity: Activity){
         activityDao.insertActivity(activity)
+    }
+
+
+
+    suspend fun updateSeconds(activityId: Int, secondsFrom: Long, secondsTo: Long){
+        activityDao.updateSeconds(activityId,secondsFrom,secondsTo)
     }
 
     suspend fun updateActivity(activity: Activity){

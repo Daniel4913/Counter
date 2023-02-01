@@ -24,7 +24,6 @@ class CounterViewModel @Inject constructor(
     val readOccurrencesWithActivities: LiveData<List<OccurrenceWithActivities>> =
         repository.dataSource.getOccurrencesWithActivities().asLiveData()
 
-
     fun getOccurrence(id: Int): LiveData<Occurrence> {
         return repository.dataSource.getOccurrence(id).asLiveData()
     }
@@ -39,6 +38,20 @@ class CounterViewModel @Inject constructor(
 
     fun getActivities(id: Int): LiveData<List<Activity>>{
         return repository.dataSource.getOccurrenceActivities(id).asLiveData()
+    }
+
+    fun getAllActivities(): LiveData<List<Activity>>{
+        return repository.dataSource.getAllActivities().asLiveData()
+    }
+
+    fun updateSeconds(activityId: Int, secondsFrom: Long, secondsTo: Long) {
+        viewModelScope.launch {
+            repository.dataSource.updateSeconds(activityId,secondsFrom,secondsTo)
+        }
+    }
+
+    fun updateActivity(activity: Activity){
+        viewModelScope.launch { repository.dataSource.updateActivity(activity) }
     }
 
     fun retrieveOccurrenceWithDescriptions(): LiveData<List<OccurrenceWithDescripion>> {
@@ -159,11 +172,12 @@ class CounterViewModel @Inject constructor(
         }
     }
 
-    private fun getNewDateTimeEntry(
+    private fun getNewActivity(
         occurenceOwnerId: Int,
         fullDate: String,
         timeStart: String,
         secondsFromLast: Long,
+        intervalSeconds: Long,
         secondsToNext: Long,
 
         ): Activity {
@@ -172,20 +186,25 @@ class CounterViewModel @Inject constructor(
             fullDate = fullDate,
             timeSpend = timeStart,
             secondsFromLast = secondsFromLast,
+            intervalSeconds = intervalSeconds,
             secondsToNext = secondsToNext
         )
     }
 
-    fun addNewDateTime(
+    fun addNewActivity(
         occurenceOwnerId: Int,
         fullDate: String,
-        timeStart: String,
+        timeSpend: String,
         secondsFromLast: Long,
-        secondsToNext: Long,
+        intervalSeconds: Long,
+        secondsToNext: Long
     ) {
-        val newDateTime = getNewDateTimeEntry(
-            occurenceOwnerId, fullDate, timeStart,
+        val newDateTime = getNewActivity(
+            occurenceOwnerId,
+            fullDate,
+            timeSpend,
             secondsFromLast,
+            intervalSeconds,
             secondsToNext
         )
         insertActivity(newDateTime)
@@ -235,6 +254,12 @@ class CounterViewModel @Inject constructor(
         val newDescription = getNewDescriptionEntry(descriptionNote, occurenceOwnerId)
         insertDescription(newDescription)
     }
+
+    /**
+     * Counting bloc, to calculate how much time passed between occurences
+     */
+
+
 
     /**
      * Counting bloc, to calculate how much time passed between occurences

@@ -23,7 +23,10 @@ data class Activity(
     @ColumnInfo(name="seconds_from_last")
     val secondsFromLast: Long?,
 
+    @ColumnInfo(name="interval_seconds")
+    var intervalSeconds: Long?,
+
     @ColumnInfo(name="seconds_to_next")
-    val secondsToNext: Long?,
+    var secondsToNext: Long? = -1
 ){
 }

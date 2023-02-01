@@ -1,5 +1,6 @@
 package com.example.counter.adapters
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
@@ -9,12 +10,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.counter.R
 import com.example.counter.data.relations.OccurrenceWithActivities
 import com.example.counter.databinding.OccurenceHomeItemBinding
+
 import com.example.counter.viewmodels.TimeCounter
 
 class OccurrenceActivitiesListAdapter(private val onItemClicked: (OccurrenceWithActivities) -> Unit) :
     ListAdapter<OccurrenceWithActivities, OccurrenceActivitiesListAdapter.OccurrenceViewHolder>(
         DiffCallback
     ) {
+
 
     class OccurrenceViewHolder(private val binding: OccurenceHomeItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
@@ -26,14 +29,23 @@ class OccurrenceActivitiesListAdapter(private val onItemClicked: (OccurrenceWith
                 occurenceName.setSingleLine()
 
                 if (occ.occurrenceActivities.isNotEmpty()) {
-                    val time = TimeCounter(occ.occurrence, occ.occurrenceActivities[0])
-                    val secondsFrom = time.getSecondsPassed()
-                    val secondsTo = time.getSecondsTo()
-                    val calculatedSecondsTo = time.calculateSecondsTo(secondsTo)
 
-                    timeToNext.text = time.secondsToComponents(calculatedSecondsTo)
-                    timeFromLast.text = time.secondsToComponents(secondsFrom)
-                    applyTimeColor(time.secondsToComponents(calculatedSecondsTo))
+                    val time = TimeCounter(occ.occurrence, occ.occurrenceActivities.last())
+                    Log.d("Adapter", "${occ.occurrence.occurrenceName} ${occ.occurrenceActivities[0]}")
+                    val secondsFrom = occ.occurrenceActivities.last().secondsFromLast
+                    val secondsTo = occ.occurrenceActivities.last().secondsToNext
+                    val calculatedSecondsTo = secondsTo?.let { time.intervalSeconds(it) }
+
+
+
+                    timeToNext.text = calculatedSecondsTo?.let { time.secondsToComponents(it) }
+                    timeFromLast.text = secondsFrom?.let { time.secondsToComponents(it) }
+
+
+
+
+                    calculatedSecondsTo?.let { time.secondsToComponents(it) }
+                        ?.let { applyTimeColor(it) }
 
                 } else {
                     timeFromLast.text = "-"
@@ -91,6 +103,7 @@ class OccurrenceActivitiesListAdapter(private val onItemClicked: (OccurrenceWith
         }
         holder.bind(current)
     }
+
 
     companion object {
         private val DiffCallback = object : DiffUtil.ItemCallback<OccurrenceWithActivities>() {

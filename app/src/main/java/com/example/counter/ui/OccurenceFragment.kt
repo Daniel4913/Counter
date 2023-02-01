@@ -15,8 +15,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.counter.util.Constants.Companion.DAYS
-import com.example.counter.util.Constants.Companion.HOURS
 import com.example.counter.adapters.ActivitiesListAdapter
 import com.example.counter.R.string
 import com.example.counter.data.modelentity.Activity
@@ -29,10 +27,8 @@ import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 import kotlin.math.roundToInt
 import kotlin.time.Duration.Companion.seconds
-import com.example.counter.util.Constants.Companion.MINUTES
-import com.example.counter.util.Constants.Companion.MONTHS
-import com.example.counter.util.Constants.Companion.WEEKS
 import com.example.counter.R
+import com.example.counter.util.Constants
 import com.example.counter.viewmodels.CounterViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -126,7 +122,7 @@ class OccurenceFragment : Fragment() {
                     secondsToComponents(getSecondsPassed())
 
                 bindingOccurence.occurencyTimeTo.text =
-                    secondsToComponents(calculateSecondsTo(getSecondsTo()))
+                    secondsToComponents(getSecondsTo(getIntervalSeconds()))
 
                 val datesTimesSize = selectedOccurenceList.size
                 bindingOccurence.listSizeTextView.text =
@@ -149,7 +145,7 @@ class OccurenceFragment : Fragment() {
             LinearLayoutManager(this.context)
 
         // Set button
-        bindingOccurence.addActivity.setOnClickListener { addNewDateTime() }
+        bindingOccurence.addActivity.setOnClickListener { addNewActivity() }
 
         // start stop timer
         serviceIntent = Intent(context?.applicationContext, TimerService::class.java)
@@ -158,31 +154,51 @@ class OccurenceFragment : Fragment() {
     }
 
     private fun updateTimeColor(timeString: CharSequence) {
+        if (
+            !timeString.contains("-") &&
+            timeString.contains("0h") ||
+            timeString.contains("1h")
+
+        ) {
+            bindingOccurence.occurencyTimeToLabel.setTextColor(
+                ContextCompat.getColor(
+                    requireContext(),
+                    R.color.orange
+                )
+            )
+            bindingOccurence.occurencyTimeTo.setTextColor(
+                ContextCompat.getColor(
+                    requireContext(),
+                    R.color.orange
+                )
+            )
+        }
         if (timeString.contains("-")) {
             bindingOccurence.occurencyTimeToLabel.setTextColor(
                 ContextCompat.getColor(
                     requireContext(),
-                    R.color.green
+                    R.color.red_700
                 )
             )
             bindingOccurence.occurencyTimeTo.setTextColor(
                 ContextCompat.getColor(
                     requireContext(),
-                    R.color.green
+                    R.color.red_700
                 )
             )
-        } else {
-            bindingOccurence.occurencyTimeToLabel.text = "You're late!"
+        }
+        else {
+
             bindingOccurence.occurencyTimeToLabel.setTextColor(
                 ContextCompat.getColor(
                     requireContext(),
-                    R.color.red
+                    R.color.green
                 )
             )
             bindingOccurence.occurencyTimeTo.setTextColor(
                 ContextCompat.getColor(
                     requireContext(),
-                    R.color.red
+                    R.color.green
                 )
             )
         }
@@ -190,26 +206,27 @@ class OccurenceFragment : Fragment() {
 
     // CALCULATING BLOK
 
-    fun getSecondsTo(): Long {
+    fun getIntervalSeconds(): Long {
         val interval = occurrence.intervalFrequency
 
         val intervalValue = interval.split(" ")[0].toLong()
         val intervalFrequency = interval.split(" ")[1]
         var toSecondsTo: Long = 0
         when (intervalFrequency) {
-            MINUTES -> {
+            Constants.MINUTES -> {
                 toSecondsTo = 60 * intervalValue
             }
-            HOURS -> {
+            Constants.HOURS -> {
                 toSecondsTo = 3600 * intervalValue
             }
-            DAYS -> {
+            Constants.DAYS -> {
                 toSecondsTo = 86400 * intervalValue
+
             }
-            WEEKS -> {
+            Constants.WEEKS -> {
                 toSecondsTo = 604800 * intervalValue
             }
-            MONTHS -> {
+            Constants.MONTHS -> {
                 toSecondsTo = 2629800 * intervalValue
             }
         }
@@ -217,18 +234,20 @@ class OccurenceFragment : Fragment() {
     }
 
 
-    private fun calculateSecondsTo(secondsTo: Long): Long {
+    fun getSecondsTo(secondsTo: Long): Long {
         val timeFrom = lastDateTime
         val timeTo = secondsTo
+
         val pattern = "HH:mm:ss dd.MM.yyyy"
         val formatter = DateTimeFormatter.ofPattern(pattern)
         val lastDate = LocalDateTime.parse(timeFrom, formatter)
         val calculatedToDay = lastDate.plusSeconds(timeTo)
         val secondsTo = ChronoUnit.SECONDS.between(
-            calculatedToDay,
             LocalDateTime.now(),
+            calculatedToDay,
         )
         return secondsTo
+
     }
 
 
@@ -236,38 +255,44 @@ class OccurenceFragment : Fragment() {
         val today = LocalDateTime.now()
         val pattern = "HH:mm:ss dd.MM.yyyy"
         val formatter = DateTimeFormatter.ofPattern(pattern)
-
-        if (this::lastDateTime.isInitialized) {
-            val lastDate = LocalDateTime.parse(lastDateTime, formatter)
-            val secondsPassed = ChronoUnit.SECONDS.between(
-                lastDate,
-                today
-            )
-            return secondsPassed
-        }
-        return 0
+        val lastDate = LocalDateTime.parse(lastDateTime, formatter)
+        val secondsPassed = ChronoUnit.SECONDS.between(
+            lastDate,
+            today
+        )
+        return secondsPassed
     }
 
 
-    private fun secondsToComponents(secondsPassed: Long): String {
+    fun secondsToComponents(secondsPassed: Long): String {
         secondsPassed.seconds.toComponents { days, hours, minutes, seconds, nanoseconds ->
-            val calculated = when (days) {
-                0L -> "${hours}h ${minutes}m ${seconds}s"
-                else -> "${days}d ${hours}h ${minutes}m ${seconds}s"
+            var calculated = ""
+
+            when (days) {
+                0L -> calculated = "${hours}h ${minutes}m ${seconds}s"
+                else -> calculated =  "${days}d ${hours}h ${minutes}m ${seconds}s"
             }
+
+            //TODO
+//             when (hours) {
+//                0 -> calculated = "${minutes}m ${seconds}m "
+//                else -> calculated =  "${hours}h ${minutes}m"
+//            }
+
             return calculated
         }
     }
 
     // DB SRATATATA
 
-    private fun addNewDateTime(timerValue: String = " ") {
-        viewModel.addNewDateTime(
+    private fun addNewActivity(timerValue: String = " ") {
+        viewModel.addNewActivity(
             navigationArgs.id,
             getDate(),
             getHour(),
-            getSecondsPassed(),
-            getSecondsTo()
+            0,
+            getSecondsTo(getIntervalSeconds()),
+            getIntervalSeconds()
         )
     }
 
@@ -344,7 +369,7 @@ class OccurenceFragment : Fragment() {
             .setCancelable(false)
             .setNegativeButton(getString(string.no)) { _, _ -> }
             .setPositiveButton(getString(string.yes)) { _, _ ->
-                addNewDateTime(timePassed)
+                addNewActivity(timePassed)
             }
             .show()
     }

@@ -2,7 +2,7 @@ package com.example.counter.di
 
 import android.content.Context
 import androidx.room.Room
-import com.example.counter.data.CounterDatabase
+import com.example.counter.data.database.CounterDatabase
 import com.example.counter.util.Constants.Companion.DATABASE_NAME
 import dagger.Module
 import dagger.Provides

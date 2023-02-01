@@ -16,9 +16,16 @@ interface ActivityDao {
     @Query("SELECT * from activities_table WHERE occurrence_owner_id = :id ORDER BY full_date DESC")
     fun getOccurenceWithActivities(id:Int): Flow<List<Activity>>
 
+    @Transaction
+    @Query("SELECT * from activities_table")
+    fun getAllActivities(): Flow<List<Activity>>
+
 //    @Query("SELECT date_time_id, full_date from dateTime WHERE occurence_owner_id = :id")
 //@Query("SELECT date_time_id, full_date from dateTime")
 //    fun getLastDateTime(id: Int): Flow<List<DateTime>>
+
+    @Query("UPDATE activities_table SET seconds_to_next =:secondsTo AND seconds_from_last =:secondsFrom WHERE date_time_id =:activityId")
+    suspend fun updateSeconds(activityId: Int, secondsFrom: Long, secondsTo: Long)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertActivity(activity: Activity)

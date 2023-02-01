@@ -3,15 +3,19 @@ package com.example.counter.viewmodels
 import com.example.counter.util.Constants
 import com.example.counter.data.modelentity.Activity
 import com.example.counter.data.modelentity.Occurrence
+import com.example.counter.data.relations.OccurrenceWithActivities
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 import kotlin.time.Duration.Companion.seconds
 
-class TimeCounter(occurrence: Occurrence, activity: Activity) {
+class TimeCounter(private val occurrence: Occurrence, activity: Activity) {
 
-    private val occurrence = occurrence
     private val lastDateTime = activity.fullDate
+
+    private val getIntervalSeconds = activity.intervalSeconds
+
+    private val occurrenceActivities = OccurrenceWithActivities
 
     // CALCULATING BLOK
 
@@ -43,9 +47,10 @@ class TimeCounter(occurrence: Occurrence, activity: Activity) {
     }
 
 
-    fun calculateSecondsTo(secondsTo: Long): Long {
+    fun intervalSeconds(secondsTo: Long): Long {
         val timeFrom = lastDateTime
         val timeTo = secondsTo
+
         val pattern = "HH:mm:ss dd.MM.yyyy"
         val formatter = DateTimeFormatter.ofPattern(pattern)
         val lastDate = LocalDateTime.parse(timeFrom, formatter)
@@ -56,6 +61,10 @@ class TimeCounter(occurrence: Occurrence, activity: Activity) {
         )
         return secondsTo
 
+    }
+
+    fun refreshSecondsTo(intervalSeconds: Long, secondsPassed: Long): Long{
+        return intervalSeconds-secondsPassed
     }
 
 
@@ -72,7 +81,7 @@ class TimeCounter(occurrence: Occurrence, activity: Activity) {
     }
 
     fun nieWykonane(){
-
+            occurrenceActivities
     }
 
 
@@ -81,8 +90,8 @@ class TimeCounter(occurrence: Occurrence, activity: Activity) {
             var calculated = ""
 
              when (days) {
-                0L -> calculated = "${hours}h ${minutes}m"
-                else -> calculated =  "${days}d ${hours}h ${minutes}m"
+                0L -> calculated = "${hours}h ${minutes}m ${seconds}s"
+                else -> calculated =  "${days}d ${hours}h ${minutes}m ${seconds}s"
             }
 
             //TODO
@@ -95,13 +104,13 @@ class TimeCounter(occurrence: Occurrence, activity: Activity) {
         }
     }
 
-
-
     fun saveTimesToDb(){
         /**
         todo musze zapisac te sekundy, aby moc posortowac recycler view
          UPDATE: jednak to jest bez sensu bo bedzie zbyt duzo operacji na DB (zapisow i odczytow).
          Musze wyciagnac te czasy z textView
+         UPDATE2: jednak chuj wie jak je wyciagnaz z tv wiec bede zapisywal w db.
+        To dobre podejscie bo tylko jedno activity bede updateowal
          **/
         val secondsPassed = getSecondsPassed()
         val secondsTo = getSecondsTo()
