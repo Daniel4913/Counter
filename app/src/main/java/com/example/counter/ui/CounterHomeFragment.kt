@@ -45,47 +45,6 @@ class CounterHomeFragment : Fragment() {
     ): View? {
         _binding = FragmentCounterHomeBinding.inflate(inflater, container, false)
 
-
-        val data = viewModel.readOccurrencesWithActivities.value
-        data?.forEach {
-            if (it.occurrenceActivities.isNotEmpty()) {
-
-                val timeCounter = TimeCounter(
-                    it.occurrence,
-                    it.occurrenceActivities[0]
-                )
-
-                var secondsPassed: Long? = timeCounter.getSecondsPassed()
-
-                val id = it.occurrenceActivities[0].dateTimeId
-                val owner = it.occurrenceActivities[0].occurrenceOwnerId
-                val fullDate = it.occurrenceActivities[0].fullDate
-
-
-                val intervalSeconds =
-                    it.occurrenceActivities[0].intervalSeconds
-                val secondsTo = intervalSeconds?.minus(secondsPassed!!)
-
-                fun getActivityToUpdate(): Activity {
-                    val aktiwiti = Activity(
-                        id,
-                        owner,
-                        fullDate,
-                        it.occurrenceActivities[0].timeSpend,
-                        secondsPassed,
-                        it.occurrenceActivities[0].intervalSeconds,
-                        secondsTo
-                    )
-                    Log.d("Home", "$aktiwiti")
-                    return aktiwiti
-                }
-                binding.refresh.setOnClickListener {
-                    viewModel.updateActivity(getActivityToUpdate())
-                    Log.d("hOMEE", "UpdateActivityCalled")
-                }
-            }
-        }
-
         return binding.root
     }
 
@@ -102,6 +61,8 @@ class CounterHomeFragment : Fragment() {
         }
 
 
+
+
         binding.occurenciesRecyclerView.adapter = adapter
         viewModel.readOccurrencesWithActivities.observe(this.viewLifecycleOwner) { items ->
 
@@ -112,7 +73,48 @@ class CounterHomeFragment : Fragment() {
 
             }
         }
+        binding.refresh.setOnClickListener {
+        val data = viewModel.readOccurrencesWithActivities.value
+        Log.d("Home", "data $data")
+        data?.forEach {
 
+         
+
+
+            val timeCounter = TimeCounter(
+                it.occurrence,
+                it.occurrenceActivities[0]
+            )
+
+            var secondsPassed: Long? = timeCounter.getSecondsPassed()
+
+            val id = it.occurrenceActivities[0].dateTimeId
+            val owner = it.occurrenceActivities[0].occurrenceOwnerId
+            val fullDate = it.occurrenceActivities[0].fullDate
+
+            val intervalSeconds =
+                it.occurrenceActivities[0].intervalSeconds
+            val secondsTo = intervalSeconds?.minus(secondsPassed!!)
+
+            fun getActivityToUpdate(): Activity {
+                val aktiwiti = Activity(
+                    id,
+                    owner,
+                    fullDate,
+                    it.occurrenceActivities[0].timeSpend,
+                    secondsPassed,
+                    it.occurrenceActivities[0].intervalSeconds,
+                    secondsTo
+                )
+                Log.d("Home", "$aktiwiti")
+                return aktiwiti
+            }
+            viewModel.updateActivity(getActivityToUpdate())
+            Log.d("Home", "ForEach UpdateActivityCalled")
+
+            }
+
+        }
 
         binding.occurenciesRecyclerView.layoutManager = LinearLayoutManager(this.context)
 
