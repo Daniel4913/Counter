@@ -59,60 +59,65 @@ class CounterHomeFragment : Fragment() {
                 )
             this.findNavController().navigate(action)
         }
-
-
-
+        
 
         binding.occurenciesRecyclerView.adapter = adapter
         viewModel.readOccurrencesWithActivities.observe(this.viewLifecycleOwner) { items ->
 
-            items.let {
-
-                val sorted = items.sortedBy { it.occurrenceActivities[0].secondsToNext }
-                adapter.submitList(sorted)
-
+            items.let { it ->
+                        try {
+                            val sorted = items.sortedBy{ it.occurrenceActivities[0].secondsToNext }
+                            adapter.submitList(sorted)
+                            Log.d("Home sortedBy", "posortowane")
+                        } catch (e: java.lang.Exception){
+                            Log.d("Home sortedBy", "NIE POSORTOWANE$e")
+                            adapter.submitList(it)
+                        }
             }
         }
         binding.refresh.setOnClickListener {
-        val data = viewModel.readOccurrencesWithActivities.value
-        Log.d("Home", "data $data")
-        data?.forEach {
+            try {
+                val data = viewModel.readOccurrencesWithActivities.value
+                data?.forEach {
+                    Log.d("Home", "data $data")
 
-         
 
+                    val timeCounter = TimeCounter(
+                        it.occurrence,
+                        it.occurrenceActivities[0]
+                    )
 
-            val timeCounter = TimeCounter(
-                it.occurrence,
-                it.occurrenceActivities[0]
-            )
+                    var secondsPassed: Long? = timeCounter.getSecondsPassed()
 
-            var secondsPassed: Long? = timeCounter.getSecondsPassed()
+                    val id = it.occurrenceActivities[0].dateTimeId
+                    val owner = it.occurrenceActivities[0].occurrenceOwnerId
+                    val fullDate = it.occurrenceActivities[0].fullDate
 
-            val id = it.occurrenceActivities[0].dateTimeId
-            val owner = it.occurrenceActivities[0].occurrenceOwnerId
-            val fullDate = it.occurrenceActivities[0].fullDate
+                    val intervalSeconds =
+                        it.occurrenceActivities[0].intervalSeconds
+                    val secondsTo = intervalSeconds?.minus(secondsPassed!!)
 
-            val intervalSeconds =
-                it.occurrenceActivities[0].intervalSeconds
-            val secondsTo = intervalSeconds?.minus(secondsPassed!!)
+                    fun getActivityToUpdate(): Activity {
+                        val aktiwiti = Activity(
+                            id,
+                            owner,
+                            fullDate,
+                            it.occurrenceActivities[0].timeSpend,
+                            secondsPassed,
+                            it.occurrenceActivities[0].intervalSeconds,
+                            secondsTo
+                        )
+                        Log.d("Home", "$aktiwiti")
+                        return aktiwiti
+                    }
+                    viewModel.updateActivity(getActivityToUpdate())
+                    Log.d("Home", "ForEach UpdateActivityCalled")
 
-            fun getActivityToUpdate(): Activity {
-                val aktiwiti = Activity(
-                    id,
-                    owner,
-                    fullDate,
-                    it.occurrenceActivities[0].timeSpend,
-                    secondsPassed,
-                    it.occurrenceActivities[0].intervalSeconds,
-                    secondsTo
-                )
-                Log.d("Home", "$aktiwiti")
-                return aktiwiti
+                }
+            } catch (e: Exception) {
+                Log.d("Home catch", "$e")
             }
-            viewModel.updateActivity(getActivityToUpdate())
-            Log.d("Home", "ForEach UpdateActivityCalled")
 
-            }
 
         }
 

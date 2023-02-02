@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.IntentFilter
 //import android.os.Build.VERSION_CODES.R to bylo zaimportowane kiedy zjebaly sie stringi (unresolved reference R. string)
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -111,20 +112,20 @@ class OccurenceFragment : Fragment() {
 
         bindingOccurence.occurenceDetailRecyclerView.adapter = adapter
 
-        viewModel.getActivities(id).observe(this.viewLifecycleOwner) { selectedOccurenceList ->
-            selectedOccurenceList.let {
+        viewModel.getActivities(id).observe(this.viewLifecycleOwner) { selectedOccurrenceList ->
+            selectedOccurrenceList.let {
                 adapter.submitList(it as MutableList<Activity>)
             }
-            if (selectedOccurenceList.isNotEmpty()) {
+            if (this::occurrence.isInitialized && selectedOccurrenceList.isNotEmpty()) {
+                lastDateTime = selectedOccurrenceList[0].fullDate
 
-                lastDateTime = selectedOccurenceList[0].fullDate
                 bindingOccurence.occurencyTimeFrom.text =
                     secondsToComponents(getSecondsPassed())
 
                 bindingOccurence.occurencyTimeTo.text =
                     secondsToComponents(getSecondsTo(getIntervalSeconds()))
 
-                val datesTimesSize = selectedOccurenceList.size
+                val datesTimesSize = selectedOccurrenceList.size
                 bindingOccurence.listSizeTextView.text =
                     datesTimesSize.toString()
 
@@ -154,10 +155,24 @@ class OccurenceFragment : Fragment() {
     }
 
     private fun updateTimeColor(timeString: CharSequence) {
-        if (
-            !timeString.contains("-") &&
-            timeString.contains("0h") ||
-            timeString.contains("1h")
+
+        if (timeString.contains("-")) {
+            bindingOccurence.occurencyTimeToLabel.setTextColor(
+                ContextCompat.getColor(
+                    requireContext(),
+                    R.color.red_700
+                )
+            )
+            bindingOccurence.occurencyTimeTo.setTextColor(
+                ContextCompat.getColor(
+                    requireContext(),
+                    R.color.red_700
+                )
+            )
+        } else if (
+            timeString.contains("0h")
+            || timeString.contains("1h")
+            && !timeString.contains("-")
 
         ) {
             bindingOccurence.occurencyTimeToLabel.setTextColor(
@@ -172,22 +187,7 @@ class OccurenceFragment : Fragment() {
                     R.color.orange
                 )
             )
-        }
-        if (timeString.contains("-")) {
-            bindingOccurence.occurencyTimeToLabel.setTextColor(
-                ContextCompat.getColor(
-                    requireContext(),
-                    R.color.red_700
-                )
-            )
-            bindingOccurence.occurencyTimeTo.setTextColor(
-                ContextCompat.getColor(
-                    requireContext(),
-                    R.color.red_700
-                )
-            )
-        }
-        else {
+        } else {
 
             bindingOccurence.occurencyTimeToLabel.setTextColor(
                 ContextCompat.getColor(
@@ -270,7 +270,7 @@ class OccurenceFragment : Fragment() {
 
             when (days) {
                 0L -> calculated = "${hours}h ${minutes}m ${seconds}s"
-                else -> calculated =  "${days}d ${hours}h ${minutes}m ${seconds}s"
+                else -> calculated = "${days}d ${hours}h ${minutes}m ${seconds}s"
             }
 
             //TODO
@@ -291,8 +291,8 @@ class OccurenceFragment : Fragment() {
             getDate(),
             getHour(),
             0,
-            getSecondsTo(getIntervalSeconds()),
-            getIntervalSeconds()
+            getIntervalSeconds(),
+            0
         )
     }
 

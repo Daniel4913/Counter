@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface ActivityDao {
     @Transaction
-    @Query("SELECT * from activities_table WHERE occurrence_owner_id = :id ORDER BY full_date DESC")
+    @Query("SELECT * from activities_table WHERE occurrence_owner_id = :id ORDER BY date_time_id DESC")
     fun getOccurenceWithActivities(id:Int): Flow<List<Activity>>
 
     @Transaction
