@@ -1,19 +1,15 @@
 package com.example.counter.adapters
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
-import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.counter.R
 import com.example.counter.data.relations.OccurrenceWithActivities
 import com.example.counter.databinding.OccurenceHomeItemBinding
 import com.example.counter.util.Constants
-
-import com.example.counter.viewmodels.TimeCounter
-import kotlinx.coroutines.coroutineScope
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
@@ -23,7 +19,6 @@ class OccurrenceActivitiesListAdapter(private val onItemClicked: (OccurrenceWith
     ListAdapter<OccurrenceWithActivities, OccurrenceActivitiesListAdapter.OccurrenceViewHolder>(
         DiffCallback
     ) {
-
 
     class OccurrenceViewHolder(private val binding: OccurenceHomeItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
@@ -37,8 +32,6 @@ class OccurrenceActivitiesListAdapter(private val onItemClicked: (OccurrenceWith
                 occurenceName.text = occ.occurrence.occurrenceName
                 occurenceName.isSelected = true
                 occurenceName.setSingleLine()
-
-
 
                 if (occ.occurrenceActivities.isNotEmpty()) {
 
@@ -56,9 +49,8 @@ class OccurrenceActivitiesListAdapter(private val onItemClicked: (OccurrenceWith
                     timeToNext.text = "-"
                 }
             }
-            ////
-
         }
+
         fun getIntervalSeconds(): Long {
             val interval = intervalFrequency
 
@@ -131,6 +123,7 @@ class OccurrenceActivitiesListAdapter(private val onItemClicked: (OccurrenceWith
             val context = binding.timeToNext.context
             if (
                 !timeString.contains("-") &&
+                timeString.contains("d") &&
                 timeString.contains("0h") ||
                 timeString.contains("1h")
 
@@ -175,9 +168,6 @@ class OccurrenceActivitiesListAdapter(private val onItemClicked: (OccurrenceWith
         }
         holder.bind(current)
     }
-
-
-
 
     companion object {
         private val DiffCallback = object : DiffUtil.ItemCallback<OccurrenceWithActivities>() {

@@ -1,18 +1,20 @@
 package com.example.counter.ui
 
 import android.os.Bundle
-import android.os.Handler
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.counter.adapters.OccurrenceActivitiesListAdapter
 import com.example.counter.data.modelentity.Activity
+import com.example.counter.data.relations.OccurrenceWithActivities
 import com.example.counter.databinding.FragmentCounterHomeBinding
+import com.example.counter.util.Constants
 import com.example.counter.viewmodels.CounterViewModel
 import com.example.counter.viewmodels.TimeCounter
 
@@ -20,10 +22,16 @@ import com.example.counter.viewmodels.TimeCounter
 import com.google.android.material.chip.Chip
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoUnit
+import kotlin.time.Duration.Companion.seconds
 
 @ExperimentalCoroutinesApi
 @AndroidEntryPoint
 class CounterHomeFragment : Fragment() {
+
+
     private lateinit var viewModel: CounterViewModel
 
     private var selectedCategoryChip = "All"
@@ -36,7 +44,6 @@ class CounterHomeFragment : Fragment() {
         super.onCreate(savedInstanceState)
         viewModel = ViewModelProvider(requireActivity())[CounterViewModel::class.java]
 
-
     }
 
     override fun onCreateView(
@@ -46,6 +53,23 @@ class CounterHomeFragment : Fragment() {
         _binding = FragmentCounterHomeBinding.inflate(inflater, container, false)
 
         return binding.root
+    }
+
+    fun getSecondsToNext(it: List<OccurrenceWithActivities>): MutableList<Long> {
+        val listOfSeconds = mutableListOf<Long>()
+        it.forEach {
+            listOfSeconds.add(
+                it.occurrenceActivities.last().secondsToNext!!
+            )
+        }
+        return listOfSeconds
+    }
+
+    private fun getSortedList(listSeconds: MutableList<Long>): Any {
+        val sortedList = listSeconds.sorted()
+
+        return sortedList
+
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -65,59 +89,69 @@ class CounterHomeFragment : Fragment() {
         viewModel.readOccurrencesWithActivities.observe(this.viewLifecycleOwner) { items ->
 
             items.let { it ->
-                        try {
-                            val sorted = items.sortedBy{ it.occurrenceActivities[0].secondsToNext }
-                            adapter.submitList(sorted)
-                            Log.d("Home sortedBy", "posortowane")
-                        } catch (e: java.lang.Exception){
-                            Log.d("Home sortedBy", "NIE POSORTOWANE$e")
-                            adapter.submitList(it)
-                        }
+                try {
+                    val items = it
+                    val listSeconds = getSecondsToNext(it)
+                    val itemsBySeconds =
+                        items.associateBy { it.occurrenceActivities.last().secondsToNext }
+                    val sortedItems = listSeconds.sorted().map { itemsBySeconds[it] }
+                    adapter.submitList(sortedItems)
+                } catch (e: java.lang.Exception) {
+
+                    adapter.submitList(it)
+                }
             }
-            refresh()
         }
         binding.refresh.setOnClickListener {
 
             try {
                 val data = viewModel.readOccurrencesWithActivities.value
                 data?.forEach {
-//                    Log.d("Home", "data $data")
-
-
                     val timeCounter = TimeCounter(
                         it.occurrence,
-                        it.occurrenceActivities[0]
+                        it.occurrenceActivities.last()
                     )
 
-                    var secondsPassed: Long? = timeCounter.getSecondsPassed()
+                    var secondsPassed: Long? =
+                        getSecondsPassed(it.occurrenceActivities.last().fullDate)
 
-                    val id = it.occurrenceActivities[0].dateTimeId
-                    val owner = it.occurrenceActivities[0].occurrenceOwnerId
-                    val fullDate = it.occurrenceActivities[0].fullDate
+                    val id = it.occurrenceActivities.last().dateTimeId
+                    val owner = it.occurrenceActivities.last().occurrenceOwnerId
+                    val fullDate = it.occurrenceActivities.last().fullDate
 
                     val intervalSeconds =
-                        it.occurrenceActivities[0].intervalSeconds
-                    val secondsTo = intervalSeconds?.minus(secondsPassed!!)
+                        it.occurrenceActivities.last().intervalSeconds
+
+                    val secondsTo = intervalSeconds?.let { it1 ->
+                        getSecondsTo(
+                            it1,
+                            it.occurrenceActivities.last().fullDate
+                        )
+                    }
+
 
                     fun getActivityToUpdate(): Activity {
                         val aktiwiti = Activity(
                             id,
                             owner,
                             fullDate,
-                            it.occurrenceActivities[0].timeSpend,
+                            it.occurrenceActivities.last().timeSpend,
                             secondsPassed,
-                            it.occurrenceActivities[0].intervalSeconds,
+                            it.occurrenceActivities.last().intervalSeconds,
                             secondsTo
                         )
-                        Log.d("Home", "$aktiwiti")
+                        Log.d("To update: ", "$aktiwiti")
                         return aktiwiti
                     }
                     viewModel.updateActivity(getActivityToUpdate())
-                    Log.d("Home", "ForEach UpdateActivityCalled")
 
                 }
             } catch (e: Exception) {
-                Log.d("Home catch", "$e")
+                Toast.makeText(
+                    context,
+                    "eror: $e",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
 
 
@@ -160,8 +194,31 @@ class CounterHomeFragment : Fragment() {
         }
     }
 
-    private fun refresh() {
-        TODO("Not yet implemented")
+
+    private fun getSecondsTo(secondsTo: Long, lastDateTime: String): Long {
+        val pattern = "HH:mm:ss dd.MM.yyyy"
+        val formatter = DateTimeFormatter.ofPattern(pattern)
+        val lastDate = LocalDateTime.parse(lastDateTime, formatter)
+        val calculatedToDay = lastDate.plusSeconds(secondsTo)
+        val secondsTo = ChronoUnit.SECONDS.between(
+            LocalDateTime.now(),
+            calculatedToDay,
+        )
+        return secondsTo
+
     }
+
+    private fun getSecondsPassed(lastDateTime: String): Long {
+        val today = LocalDateTime.now()
+        val pattern = "HH:mm:ss dd.MM.yyyy"
+        val formatter = DateTimeFormatter.ofPattern(pattern)
+        val lastDate = LocalDateTime.parse(lastDateTime, formatter)
+        val secondsPassed = ChronoUnit.SECONDS.between(
+            lastDate,
+            today
+        )
+        return secondsPassed
+    }
+
 
 }
