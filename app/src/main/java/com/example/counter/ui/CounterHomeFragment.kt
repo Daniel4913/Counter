@@ -59,7 +59,7 @@ class CounterHomeFragment : Fragment() {
                 )
             this.findNavController().navigate(action)
         }
-        
+
 
         binding.occurenciesRecyclerView.adapter = adapter
         viewModel.readOccurrencesWithActivities.observe(this.viewLifecycleOwner) { items ->
@@ -74,12 +74,14 @@ class CounterHomeFragment : Fragment() {
                             adapter.submitList(it)
                         }
             }
+            refresh()
         }
         binding.refresh.setOnClickListener {
+
             try {
                 val data = viewModel.readOccurrencesWithActivities.value
                 data?.forEach {
-                    Log.d("Home", "data $data")
+//                    Log.d("Home", "data $data")
 
 
                     val timeCounter = TimeCounter(
@@ -156,6 +158,10 @@ class CounterHomeFragment : Fragment() {
                 CounterHomeFragmentDirections.actionCounterHomeFragmentToNewFragment("Create new occurence")
             this.findNavController().navigate(action)
         }
+    }
+
+    private fun refresh() {
+        TODO("Not yet implemented")
     }
 
 }
