@@ -97,7 +97,8 @@ class CounterHomeFragment : Fragment() {
                     val sortedItems = listSeconds.sorted().map { itemsBySeconds[it] }
                     adapter.submitList(sortedItems)
                 } catch (e: java.lang.Exception) {
-
+                    Toast.makeText(context,
+                    "List will be sorted when all Occurrences have at least one activity",Toast.LENGTH_LONG).show()
                     adapter.submitList(it)
                 }
             }
