@@ -10,6 +10,7 @@ import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.counter.R
 import com.example.counter.adapters.OccurrenceActivitiesListAdapter
 import com.example.counter.data.modelentity.Activity
 import com.example.counter.data.relations.OccurrenceWithActivities
@@ -50,6 +51,8 @@ class CounterHomeFragment : Fragment() {
         return binding.root
     }
 
+
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -72,9 +75,23 @@ class CounterHomeFragment : Fragment() {
                         items.associateBy { it.occurrenceActivities.last().secondsToNext }
                     val sortedItems = listSeconds.sorted().map { itemsBySeconds[it] }
                     adapter.submitList(sortedItems)
+
+                    /////////////////////
+                    val bigOccurrence = sortedItems.first()
+                    binding.occurencyNameLabel.text = bigOccurrence?.occurrence?.occurrenceName
+
+                    binding.occurencyTimeToLabel.text = getString(
+                        R.string.time_late,
+                        bigOccurrence?.occurrenceActivities?.last()?.secondsToNext.toString()
+                    )
+                    binding.occurencyTimeFromLabel.text = getString(R.string.time_passed,bigOccurrence?.occurrenceActivities?.last()?.secondsPassed.toString() )
+
                 } catch (e: java.lang.Exception) {
-                    Toast.makeText(context,
-                    "List will be sorted when all Occurrences have at least one activity",Toast.LENGTH_LONG).show()
+                    Toast.makeText(
+                        context,
+                        "List will be sorted when all Occurrences have at least one activity",
+                        Toast.LENGTH_LONG
+                    ).show()
                     adapter.submitList(it)
                 }
             }
@@ -151,13 +168,14 @@ class CounterHomeFragment : Fragment() {
                 }
             }
         }
-
+        binding.newOccurency.rippleColor = resources.getColor(R.color.heavenBlue)
         binding.newOccurency.setOnClickListener {
             val action =
-                CounterHomeFragmentDirections.actionCounterHomeFragmentToNewFragment("Create new occurrence")
+                CounterHomeFragmentDirections.actionCounterHomeFragmentToNewFragment("Create new Occurrence")
             this.findNavController().navigate(action)
         }
     }
+
     private fun makeListOfSecondsTo(it: List<OccurrenceWithActivities>): MutableList<Long> {
         val listOfSeconds = mutableListOf<Long>()
         it.forEach {

@@ -22,10 +22,15 @@
     <string name="save_timer_question">Add this activity to list?\nTime: %1s </string>
     <string name="occurence_name">caffeine</string>
 
+    // OccurrenceHome
+    <string name="time_late">You should have done this %s ago!</string>
+
     // Time and date dividers
     <string name="colon_time">%d:%d</string>
     <string name="minus_date">%d-%d-%d </string>
-
+    <string name="dawno_temu">dawno temu</string>
+    <string name="affirmation">Wzrasta to, czemu poświęcasz uwagę. ~ T. Harv Eker</string>
+    <string name="time_passed">It passed %s since you did it last time...</string>
 
 
     <string-array name="categories">

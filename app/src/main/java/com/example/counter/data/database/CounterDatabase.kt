@@ -15,7 +15,7 @@ import com.example.counter.data.modelentity.Occurrence
         Occurrence::class,
         Activity::class,
         Description::class],
-    version = 4,
+    version = 7,
     exportSchema = false
 )
 abstract class CounterDatabase : RoomDatabase() {

@@ -63,7 +63,9 @@ class DataSource @Inject constructor(
     suspend fun insertActivity(activity: Activity){
         activityDao.insertActivity(activity)
     }
-
+    fun getActivity(id: Int): Flow<Activity> {
+        return activityDao.getActivity(id)
+    }
 
 
     suspend fun updateSeconds(activityId: Int, secondsFrom: Long, secondsTo: Long){
@@ -103,6 +105,8 @@ class DataSource @Inject constructor(
     suspend fun deleteAllDescriptions(){
         descriptionDao.deleteAll()
     }
+
+
 
 
 }

@@ -26,6 +26,7 @@ interface ActivityDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertActivity(activity: Activity)
 
+    @Transaction
     @Update
     suspend fun update(activity: Activity)
 
@@ -34,4 +35,7 @@ interface ActivityDao {
 
     @Query("DELETE from activities_table")
     suspend fun deleteAll()
+    @Transaction
+    @Query("SELECT * from activities_table WHERE activity_id=:id")
+    fun getActivity(id: Int): Flow<Activity>
 }

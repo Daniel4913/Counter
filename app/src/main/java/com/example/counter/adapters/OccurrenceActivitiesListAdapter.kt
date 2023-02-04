@@ -39,6 +39,11 @@ class OccurrenceActivitiesListAdapter(private val onItemClicked: (OccurrenceWith
                     lastDateTime = occ.occurrenceActivities.last().fullDate
                     intervalFrequency = occ.occurrence.intervalFrequency
 
+                    /** todo chce z  tym zrobic iluzje uplywania czasu dodajac +1 co sekunde ale tylko w UI
+                    var secondsPassed = getSecondsPassed()
+                    var secondsTo = getSecondsTo(getIntervalSeconds())
+                    */
+
                     timeToNext.text = secondsToComponents(getSecondsTo(getIntervalSeconds()))
                     timeFromLast.text = secondsToComponents(getSecondsPassed())
 
@@ -110,8 +115,8 @@ class OccurrenceActivitiesListAdapter(private val onItemClicked: (OccurrenceWith
             )
         }
 
-        private fun secondsToComponents(secondsPassed: Long): String {
-            secondsPassed.seconds.toComponents { days, hours, minutes, seconds, _ ->
+        private fun secondsToComponents(seconds: Long): String {
+            seconds.seconds.toComponents { days, hours, minutes, seconds, _ ->
 
                 return when (days) {
                     0L -> "${hours}h ${minutes}m ${seconds}s"

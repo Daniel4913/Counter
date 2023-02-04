@@ -61,21 +61,14 @@ class OccurrenceFragment : Fragment() {
             occurencyCategory.text = occurrence.category
             occurIcon.setImageResource(getOccurIcon())
             deleteBtn.setOnClickListener { showConfirmationDialog() }
-            editBtn.setOnClickListener { editOccurence() }
+            editBtn.setOnClickListener { editOccurrence() }
             startTimer.setOnClickListener { startStopTimer() }
             resetTimer.setOnClickListener { resetTimer() }
             intervalTextView.text = occurrence.intervalFrequency
         }
     }
 
-    private fun getOccurIcon(): Int {
-        val occurMore: Boolean = occurrence.occurMore
-        return if (occurMore) {
-            R.drawable.ic_expand_more
-        } else {
-            R.drawable.ic_expand_less
-        }
-    }
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -99,7 +92,10 @@ class OccurrenceFragment : Fragment() {
 
         val adapter = ActivitiesListAdapter {
             activity = it
-            showConfirmationDialogDeleteDateTime()
+//            showConfirmationDialogDeleteDateTime()
+            val action = OccurrenceFragmentDirections.actionOccurenceFragmentToActivityEditFragment(it.activityId)
+            this.findNavController().navigate(action)
+
         }
 
         bindingOccurence.occurenceDetailRecyclerView.adapter = adapter
@@ -193,6 +189,15 @@ class OccurrenceFragment : Fragment() {
                     R.color.green
                 )
             )
+        }
+    }
+
+    private fun getOccurIcon(): Int {
+        val occurMore: Boolean = occurrence.occurMore
+        return if (occurMore) {
+            R.drawable.ic_expand_more
+        } else {
+            R.drawable.ic_expand_less
         }
     }
 
@@ -299,14 +304,14 @@ class OccurrenceFragment : Fragment() {
         viewModel.deleteActivity(activity)
     }
 
-    private fun deleteOccurence() {
+    private fun deleteOccurrence() {
         viewModel.deleteOccurence(occurrence)
         findNavController().navigateUp()
     }
 
-    private fun editOccurence() {
+    private fun editOccurrence() {
         val action = OccurrenceFragmentDirections.actionOccurenceFragmentToNewFragment(
-            "Edit occurrence",
+            "Edit Occurrence",
             occurrence.occurrenceId
         )
         this.findNavController().navigate(action)
@@ -324,7 +329,7 @@ class OccurrenceFragment : Fragment() {
             .setCancelable(false)
             .setNegativeButton(getString(string.no)) { _, _ -> }
             .setPositiveButton(getString(string.yes)) { _, _ ->
-                deleteOccurence()
+                deleteOccurrence()
             }
             .show()
     }

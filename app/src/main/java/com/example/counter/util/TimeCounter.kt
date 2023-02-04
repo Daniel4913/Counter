@@ -1,7 +1,5 @@
-package com.example.counter.viewmodels
+package com.example.counter.util
 
-import android.util.Log
-import com.example.counter.util.Constants
 import com.example.counter.data.modelentity.Activity
 import com.example.counter.data.modelentity.Occurrence
 import com.example.counter.data.relations.OccurrenceWithActivities

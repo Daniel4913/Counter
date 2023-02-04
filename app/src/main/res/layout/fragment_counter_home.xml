@@ -17,12 +17,12 @@
         app:cardCornerRadius="10dp"
         app:cardElevation="0.5dp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@drawable/bg_trans">
+            android:layout_height="match_parent">
 
             <ImageView
                 android:id="@+id/profile_imageView"
@@ -66,7 +66,7 @@
                 android:layout_marginStart="16dp"
                 android:maxLines="1"
                 android:overScrollMode="ifContentScrolls"
-                android:text="Lorem ipsum – tekst składający się z łacińskich i quasi-łacińskich wyrazów, mający korzenie w klasycznej łacinie, wzorowany na fragmencie traktatu Cycerona „O granicach dobra i z"
+                android:text="@string/affirmation"
                 android:textColor="@color/lightGray"
                 android:textSize="12sp"
                 app:layout_constraintStart_toStartOf="@+id/occurence_icon"
@@ -76,25 +76,25 @@
                 android:id="@+id/occurency_time_to_label"
                 style="@style/Widget.Counter.Header"
                 android:layout_below="@+id/occurency_name_label"
-                android:layout_marginBottom="8dp"
-                android:text="@string/time_to"
+                android:text="@string/time_late"
                 android:textAlignment="center"
                 android:textColor="@color/lightGray"
                 android:textSize="8dp"
                 app:layout_constraintBottom_toTopOf="@+id/occurency_time_from_label"
                 app:layout_constraintHorizontal_weight="1"
                 app:layout_constraintStart_toStartOf="@+id/occurence_icon"
-                app:layout_constraintTop_toTopOf="@+id/imageView3" />
+                app:layout_constraintTop_toBottomOf="@+id/textView3" />
 
             <TextView
                 android:id="@+id/occurency_time_from_label"
                 style="@style/Widget.Counter.Header"
                 android:layout_alignParentEnd="true"
-                android:text="@string/time_from_last"
+                android:layout_marginBottom="24dp"
+                android:text="@string/time_passed"
                 android:textAlignment="center"
                 android:textColor="@color/lightGray"
                 android:textSize="8dp"
-                app:layout_constraintBottom_toBottomOf="@+id/imageView3"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintHorizontal_weight="1"
                 app:layout_constraintStart_toStartOf="@+id/occurency_time_to_label" />
 
@@ -231,6 +231,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="32dp"
         android:layout_marginBottom="32dp"
+        app:backgroundTint="#BF00A8FF"
         android:src="@drawable/ic_plus"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />

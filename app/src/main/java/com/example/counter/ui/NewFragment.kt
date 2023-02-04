@@ -2,7 +2,6 @@ package com.example.counter.ui
 
 import android.content.Context.INPUT_METHOD_SERVICE
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -23,7 +22,6 @@ import com.example.counter.pickers.DatePickerFragment
 import com.example.counter.pickers.TimePickerFragment
 import com.example.counter.viewmodels.CounterViewModel
 import com.google.android.material.chip.Chip
-import com.google.android.material.chip.ChipGroup
 import com.vanniktech.emoji.installForceSingleEmoji
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -35,7 +33,7 @@ class NewFragment : Fragment() {
     private val navigationArgs: NewFragmentArgs by navArgs()
 
     private lateinit var viewModel: CounterViewModel
-
+    private lateinit var occurrence: Occurrence
 
     private var intervalFrequencyChip = MINUTES
     private var intervalFrequencyChipId = 0
@@ -43,12 +41,11 @@ class NewFragment : Fragment() {
 
 //    lateinit var emojiProvider: EmojiProvider
 
-    lateinit var occurrence: Occurrence
-
-
     private var _binding: FragmentNewBinding? = null
     private val binding get() = _binding!!
     private var emojiIcon = ""
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel = ViewModelProvider(requireActivity())[CounterViewModel::class.java]
@@ -64,6 +61,12 @@ class NewFragment : Fragment() {
             intervalNumberPicker.minValue = DEFAULT_HOURS
             intervalNumberPicker.maxValue = DEFAULT_MAX_HOURS
             emojiEditText.setText(emojiIcon)
+
+            //populate category list on edit
+            //TODO ALLOW USER TO CREATE OWN CATEGORY (NEED TO IMPLEMENT DATA STORE FIRST)
+            val categories: Array<String> = resources.getStringArray(R.array.categories)
+            val arrayAdapter = ArrayAdapter(requireContext(), R.layout.category_item, categories)
+            binding.categoryDropdown.setAdapter(arrayAdapter)
 
         }
     }
@@ -86,27 +89,16 @@ class NewFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val id = navigationArgs.occurenceId
-        if (id > 0) {
-            viewModel.getOccurrence(id).observe(this.viewLifecycleOwner) { selectedOccurrence ->
-                occurrence = selectedOccurrence
-                bind(occurrence)
-            }
-        } else {
-            binding.addBtn.setOnClickListener { addNewOccurrence() }
-        }
 
-        setIntervalValue()
+
+        setIntervalValues()
 
         binding.tvDate.setOnClickListener { getDate() }
-
         binding.tvTime.setOnClickListener { getTime() }
-
         binding.frequencySwitch.setOnClickListener { updateFrequencySwitchText() }
 
-        val duration = Toast.LENGTH_LONG
-        val text = "Click on date and time to change it"
-        val toast = Toast.makeText(requireContext(), text, duration)
-        toast.show()
+        Toast.makeText(requireContext(), "Click on date and time to change it", Toast.LENGTH_LONG)
+            .show()
 
         val c = Calendar.getInstance()
         val year = c.get(Calendar.YEAR)
@@ -116,35 +108,52 @@ class NewFragment : Fragment() {
         val minute = c.get(Calendar.MINUTE)
         val now = "${hourOfDay}:${minute}"
 
-        if (binding.tvTime.text == now) {
-        } else {
+        if (binding.tvTime.text !== now) {
             binding.tvTime.text = getString(R.string.colon_time, hourOfDay, minute)
             binding.tvDate.text = getString(R.string.minus_date, day, month, year)
         }
 
-
-        //TODO update chip gdy edytujemy
-//if (currentOccurence != null) {
-//    currentOccurence?.occurenceId?.let {
-//        viewModel.retrieveOccurence(it).observe(viewLifecycleOwner) { value ->
-//            intervalFrequencyChip =
-//                value.intervalFrequency //todo wyciagnac tylko czestotliwosc dzien/godzina itd
-//            Log.d("intervalFrequencyChip from retrieve occurence", value.intervalFrequency)
-//            updateChip(intervalFrequencyChipId, binding.frequencyChipGroup)
-//            //TODO FATAL EXCEPTION: lateinit property occurence has not been initialized
-//        }
-//    }
-//}
-
         binding.frequencyChipGroup.setOnCheckedStateChangeListener { group, selectedChipId ->
             val chip = group.findViewById<Chip>(selectedChipId.first())
             val selectedFrequency = chip.text.toString().lowercase(Locale.ROOT)
-            Log.d("checked chip ID: ", chip.toString())
             intervalFrequencyChip = selectedFrequency
             intervalFrequencyChipId = selectedChipId.first()
         }
 
+        if (id > 0) {
+            viewModel.getOccurrence(id).observe(this.viewLifecycleOwner) { selectedOccurrence ->
+                occurrence = selectedOccurrence
 
+                val readFrequence = splitFrequence()
+                updateChipAndValue(readFrequence)
+                intervalValue = readFrequence[0].toInt()
+                intervalFrequencyChip = readFrequence[1]
+
+                bind(occurrence)
+            }
+        } else {
+            binding.addBtn.setOnClickListener { addNewOccurrence() }
+        }
+    }
+
+    private fun updateChipAndValue(intervalValues: List<String>) {
+        val pickerValue = intervalValues[0].toInt()
+        val chipValue = intervalValues[1]
+
+
+
+        val value: Int = when (chipValue) {
+            "minutes" -> R.id.chip_minutes
+            "hours" -> R.id.chip_hours
+            "days" -> R.id.chip_days
+            "weeks" -> R.id.chip_weeks
+            else -> {
+                R.id.chip_months
+            }
+        }
+
+        binding.intervalNumberPicker.value = pickerValue
+        binding.frequencyChipGroup.check(value)
     }
 
     private fun updateFrequencySwitchText() {
@@ -159,33 +168,30 @@ class NewFragment : Fragment() {
         }
     }
 
-    private fun updateChip(intervalFrequencyChipId: Int, frequencyChipGroup: ChipGroup) {
-        if (intervalFrequencyChipId != 0) {
-            try {
-                frequencyChipGroup.findViewById<Chip>(intervalFrequencyChipId).isChecked = true
-            } catch (e: Exception) {
-
-            }
-        }
-    }
 
     private fun getIntervalFrequency(value: Int, frequency: String): String {
         return "$value $frequency"
     }
 
 
-    private fun setIntervalValue() {
+    private fun setIntervalValues() {
         binding.intervalNumberPicker.minValue = intervalValue
         binding.intervalNumberPicker.maxValue = DEFAULT_MAX_DAYS
         binding.intervalNumberPicker.setOnValueChangedListener { picker, oldVal, newVal ->
             intervalValue = newVal
         }
+
     }
 
     private fun splitCreateDate(): List<String> {
         val createDate = occurrence.createDate
-        val delim = " "
-        return createDate.split(delim)
+        return createDate.split(" ")
+    }
+
+    private fun splitFrequence(): List<String> {
+        val frequence = occurrence.intervalFrequency
+        return frequence.split(" ")
+
     }
 
     private fun getNewDateTime(date: String, time: String): String {
@@ -273,7 +279,7 @@ class NewFragment : Fragment() {
         }
     }
 
-    // to prevent of disappear category items from list //todo NIEDZIALA PRZY UPDATE
+    //     to prevent of disappear category items from list
     override fun onResume() {
         super.onResume()
         val categories = resources.getStringArray(R.array.categories)

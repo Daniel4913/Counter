@@ -36,21 +36,21 @@ class CounterViewModel @Inject constructor(
         return repository.dataSource.getOccurrencesWithActivities().asLiveData()
     }
 
-    fun getActivities(id: Int): LiveData<List<Activity>>{
+    fun getActivities(id: Int): LiveData<List<Activity>> {
         return repository.dataSource.getOccurrenceActivities(id).asLiveData()
     }
 
-    fun getAllActivities(): LiveData<List<Activity>>{
+    fun getAllActivities(): LiveData<List<Activity>> {
         return repository.dataSource.getAllActivities().asLiveData()
     }
 
     fun updateSeconds(activityId: Int, secondsFrom: Long, secondsTo: Long) {
         viewModelScope.launch {
-            repository.dataSource.updateSeconds(activityId,secondsFrom,secondsTo)
+            repository.dataSource.updateSeconds(activityId, secondsFrom, secondsTo)
         }
     }
 
-    fun updateActivity(activity: Activity){
+    fun updateActivity(activity: Activity) {
         viewModelScope.launch { repository.dataSource.updateActivity(activity) }
     }
 
@@ -58,7 +58,7 @@ class CounterViewModel @Inject constructor(
         return repository.dataSource.getOccurrenceWithDescriptions().asLiveData()
     }
 
-    fun getDescriptions(id: Int): LiveData<List<Description>>{
+    fun getDescriptions(id: Int): LiveData<List<Description>> {
         return repository.dataSource.getDescriptions(id).asLiveData()
     }
 
@@ -172,6 +172,10 @@ class CounterViewModel @Inject constructor(
         }
     }
 
+    fun getActivity(id: Int): LiveData<Activity> {
+        return repository.dataSource.getActivity(id).asLiveData()
+    }
+
     private fun getNewActivity(
         occurenceOwnerId: Int,
         fullDate: String,
@@ -255,10 +259,10 @@ class CounterViewModel @Inject constructor(
         insertDescription(newDescription)
     }
 
+
     /**
      * Counting bloc, to calculate how much time passed between occurences
      */
-
 
 
     /**

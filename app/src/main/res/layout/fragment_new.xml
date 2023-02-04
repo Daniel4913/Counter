@@ -135,7 +135,7 @@
                         style="@style/CustomChipStyle"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        app:checkedChip="@+id/chip_minutes"
+                        app:checkedChip="@+id/chip_hours"
                         app:selectionRequired="true"
                         app:singleLine="true"
                         app:singleSelection="true">
@@ -290,7 +290,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:inputType="none" />
+                    android:inputType="textCapWords" />
             </com.google.android.material.textfield.TextInputLayout>
 
 

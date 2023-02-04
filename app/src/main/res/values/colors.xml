@@ -22,6 +22,7 @@
     <color name="yellow">#FFC114</color>
     <color name="orange">#F49200</color>
     <color name="green">#00C980</color>
+    <color name="heavenBlue">#9000A8FF</color>
     <!--light theme-->
     // Custom chip style
     <color name="checkedChipBgColor">#206200EA</color>
