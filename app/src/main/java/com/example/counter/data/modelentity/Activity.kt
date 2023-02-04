@@ -8,8 +8,8 @@ import com.example.counter.util.Constants.Companion.ACTIVITIES_TABLE
 @Entity(tableName = ACTIVITIES_TABLE)
 data class Activity(
     @PrimaryKey(autoGenerate = true)
-    @ColumnInfo(name="date_time_id")
-    val dateTimeId: Int = 0,
+    @ColumnInfo(name="activity_id")
+    val activityId: Int = 0,
 
     @ColumnInfo(name="occurrence_owner_id")
     val occurrenceOwnerId: Int =0,
@@ -20,8 +20,8 @@ data class Activity(
     @ColumnInfo(name= "time_spend")
     val timeSpend: String?,
 
-    @ColumnInfo(name="seconds_from_last")
-    val secondsFromLast: Long?,
+    @ColumnInfo(name="seconds_passed")
+    val secondsPassed: Long?,
 
     @ColumnInfo(name="interval_seconds")
     var intervalSeconds: Long?,

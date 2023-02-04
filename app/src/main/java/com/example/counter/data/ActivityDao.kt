@@ -13,19 +13,15 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface ActivityDao {
     @Transaction
-    @Query("SELECT * from activities_table WHERE occurrence_owner_id = :id ORDER BY date_time_id DESC")
-    fun getOccurenceWithActivities(id:Int): Flow<List<Activity>>
+    @Query("SELECT * from activities_table WHERE occurrence_owner_id = :id ORDER BY activity_id DESC")
+    fun getOccurrenceWithActivities(id:Int): Flow<List<Activity>>
 
     @Transaction
     @Query("SELECT * from activities_table")
     fun getAllActivities(): Flow<List<Activity>>
 
-//    @Query("SELECT date_time_id, full_date from dateTime WHERE occurence_owner_id = :id")
-//@Query("SELECT date_time_id, full_date from dateTime")
-//    fun getLastDateTime(id: Int): Flow<List<DateTime>>
-
-    @Query("UPDATE activities_table SET seconds_to_next =:secondsTo AND seconds_from_last =:secondsFrom WHERE date_time_id =:activityId")
-    suspend fun updateSeconds(activityId: Int, secondsFrom: Long, secondsTo: Long)
+    @Query("UPDATE activities_table SET seconds_to_next =:secondsTo AND seconds_passed =:secondsPassed WHERE activity_id =:activityId")
+    suspend fun updateSeconds(activityId: Int, secondsPassed: Long, secondsTo: Long)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertActivity(activity: Activity)

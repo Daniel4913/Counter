@@ -24,7 +24,7 @@
     </fragment>
     <fragment
         android:id="@+id/occurenceFragment"
-        android:name="com.example.counter.ui.OccurenceFragment"
+        android:name="com.example.counter.ui.OccurrenceFragment"
         android:label="Occurence"
         tools:layout="@layout/fragment_occurence">
         <argument

@@ -185,7 +185,7 @@ class CounterViewModel @Inject constructor(
             occurrenceOwnerId = occurenceOwnerId,
             fullDate = fullDate,
             timeSpend = timeStart,
-            secondsFromLast = secondsFromLast,
+            secondsPassed = secondsFromLast,
             intervalSeconds = intervalSeconds,
             secondsToNext = secondsToNext
         )

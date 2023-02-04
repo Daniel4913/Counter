@@ -32,7 +32,7 @@ import java.util.*
 @ExperimentalCoroutinesApi
 @AndroidEntryPoint
 class NewFragment : Fragment() {
-    val navigationArgs: NewFragmentArgs by navArgs()
+    private val navigationArgs: NewFragmentArgs by navArgs()
 
     private lateinit var viewModel: CounterViewModel
 
@@ -44,7 +44,7 @@ class NewFragment : Fragment() {
 //    lateinit var emojiProvider: EmojiProvider
 
     lateinit var occurrence: Occurrence
-//    private var currentOccurence: Occurence? = occurence
+
 
     private var _binding: FragmentNewBinding? = null
     private val binding get() = _binding!!
@@ -58,7 +58,7 @@ class NewFragment : Fragment() {
         binding.apply {
             occurenceName.setText(occurrence.occurrenceName, TextView.BufferType.SPANNABLE)
             categoryDropdown.setText(occurrence.category, TextView.BufferType.SPANNABLE)
-            addBtn.setOnClickListener { updateOccurence() }
+            addBtn.setOnClickListener { updateOccurrence() }
             tvDate.setText(splitCreateDate()[0])
             tvTime.setText(splitCreateDate()[1])
             intervalNumberPicker.minValue = DEFAULT_HOURS
@@ -87,17 +87,15 @@ class NewFragment : Fragment() {
 
         val id = navigationArgs.occurenceId
         if (id > 0) {
-            viewModel.getOccurrence(id).observe(this.viewLifecycleOwner) { selectedOccurence ->
-                occurrence = selectedOccurence
+            viewModel.getOccurrence(id).observe(this.viewLifecycleOwner) { selectedOccurrence ->
+                occurrence = selectedOccurrence
                 bind(occurrence)
             }
         } else {
-            binding.addBtn.setOnClickListener { addNewOccurence() }
+            binding.addBtn.setOnClickListener { addNewOccurrence() }
         }
 
         setIntervalValue()
-
-
 
         binding.tvDate.setOnClickListener { getDate() }
 
@@ -120,8 +118,8 @@ class NewFragment : Fragment() {
 
         if (binding.tvTime.text == now) {
         } else {
-            binding.tvTime.setText("${hourOfDay}:${minute}")
-            binding.tvDate.setText("${year}-${month}-${day}")
+            binding.tvTime.text = getString(R.string.colon_time, hourOfDay, minute)
+            binding.tvDate.text = getString(R.string.minus_date, day, month, year)
         }
 
 
@@ -185,11 +183,14 @@ class NewFragment : Fragment() {
     }
 
     private fun splitCreateDate(): List<String> {
-        val fullCreateDate = occurrence.createDate
+        val createDate = occurrence.createDate
         val delim = " "
-        return fullCreateDate.split(delim)
+        return createDate.split(delim)
     }
 
+    private fun getNewDateTime(date: String, time: String): String {
+        return "$date $time"
+    }
 
     private fun getDate() {
         val datePickerFragment = DatePickerFragment()
@@ -205,10 +206,6 @@ class NewFragment : Fragment() {
             }
         }
         datePickerFragment.show(supportFragmentManager, "DatePickerFragment")
-    }
-
-    fun getNewDateTime(date: String, time: String): String {
-        return "$date $time"
     }
 
     private fun getTime() {
@@ -236,7 +233,7 @@ class NewFragment : Fragment() {
         return "$icon $name"
     }
 
-    private fun addNewOccurence() {
+    private fun addNewOccurrence() {
         if (isEntryValid()) {
             val createDate =
                 getNewDateTime(binding.tvDate.text.toString(), binding.tvTime.text.toString())
@@ -258,7 +255,7 @@ class NewFragment : Fragment() {
         )
     }
 
-    private fun updateOccurence() {
+    private fun updateOccurrence() {
         if (isEntryValid()) {
             val createDate =
                 getNewDateTime(binding.tvDate.text.toString(), binding.tvTime.text.toString())
@@ -276,7 +273,7 @@ class NewFragment : Fragment() {
         }
     }
 
-    // to prevent of disappear category items from list
+    // to prevent of disappear category items from list //todo NIEDZIALA PRZY UPDATE
     override fun onResume() {
         super.onResume()
         val categories = resources.getStringArray(R.array.categories)

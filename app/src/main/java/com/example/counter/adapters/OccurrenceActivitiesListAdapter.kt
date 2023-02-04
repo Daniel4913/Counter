@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.counter.R
+import com.example.counter.data.modelentity.Occurrence
 import com.example.counter.data.relations.OccurrenceWithActivities
 import com.example.counter.databinding.OccurenceHomeItemBinding
 import com.example.counter.util.Constants
@@ -23,37 +24,43 @@ class OccurrenceActivitiesListAdapter(private val onItemClicked: (OccurrenceWith
     class OccurrenceViewHolder(private val binding: OccurenceHomeItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        lateinit var lastDateTime: String
-        lateinit var intervalFrequency: String
+        private lateinit var lastDateTime: String
+        private lateinit var intervalFrequency: String
 
         fun bind(occ: OccurrenceWithActivities) {
             binding.apply {
-                icCategory.text = occ.occurrence.occurrenceName[1].toString()
+                icOccurrence.text = occ.occurrence.occurrenceName[1].toString()
                 occurenceName.text = occ.occurrence.occurrenceName
                 occurenceName.isSelected = true
                 occurenceName.setSingleLine()
+                occurIcon.setImageResource(getOccurIcon(occ.occurrence))
 
                 if (occ.occurrenceActivities.isNotEmpty()) {
-
                     lastDateTime = occ.occurrenceActivities.last().fullDate
                     intervalFrequency = occ.occurrence.intervalFrequency
 
                     timeToNext.text = secondsToComponents(getSecondsTo(getIntervalSeconds()))
-
                     timeFromLast.text = secondsToComponents(getSecondsPassed())
 
                     applyTimeColor(secondsToComponents(getSecondsTo(getIntervalSeconds())))
-
                 } else {
-                    timeFromLast.text = "-"
-                    timeToNext.text = "-"
+                    timeFromLast.text = "- -"
+                    timeToNext.text = "- -"
                 }
+            }
+        }
+
+        private fun getOccurIcon(occurrence: Occurrence): Int {
+            val occurMore: Boolean = occurrence.occurMore
+            return if (occurMore) {
+                R.drawable.ic_expand_more
+            } else {
+                R.drawable.ic_expand_less
             }
         }
 
         fun getIntervalSeconds(): Long {
             val interval = intervalFrequency
-
             val intervalValue = interval.split(" ")[0].toLong()
             val intervalFrequency = interval.split(" ")[1]
             var toSecondsTo: Long = 0
@@ -66,7 +73,6 @@ class OccurrenceActivitiesListAdapter(private val onItemClicked: (OccurrenceWith
                 }
                 Constants.DAYS -> {
                     toSecondsTo = 86400 * intervalValue
-
                 }
                 Constants.WEEKS -> {
                     toSecondsTo = 604800 * intervalValue
@@ -79,53 +85,50 @@ class OccurrenceActivitiesListAdapter(private val onItemClicked: (OccurrenceWith
         }
 
 
-        fun getSecondsTo(secondsTo: Long): Long {
+        private fun getSecondsTo(secondsTo: Long): Long {
             val timeFrom = lastDateTime
-            val timeTo = secondsTo
-
             val pattern = "HH:mm:ss dd.MM.yyyy"
             val formatter = DateTimeFormatter.ofPattern(pattern)
             val lastDate = LocalDateTime.parse(timeFrom, formatter)
-            val calculatedToDay = lastDate.plusSeconds(timeTo)
-            val secondsTo = ChronoUnit.SECONDS.between(
+            val calculatedToDay = lastDate.plusSeconds(secondsTo)
+
+            return ChronoUnit.SECONDS.between(
                 LocalDateTime.now(),
                 calculatedToDay,
             )
-            return secondsTo
-
         }
-        fun getSecondsPassed(): Long {
+
+        private fun getSecondsPassed(): Long {
             val today = LocalDateTime.now()
             val pattern = "HH:mm:ss dd.MM.yyyy"
             val formatter = DateTimeFormatter.ofPattern(pattern)
             val lastDate = LocalDateTime.parse(lastDateTime, formatter)
-            val secondsPassed = ChronoUnit.SECONDS.between(
+
+            return ChronoUnit.SECONDS.between(
                 lastDate,
                 today
             )
-            return secondsPassed
         }
-       private fun secondsToComponents(secondsPassed: Long): String {
-            secondsPassed.seconds.toComponents { days, hours, minutes, seconds, nanoseconds ->
-                var calculated = ""
 
-                when (days) {
-                    0L -> calculated = "${hours}h ${minutes}m ${seconds}s"
-                    else -> calculated = "${days}d ${hours}h ${minutes}m ${seconds}s"
+        private fun secondsToComponents(secondsPassed: Long): String {
+            secondsPassed.seconds.toComponents { days, hours, minutes, seconds, _ ->
+
+                return when (days) {
+                    0L -> "${hours}h ${minutes}m ${seconds}s"
+                    else -> "${days}d ${hours}h ${minutes}m ${seconds}s"
                 }
-
-                return calculated
             }
         }
-//
 
         private fun applyTimeColor(timeString: String) {
             val context = binding.timeToNext.context
             if (
                 !timeString.contains("-") &&
-                timeString.contains("d") &&
                 timeString.contains("0h") ||
-                timeString.contains("1h")
+                timeString.contains("1h") &&
+                timeString.contains("11h") &&
+                timeString.contains("21h") &&
+                !timeString.contains("d")
 
             ) {
                 binding.timeToNext.setTextColor(
@@ -134,8 +137,7 @@ class OccurrenceActivitiesListAdapter(private val onItemClicked: (OccurrenceWith
                         R.color.orange
                     )
                 )
-            }
-            else if (timeString.contains("-")) {
+            } else if (timeString.contains("-")) {
                 binding.timeToNext.setTextColor(
                     ContextCompat.getColor(
                         context,

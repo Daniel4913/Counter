@@ -57,7 +57,7 @@ class DataSource @Inject constructor(
     }
 
     fun getOccurrenceActivities(occurrenceId: Int): Flow<List<Activity>>{
-        return activityDao.getOccurenceWithActivities(occurrenceId)
+        return activityDao.getOccurrenceWithActivities(occurrenceId)
     }
 
     suspend fun insertActivity(activity: Activity){

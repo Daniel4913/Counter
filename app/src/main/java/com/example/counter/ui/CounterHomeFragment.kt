@@ -14,9 +14,7 @@ import com.example.counter.adapters.OccurrenceActivitiesListAdapter
 import com.example.counter.data.modelentity.Activity
 import com.example.counter.data.relations.OccurrenceWithActivities
 import com.example.counter.databinding.FragmentCounterHomeBinding
-import com.example.counter.util.Constants
 import com.example.counter.viewmodels.CounterViewModel
-import com.example.counter.viewmodels.TimeCounter
 
 
 import com.google.android.material.chip.Chip
@@ -25,12 +23,10 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
-import kotlin.time.Duration.Companion.seconds
 
 @ExperimentalCoroutinesApi
 @AndroidEntryPoint
 class CounterHomeFragment : Fragment() {
-
 
     private lateinit var viewModel: CounterViewModel
 
@@ -43,7 +39,6 @@ class CounterHomeFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel = ViewModelProvider(requireActivity())[CounterViewModel::class.java]
-
     }
 
     override fun onCreateView(
@@ -53,23 +48,6 @@ class CounterHomeFragment : Fragment() {
         _binding = FragmentCounterHomeBinding.inflate(inflater, container, false)
 
         return binding.root
-    }
-
-    fun getSecondsToNext(it: List<OccurrenceWithActivities>): MutableList<Long> {
-        val listOfSeconds = mutableListOf<Long>()
-        it.forEach {
-            listOfSeconds.add(
-                it.occurrenceActivities.last().secondsToNext!!
-            )
-        }
-        return listOfSeconds
-    }
-
-    private fun getSortedList(listSeconds: MutableList<Long>): Any {
-        val sortedList = listSeconds.sorted()
-
-        return sortedList
-
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -84,14 +62,12 @@ class CounterHomeFragment : Fragment() {
             this.findNavController().navigate(action)
         }
 
-
         binding.occurenciesRecyclerView.adapter = adapter
         viewModel.readOccurrencesWithActivities.observe(this.viewLifecycleOwner) { items ->
-
             items.let { it ->
                 try {
                     val items = it
-                    val listSeconds = getSecondsToNext(it)
+                    val listSeconds = makeListOfSecondsTo(it)
                     val itemsBySeconds =
                         items.associateBy { it.occurrenceActivities.last().secondsToNext }
                     val sortedItems = listSeconds.sorted().map { itemsBySeconds[it] }
@@ -103,20 +79,14 @@ class CounterHomeFragment : Fragment() {
                 }
             }
         }
-        binding.refresh.setOnClickListener {
 
+        binding.refresh.setOnClickListener {
             try {
                 val data = viewModel.readOccurrencesWithActivities.value
                 data?.forEach {
-                    val timeCounter = TimeCounter(
-                        it.occurrence,
-                        it.occurrenceActivities.last()
-                    )
-
-                    var secondsPassed: Long? =
+                    val secondsPassed: Long? =
                         getSecondsPassed(it.occurrenceActivities.last().fullDate)
-
-                    val id = it.occurrenceActivities.last().dateTimeId
+                    val id = it.occurrenceActivities.last().activityId
                     val owner = it.occurrenceActivities.last().occurrenceOwnerId
                     val fullDate = it.occurrenceActivities.last().fullDate
 
@@ -129,7 +99,6 @@ class CounterHomeFragment : Fragment() {
                             it.occurrenceActivities.last().fullDate
                         )
                     }
-
 
                     fun getActivityToUpdate(): Activity {
                         val aktiwiti = Activity(
@@ -145,7 +114,6 @@ class CounterHomeFragment : Fragment() {
                         return aktiwiti
                     }
                     viewModel.updateActivity(getActivityToUpdate())
-
                 }
             } catch (e: Exception) {
                 Toast.makeText(
@@ -154,8 +122,6 @@ class CounterHomeFragment : Fragment() {
                     Toast.LENGTH_SHORT
                 ).show()
             }
-
-
         }
 
         binding.occurenciesRecyclerView.layoutManager = LinearLayoutManager(this.context)
@@ -171,7 +137,6 @@ class CounterHomeFragment : Fragment() {
                 "All" -> {
                     viewModel.readOccurrencesWithActivities.observe(this.viewLifecycleOwner) { items ->
                         items.let {
-                            it as MutableList
                             adapter.submitList(it)
                         }
                     }
@@ -187,14 +152,22 @@ class CounterHomeFragment : Fragment() {
             }
         }
 
-
         binding.newOccurency.setOnClickListener {
             val action =
-                CounterHomeFragmentDirections.actionCounterHomeFragmentToNewFragment("Create new occurence")
+                CounterHomeFragmentDirections.actionCounterHomeFragmentToNewFragment("Create new occurrence")
             this.findNavController().navigate(action)
         }
     }
+    private fun makeListOfSecondsTo(it: List<OccurrenceWithActivities>): MutableList<Long> {
+        val listOfSeconds = mutableListOf<Long>()
+        it.forEach {
+            listOfSeconds.add(
+                it.occurrenceActivities.last().secondsToNext!!
+            )
+        }
 
+        return listOfSeconds
+    }
 
     private fun getSecondsTo(secondsTo: Long, lastDateTime: String): Long {
         val pattern = "HH:mm:ss dd.MM.yyyy"

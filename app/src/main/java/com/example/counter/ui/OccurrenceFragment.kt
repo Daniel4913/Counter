@@ -4,9 +4,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-//import android.os.Build.VERSION_CODES.R to bylo zaimportowane kiedy zjebaly sie stringi (unresolved reference R. string)
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -36,19 +34,16 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 @ExperimentalCoroutinesApi
 @AndroidEntryPoint
-class OccurenceFragment : Fragment() {
+class OccurrenceFragment : Fragment() {
 
-    private val navigationArgs: OccurenceFragmentArgs by navArgs()
+    private val navigationArgs: OccurrenceFragmentArgs by navArgs()
 
     private lateinit var viewModel: CounterViewModel
-
-    lateinit var occurrence: Occurrence
-
     private lateinit var serviceIntent: Intent
-
-    lateinit var activity: Activity
-    lateinit var timePassed: String
-    lateinit var lastDateTime: String
+    private lateinit var occurrence: Occurrence
+    private lateinit var activity: Activity // counter.data.modelentity.Activity
+    private lateinit var timePassed: String
+    private lateinit var lastActivity: String
 
     private var timerStarted = false
     private var time = 0.0
@@ -73,7 +68,6 @@ class OccurenceFragment : Fragment() {
         }
     }
 
-
     private fun getOccurIcon(): Int {
         val occurMore: Boolean = occurrence.occurMore
         return if (occurMore) {
@@ -89,8 +83,6 @@ class OccurenceFragment : Fragment() {
     ): View? {
         viewModel.getOccurrenceWithActivities()
         _bindingOccurence = FragmentOccurenceBinding.inflate(inflater, container, false)
-
-
 
         return bindingOccurence.root
     }
@@ -117,7 +109,7 @@ class OccurenceFragment : Fragment() {
                 adapter.submitList(it as MutableList<Activity>)
             }
             if (this::occurrence.isInitialized && selectedOccurrenceList.isNotEmpty()) {
-                lastDateTime = selectedOccurrenceList[0].fullDate
+                lastActivity = selectedOccurrenceList[0].fullDate
 
                 bindingOccurence.occurencyTimeFrom.text =
                     secondsToComponents(getSecondsPassed())
@@ -235,7 +227,7 @@ class OccurenceFragment : Fragment() {
 
 
     fun getSecondsTo(secondsTo: Long): Long {
-        val timeFrom = lastDateTime
+        val timeFrom = lastActivity
         val timeTo = secondsTo
 
         val pattern = "HH:mm:ss dd.MM.yyyy"
@@ -255,14 +247,13 @@ class OccurenceFragment : Fragment() {
         val today = LocalDateTime.now()
         val pattern = "HH:mm:ss dd.MM.yyyy"
         val formatter = DateTimeFormatter.ofPattern(pattern)
-        val lastDate = LocalDateTime.parse(lastDateTime, formatter)
+        val lastDate = LocalDateTime.parse(lastActivity, formatter)
         val secondsPassed = ChronoUnit.SECONDS.between(
             lastDate,
             today
         )
         return secondsPassed
     }
-
 
     fun secondsToComponents(secondsPassed: Long): String {
         secondsPassed.seconds.toComponents { days, hours, minutes, seconds, nanoseconds ->
@@ -304,40 +295,28 @@ class OccurenceFragment : Fragment() {
         return viewModel.getHour()
     }
 
-    /**
-     * Deletes tapped date time item on recycler view
-     */
     private fun deleteDateTime() {
         viewModel.deleteActivity(activity)
     }
 
-    /**
-     * Deletes the current occurence and navigates to the home fragment.
-     */
     private fun deleteOccurence() {
         viewModel.deleteOccurence(occurrence)
         findNavController().navigateUp()
     }
 
     private fun editOccurence() {
-        val action = OccurenceFragmentDirections.actionOccurenceFragmentToNewFragment(
-            "Edit occurence",
+        val action = OccurrenceFragmentDirections.actionOccurenceFragmentToNewFragment(
+            "Edit occurrence",
             occurrence.occurrenceId
         )
         this.findNavController().navigate(action)
     }
 
-    /**
-     * Called when fragment is destroyed.
-     */
     override fun onDestroyView() {
         super.onDestroyView()
         _bindingOccurence = null
     }
 
-    /**
-     * Displays an alert dialog to get the user's confirmation before deleting the item.
-     */
     private fun showConfirmationDialog() {
         MaterialAlertDialogBuilder(requireContext())
             .setTitle(getString(android.R.string.dialog_alert_title))
@@ -376,7 +355,7 @@ class OccurenceFragment : Fragment() {
 
 
     /**
-     * Timer block for measure how long singgle occurence-activity was
+     * Timer block for measure how long occurrence activity was
      */
     // https://www.youtube.com/watch?v=LPjhP9D3pm8
     private fun resetTimer() {

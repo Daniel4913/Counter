@@ -31,7 +31,7 @@ class ActivitiesListAdapter(private val onItemClicked: (Activity) -> Unit):
             binding.apply {
                 dateFull.text = activity.fullDate
                 timeFrom.text =  activity.secondsToNext.toString()
-                timeLast.text = activity.secondsFromLast.toString()
+                timeLast.text = activity.secondsPassed.toString()
                 timeSpentWithTimer.text = activity.timeSpend.toString()
             }
         }
@@ -44,7 +44,7 @@ class ActivitiesListAdapter(private val onItemClicked: (Activity) -> Unit):
             }
 
             override fun areContentsTheSame(oldItem: Activity, newItem: Activity): Boolean {
-                return oldItem.dateTimeId == newItem.dateTimeId
+                return oldItem.activityId == newItem.activityId
             }
 
         }

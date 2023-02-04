@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_margin="8dp"
-    tools:context=".ui.OccurenceFragment">
+    tools:context=".ui.OccurrenceFragment">
 
     <EditText
         android:id="@+id/occurence_icon_imageView"
