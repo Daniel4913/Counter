@@ -17,6 +17,8 @@ class ActivitiesListAdapter(private val onItemClicked: (Activity) -> Unit):
         )
     }
 
+
+
     override fun onBindViewHolder(holder: DatesTimesViewHolder, position: Int) {
         val current = getItem(position)
         holder.itemView.setOnClickListener {
@@ -34,8 +36,12 @@ class ActivitiesListAdapter(private val onItemClicked: (Activity) -> Unit):
                 timeLast.text = activity.secondsPassed.toString()
                 timeSpentWithTimer.text = activity.timeSpend.toString()
             }
+
         }
+
     }
+
+
 
     companion object {
         private val DiffCallback = object : DiffUtil.ItemCallback<Activity>(){

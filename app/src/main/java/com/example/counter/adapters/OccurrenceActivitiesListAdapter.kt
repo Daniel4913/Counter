@@ -11,6 +11,7 @@ import com.example.counter.data.modelentity.Occurrence
 import com.example.counter.data.relations.OccurrenceWithActivities
 import com.example.counter.databinding.OccurenceHomeItemBinding
 import com.example.counter.util.Constants
+import com.example.counter.util.Constants.Companion.DEFAULT_FORMATTER
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
@@ -92,8 +93,7 @@ class OccurrenceActivitiesListAdapter(private val onItemClicked: (OccurrenceWith
 
         private fun getSecondsTo(secondsTo: Long): Long {
             val timeFrom = lastDateTime
-            val pattern = "HH:mm:ss dd.MM.yyyy"
-            val formatter = DateTimeFormatter.ofPattern(pattern)
+            val formatter = DateTimeFormatter.ofPattern(DEFAULT_FORMATTER)
             val lastDate = LocalDateTime.parse(timeFrom, formatter)
             val calculatedToDay = lastDate.plusSeconds(secondsTo)
 
@@ -105,8 +105,7 @@ class OccurrenceActivitiesListAdapter(private val onItemClicked: (OccurrenceWith
 
         private fun getSecondsPassed(): Long {
             val today = LocalDateTime.now()
-            val pattern = "HH:mm:ss dd.MM.yyyy"
-            val formatter = DateTimeFormatter.ofPattern(pattern)
+            val formatter = DateTimeFormatter.ofPattern(DEFAULT_FORMATTER)
             val lastDate = LocalDateTime.parse(lastDateTime, formatter)
 
             return ChronoUnit.SECONDS.between(
@@ -134,7 +133,6 @@ class OccurrenceActivitiesListAdapter(private val onItemClicked: (OccurrenceWith
                 timeString.contains("11h") &&
                 timeString.contains("21h") &&
                 !timeString.contains("d")
-
             ) {
                 binding.timeToNext.setTextColor(
                     ContextCompat.getColor(

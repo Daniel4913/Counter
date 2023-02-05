@@ -3,6 +3,7 @@ package com.example.counter.util
 import com.example.counter.data.modelentity.Activity
 import com.example.counter.data.modelentity.Occurrence
 import com.example.counter.data.relations.OccurrenceWithActivities
+import com.example.counter.util.Constants.Companion.DEFAULT_FORMATTER
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
@@ -49,42 +50,34 @@ class TimeCounter(private val occurrence: Occurrence, activity: Activity) {
     fun getSecondsTo(secondsTo: Long): Long {
         val timeFrom = lastDateTime
         val timeTo = secondsTo
-
-        val pattern = "HH:mm:ss dd.MM.yyyy"
-        val formatter = DateTimeFormatter.ofPattern(pattern)
+        val formatter = DateTimeFormatter.ofPattern(DEFAULT_FORMATTER)
         val lastDate = LocalDateTime.parse(timeFrom, formatter)
         val calculatedToDay = lastDate.plusSeconds(timeTo)
-        val secondsTo = ChronoUnit.SECONDS.between(
+        return ChronoUnit.SECONDS.between(
             LocalDateTime.now(),
             calculatedToDay,
         )
-        return secondsTo
-
     }
 
 
     fun getSecondsPassed(): Long {
         val today = LocalDateTime.now()
-        val pattern = "HH:mm:ss dd.MM.yyyy"
-        val formatter = DateTimeFormatter.ofPattern(pattern)
+        val formatter = DateTimeFormatter.ofPattern(DEFAULT_FORMATTER)
         val lastDate = LocalDateTime.parse(lastDateTime, formatter)
-        val secondsPassed = ChronoUnit.SECONDS.between(
+        return ChronoUnit.SECONDS.between(
             lastDate,
             today
         )
-        return secondsPassed
     }
-
-
 
 
     fun secondsToComponents(seconds: Long): String {
         seconds.seconds.toComponents { days, hours, minutes, seconds, nanoseconds ->
             var calculated = ""
 
-             when (days) {
+            when (days) {
                 0L -> calculated = "${hours}h ${minutes}m ${seconds}s"
-                else -> calculated =  "${days}d ${hours}h ${minutes}m ${seconds}s"
+                else -> calculated = "${days}d ${hours}h ${minutes}m ${seconds}s"
             }
 
             //TODO

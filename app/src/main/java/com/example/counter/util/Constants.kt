@@ -31,6 +31,9 @@ class Constants {
         const val WEEKS = "weeks"
         const val MONTHS = "month"
 
+        // Date Time
+        const val DEFAULT_FORMATTER = "HH:mm:ss dd.MM.yyyy"
+
     }
 
 

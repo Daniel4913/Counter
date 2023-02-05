@@ -15,6 +15,7 @@ import com.example.counter.adapters.OccurrenceActivitiesListAdapter
 import com.example.counter.data.modelentity.Activity
 import com.example.counter.data.relations.OccurrenceWithActivities
 import com.example.counter.databinding.FragmentCounterHomeBinding
+import com.example.counter.util.Constants
 import com.example.counter.viewmodels.CounterViewModel
 
 
@@ -188,8 +189,7 @@ class CounterHomeFragment : Fragment() {
     }
 
     private fun getSecondsTo(secondsTo: Long, lastDateTime: String): Long {
-        val pattern = "HH:mm:ss dd.MM.yyyy"
-        val formatter = DateTimeFormatter.ofPattern(pattern)
+        val formatter = DateTimeFormatter.ofPattern(Constants.DEFAULT_FORMATTER)
         val lastDate = LocalDateTime.parse(lastDateTime, formatter)
         val calculatedToDay = lastDate.plusSeconds(secondsTo)
         val secondsTo = ChronoUnit.SECONDS.between(
@@ -202,8 +202,7 @@ class CounterHomeFragment : Fragment() {
 
     private fun getSecondsPassed(lastDateTime: String): Long {
         val today = LocalDateTime.now()
-        val pattern = "HH:mm:ss dd.MM.yyyy"
-        val formatter = DateTimeFormatter.ofPattern(pattern)
+        val formatter = DateTimeFormatter.ofPattern(Constants.DEFAULT_FORMATTER)
         val lastDate = LocalDateTime.parse(lastDateTime, formatter)
         val secondsPassed = ChronoUnit.SECONDS.between(
             lastDate,

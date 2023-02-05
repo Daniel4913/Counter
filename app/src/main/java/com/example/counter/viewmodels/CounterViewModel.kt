@@ -8,6 +8,7 @@ import com.example.counter.data.modelentity.Description
 import com.example.counter.data.modelentity.Occurrence
 import com.example.counter.data.relations.OccurrenceWithActivities
 import com.example.counter.data.relations.OccurrenceWithDescripion
+import com.example.counter.util.Constants
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
@@ -18,7 +19,6 @@ import javax.inject.Inject
 class CounterViewModel @Inject constructor(
     private val repository: Repository,
     application: Application
-
 ) : AndroidViewModel(application) {
 
     val readOccurrencesWithActivities: LiveData<List<OccurrenceWithActivities>> =
@@ -216,7 +216,7 @@ class CounterViewModel @Inject constructor(
 
     fun getDate(): String {
         val currentDateTime = LocalDateTime.now()
-        return currentDateTime.format(DateTimeFormatter.ofPattern("HH:mm:ss dd.MM.yyyy"))
+        return currentDateTime.format(DateTimeFormatter.ofPattern(Constants.DEFAULT_FORMATTER))
     }
 
     fun getHour(): String {

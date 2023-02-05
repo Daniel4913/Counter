@@ -92,11 +92,13 @@ class OccurrenceFragment : Fragment() {
 
         val adapter = ActivitiesListAdapter {
             activity = it
+
 //            showConfirmationDialogDeleteDateTime()
             val action = OccurrenceFragmentDirections.actionOccurenceFragmentToActivityEditFragment(it.activityId)
             this.findNavController().navigate(action)
-
         }
+
+
 
         bindingOccurence.occurenceDetailRecyclerView.adapter = adapter
 
@@ -234,9 +236,7 @@ class OccurrenceFragment : Fragment() {
     fun getSecondsTo(secondsTo: Long): Long {
         val timeFrom = lastActivity
         val timeTo = secondsTo
-
-        val pattern = "HH:mm:ss dd.MM.yyyy"
-        val formatter = DateTimeFormatter.ofPattern(pattern)
+        val formatter = DateTimeFormatter.ofPattern(Constants.DEFAULT_FORMATTER)
         val lastDate = LocalDateTime.parse(timeFrom, formatter)
         val calculatedToDay = lastDate.plusSeconds(timeTo)
         val secondsTo = ChronoUnit.SECONDS.between(
@@ -247,11 +247,9 @@ class OccurrenceFragment : Fragment() {
 
     }
 
-
     fun getSecondsPassed(): Long {
         val today = LocalDateTime.now()
-        val pattern = "HH:mm:ss dd.MM.yyyy"
-        val formatter = DateTimeFormatter.ofPattern(pattern)
+        val formatter = DateTimeFormatter.ofPattern(Constants.DEFAULT_FORMATTER)
         val lastDate = LocalDateTime.parse(lastActivity, formatter)
         val secondsPassed = ChronoUnit.SECONDS.between(
             lastDate,
@@ -281,11 +279,11 @@ class OccurrenceFragment : Fragment() {
 
     // DB SRATATATA
 
-    private fun addNewActivity(timerValue: String = " ") {
+    private fun addNewActivity(timerValue: String = "") {
         viewModel.addNewActivity(
             navigationArgs.id,
             getDate(),
-            getHour(),
+            timerValue,
             0,
             getIntervalSeconds(),
             0
