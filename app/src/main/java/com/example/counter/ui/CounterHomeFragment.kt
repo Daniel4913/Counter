@@ -8,10 +8,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.asLiveData
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.counter.R
 import com.example.counter.adapters.OccurrenceActivitiesListAdapter
+import com.example.counter.data.DataStoreRepository
 import com.example.counter.data.modelentity.Activity
 import com.example.counter.data.relations.OccurrenceWithActivities
 import com.example.counter.databinding.FragmentCounterHomeBinding
@@ -20,6 +22,7 @@ import com.example.counter.viewmodels.CounterViewModel
 
 
 import com.google.android.material.chip.Chip
+import com.google.android.material.chip.ChipGroup
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import java.time.LocalDateTime
@@ -32,7 +35,8 @@ class CounterHomeFragment : Fragment() {
 
     private lateinit var viewModel: CounterViewModel
 
-    private var selectedCategoryChip = "All"
+
+    private var selectedCategoryChip = "All" //const default
     private var selectedCategoryChipId = 0
 
     private var _binding: FragmentCounterHomeBinding? = null
@@ -49,9 +53,10 @@ class CounterHomeFragment : Fragment() {
     ): View? {
         _binding = FragmentCounterHomeBinding.inflate(inflater, container, false)
 
+
+
         return binding.root
     }
-
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -85,7 +90,10 @@ class CounterHomeFragment : Fragment() {
                         R.string.time_late,
                         bigOccurrence?.occurrenceActivities?.last()?.secondsToNext.toString()
                     )
-                    binding.occurencyTimeFromLabel.text = getString(R.string.time_passed,bigOccurrence?.occurrenceActivities?.last()?.secondsPassed.toString() )
+                    binding.occurencyTimeFromLabel.text = getString(
+                        R.string.time_passed,
+                        bigOccurrence?.occurrenceActivities?.last()?.secondsPassed.toString()
+                    )
 
                 } catch (e: java.lang.Exception) {
                     Toast.makeText(
@@ -144,12 +152,24 @@ class CounterHomeFragment : Fragment() {
 
         binding.occurenciesRecyclerView.layoutManager = LinearLayoutManager(this.context)
 
+
+        viewModel.readFilterCategory.asLiveData().observe(viewLifecycleOwner){ value ->
+            selectedCategoryChip = value.filteredCategoryChip
+            selectedCategoryChipId = value.filteredCategoryChipId
+
+            updateChip(value.filteredCategoryChipId, binding.categoryChipGroup)
+//            updateChip
+            Log.d("Datastore", "$selectedCategoryChipId $selectedCategoryChip")
+        }
+
         binding.categoryChipGroup.setOnCheckedStateChangeListener { group, checkedIds ->
             val chip = group.findViewById<Chip>(checkedIds.first())
             val selectedCategory = chip.text.toString()
 
             selectedCategoryChip = selectedCategory
             selectedCategoryChipId = checkedIds.first()
+
+            viewModel.saveFilterCategoryTemp(selectedCategoryChip,selectedCategoryChipId)
 
             when (selectedCategoryChip) {
                 "All" -> {
@@ -169,11 +189,23 @@ class CounterHomeFragment : Fragment() {
                 }
             }
         }
+
         binding.newOccurency.rippleColor = resources.getColor(R.color.heavenBlue)
         binding.newOccurency.setOnClickListener {
             val action =
                 CounterHomeFragmentDirections.actionCounterHomeFragmentToNewFragment("Create new Occurrence")
             this.findNavController().navigate(action)
+        }
+    }
+    private fun updateChip(chipId: Int, chipGroup: ChipGroup) {
+        if (chipId != 0) {
+            try {
+                val targetView = chipGroup.findViewById<Chip>(chipId)
+                targetView.isChecked = true
+                chipGroup.requestChildFocus(targetView, targetView)
+            } catch (e: java.lang.Exception) {
+                Log.d("Home fun updateChip", e.message.toString())
+            }
         }
     }
 

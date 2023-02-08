@@ -3,6 +3,8 @@ package com.example.counter.viewmodels
 import android.app.Application
 import androidx.lifecycle.*
 import com.example.counter.data.*
+import com.example.counter.data.DataStoreRepository
+import com.example.counter.data.DataStoreRepository.FilterCategory
 import com.example.counter.data.modelentity.Activity
 import com.example.counter.data.modelentity.Description
 import com.example.counter.data.modelentity.Occurrence
@@ -10,6 +12,7 @@ import com.example.counter.data.relations.OccurrenceWithActivities
 import com.example.counter.data.relations.OccurrenceWithDescripion
 import com.example.counter.util.Constants
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -18,8 +21,37 @@ import javax.inject.Inject
 @HiltViewModel
 class CounterViewModel @Inject constructor(
     private val repository: Repository,
+    private val dataStoreRepository: DataStoreRepository,
     application: Application
 ) : AndroidViewModel(application) {
+
+    private lateinit var filterCategory: FilterCategory
+
+    val readFilterCategory = dataStoreRepository.readFilterCategory
+
+
+    private fun saveFilterCategory(){
+        viewModelScope.launch(Dispatchers.IO) {
+            if(this@CounterViewModel::filterCategory.isInitialized){
+                dataStoreRepository.saveFilterCategory(
+                    filterCategory.filteredCategoryChip,
+                    filterCategory.filteredCategoryChipId
+                )
+            }
+        }
+    }
+
+    fun saveFilterCategoryTemp(
+        filterCategoryChip: String,
+        filterCategoryChipId: Int
+    ){
+        filterCategory = FilterCategory(
+            filterCategoryChip,
+            filterCategoryChipId
+        )
+        saveFilterCategory()
+    }
+
 
     val readOccurrencesWithActivities: LiveData<List<OccurrenceWithActivities>> =
         repository.dataSource.getOccurrencesWithActivities().asLiveData()
@@ -74,7 +106,7 @@ class CounterViewModel @Inject constructor(
         }
     }
 
-    fun updateOccurence(occurrence: Occurrence) {
+    fun updateOccurrence(occurrence: Occurrence) {
         viewModelScope.launch {
             repository.dataSource.updateOccurrence(occurrence)
         }
@@ -87,15 +119,15 @@ class CounterViewModel @Inject constructor(
 //    }
 
 
-    private fun getNewOccurenceEntry(
-        occurenceName: String,
+    private fun getNewOccurrenceEntry(
+        occurrenceName: String,
         createDate: String,
         occurMore: Boolean,
         category: String,
         intervalFrequency: String
     ): Occurrence {
         return Occurrence(
-            occurrenceName = occurenceName,
+            occurrenceName = occurrenceName,
             createDate = createDate,
             occurMore = occurMore,
             category = category,
@@ -103,48 +135,48 @@ class CounterViewModel @Inject constructor(
         )
     }
 
-    fun addNewOccurence(
-        occurenceName: String,
+    fun addNewOccurrence(
+        occurrenceName: String,
         createDate: String,
         occurMore: Boolean,
         category: String,
         intervalFrequency: String
     ) {
-        val newOccurence =
-            getNewOccurenceEntry(occurenceName, createDate, occurMore, category, intervalFrequency)
-        insertOccurence(newOccurence)
+        val newOccurrence =
+            getNewOccurrenceEntry(occurrenceName, createDate, occurMore, category, intervalFrequency)
+        insertOccurence(newOccurrence)
     }
 
-    fun updateOccurence(
-        occurenceId: Int,
-        occurenceName: String,
+    fun updateOccurrence(
+        occurrenceId: Int,
+        occurrenceName: String,
         createDate: String,
         occurMore: Boolean,
         category: String,
         intervalFrequency: String
     ) {
-        val updatedOccurence = getUpdatedOccurenceEntry(
-            occurenceId = occurenceId,
-            occurenceName = occurenceName,
+        val updatedOccurence = getUpdatedOccurrenceEntry(
+            occurrenceId = occurrenceId,
+            occurrenceName = occurrenceName,
             createDate = createDate,
             occurMore = occurMore,
             category = category,
             intervalFrequency = intervalFrequency
         )
-        updateOccurence(updatedOccurence)
+        updateOccurrence(updatedOccurence)
     }
 
-    private fun getUpdatedOccurenceEntry(
-        occurenceId: Int,
-        occurenceName: String,
+    private fun getUpdatedOccurrenceEntry(
+        occurrenceId: Int,
+        occurrenceName: String,
         createDate: String,
         occurMore: Boolean,
         category: String,
         intervalFrequency: String
     ): Occurrence {
         return Occurrence(
-            occurrenceId = occurenceId,
-            occurrenceName = occurenceName,
+            occurrenceId = occurrenceId,
+            occurrenceName = occurrenceName,
             createDate = createDate,
             occurMore = occurMore,
             category = category,
@@ -152,8 +184,8 @@ class CounterViewModel @Inject constructor(
         )
     }
 
-    fun isEntryValid(occurenceName: String): Boolean {
-        if (occurenceName.isBlank()) {
+    fun isEntryValid(occurrenceName: String): Boolean {
+        if (occurrenceName.isBlank()) {
             return false
         }
         return true

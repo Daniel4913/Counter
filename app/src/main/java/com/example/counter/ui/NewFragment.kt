@@ -243,7 +243,7 @@ class NewFragment : Fragment() {
         if (isEntryValid()) {
             val createDate =
                 getNewDateTime(binding.tvDate.text.toString(), binding.tvTime.text.toString())
-            viewModel.addNewOccurence(
+            viewModel.addNewOccurrence(
                 occIconAndName(),
                 createDate,
                 binding.frequencySwitch.isChecked,
@@ -266,7 +266,7 @@ class NewFragment : Fragment() {
             val createDate =
                 getNewDateTime(binding.tvDate.text.toString(), binding.tvTime.text.toString())
 
-            viewModel.updateOccurence(
+            viewModel.updateOccurrence(
                 occurrence.occurrenceId,
                 binding.occurenceName.text.toString(),
                 createDate,

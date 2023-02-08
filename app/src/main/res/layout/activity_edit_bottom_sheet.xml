@@ -6,8 +6,6 @@
     android:layout_height="wrap_content"
     tools:context=".ui.ActivityEditBottomSheet"
     android:background="#1E00A8FF"
-
-
     >
 
     <TextView

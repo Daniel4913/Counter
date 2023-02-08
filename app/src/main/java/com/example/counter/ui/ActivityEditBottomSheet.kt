@@ -1,13 +1,17 @@
 package com.example.counter.ui
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import com.example.counter.R
 import com.example.counter.data.modelentity.Activity
 import com.example.counter.databinding.ActivityEditBottomSheetBinding
 import com.example.counter.util.Constants.Companion.DEFAULT_FORMATTER
@@ -82,19 +86,17 @@ class ActivityEditBottomSheet : BottomSheetDialogFragment() {
                     Activity(
                         activity.activityId,
                         activity.occurrenceOwnerId,
-                        ////////                        ////////
                         konkatenacjaFullDate(
                             binding.dateEditText.text.toString(),
                             binding.hourEditText.text.toString()
-                        ), //parse exception przy zlej kolejnosci data-godzina!!!
-//                    binding.timeSpendEditText.text.toLong()
-                        // //////                        ////////
+                        ),
                         activity.timeSpend,
                         activity.secondsPassed,
                         activity.intervalSeconds,
                         activity.secondsToNext,
                     )
                 )
+                requireActivity().onBackPressedDispatcher.onBackPressed()
             } else {
                 Toast.makeText(context, "Date or hour format is invalid", Toast.LENGTH_SHORT).show()
             }
@@ -124,5 +126,13 @@ class ActivityEditBottomSheet : BottomSheetDialogFragment() {
     private fun splitFullDate(): List<String> {
         val createDate = activity.fullDate
         return createDate.split(" ")
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        val inputMethodManager = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as
+                InputMethodManager
+        inputMethodManager.hideSoftInputFromWindow(requireActivity().currentFocus?.windowToken, 0)
+        _binding = null
     }
 }
