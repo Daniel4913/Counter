@@ -69,17 +69,7 @@ class ActivityEditBottomSheet : BottomSheetDialogFragment() {
             activity = receivedActivity
             bind(activity)
         }
-
-        binding.dateEditText.setOnClickListener {
-            Log.d("EDIT", "$getDate $getHour")
-            Log.d(
-                "EDIT", konkatenacjaFullDate(
-                    binding.dateEditText.text.toString(),
-                    binding.hourEditText.text.toString()
-                )
-            )
-        }
-
+        
         binding.saveButton.setOnClickListener {
             if (validateDateTime()) {
                 viewModel.updateActivity(

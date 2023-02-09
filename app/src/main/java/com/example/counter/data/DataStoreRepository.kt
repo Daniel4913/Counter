@@ -1,25 +1,27 @@
 package com.example.counter.data
 
 import android.content.Context
-import android.util.Log
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.*
 import androidx.datastore.preferences.preferencesDataStore
+import com.example.counter.util.Constants.Companion.NO_CATEGORY_DEFAULT
+import com.example.counter.util.Constants.Companion.PREFERENCES_CATEGORY_CHIP
+import com.example.counter.util.Constants.Companion.PREFERENCES_CATEGORY_CHIP_ID
+import com.example.counter.util.Constants.Companion.PREFERENCES_CATEGORY_NAME
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import java.io.IOException
 
 import javax.inject.Inject
 
-private val Context.dataStore by preferencesDataStore("filter_by_category_preferences")
+private val Context.dataStore by preferencesDataStore(PREFERENCES_CATEGORY_NAME)
 
 class DataStoreRepository @Inject constructor(@ApplicationContext private val context: Context) {
 
     private object PreferenceKeys {
-        val filterCategoryChip = stringPreferencesKey("filteredCategory")
-        val filterCategoryChipId = intPreferencesKey("filteredCategoryId")
+        val filterCategoryChip = stringPreferencesKey(PREFERENCES_CATEGORY_CHIP)
+        val filterCategoryChipId = intPreferencesKey(PREFERENCES_CATEGORY_CHIP_ID)
     }
 
     private val dataStore: DataStore<Preferences> = context.dataStore
@@ -40,7 +42,7 @@ class DataStoreRepository @Inject constructor(@ApplicationContext private val co
             }
         }
         .map { preferences ->
-            val filteredCategory = preferences[PreferenceKeys.filterCategoryChip] ?: "All"
+            val filteredCategory = preferences[PreferenceKeys.filterCategoryChip] ?: NO_CATEGORY_DEFAULT
             val filteredCategoryChipId = preferences[PreferenceKeys.filterCategoryChipId] ?: 0
             FilterCategory(
                 filteredCategory,
@@ -52,12 +54,6 @@ class DataStoreRepository @Inject constructor(@ApplicationContext private val co
     data class FilterCategory(
         val filteredCategoryChip: String,
         val filteredCategoryChipId: Int
-//        val all: String,
-//        val substancje: String,
-//        val relacje: String,
-//        val rozwoj: String,
-//        val trening: String,
-//        val obowiazki: String,
     )
 
 }

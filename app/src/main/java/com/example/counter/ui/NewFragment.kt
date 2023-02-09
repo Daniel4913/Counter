@@ -90,7 +90,6 @@ class NewFragment : Fragment() {
 
         val id = navigationArgs.occurenceId
 
-
         setIntervalValues()
 
         binding.tvDate.setOnClickListener { getDate() }
@@ -140,8 +139,6 @@ class NewFragment : Fragment() {
         val pickerValue = intervalValues[0].toInt()
         val chipValue = intervalValues[1]
 
-
-
         val value: Int = when (chipValue) {
             "minutes" -> R.id.chip_minutes
             "hours" -> R.id.chip_hours
@@ -185,13 +182,14 @@ class NewFragment : Fragment() {
 
     private fun splitCreateDate(): List<String> {
         val createDate = occurrence.createDate
+
         return createDate.split(" ")
     }
 
     private fun splitFrequence(): List<String> {
         val frequence = occurrence.intervalFrequency
-        return frequence.split(" ")
 
+        return frequence.split(" ")
     }
 
     private fun getNewDateTime(date: String, time: String): String {

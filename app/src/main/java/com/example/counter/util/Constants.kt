@@ -1,7 +1,5 @@
 package com.example.counter.util
 
-import java.time.format.DateTimeFormatter
-
 class Constants {
 
     companion object {
@@ -12,6 +10,14 @@ class Constants {
         const val ACTIVITIES_TABLE = "activities_table"
         const val DESCRIPTIONS_TABLE = "descriptions_table"
 
+        // DataStore
+        const val PREFERENCES_CATEGORY_NAME = "filter_by_category_preferences"
+        const val PREFERENCES_CATEGORY_CHIP = "filteredCategory"
+        const val PREFERENCES_CATEGORY_CHIP_ID = "filteredCategory"
+
+        // Category
+        const val NO_CATEGORY_DEFAULT = "All"
+
         // Number Picker
         const val DEFAULT_DAYS = 0
         const val DEFAULT_MAX_DAYS = 365
@@ -21,8 +27,6 @@ class Constants {
 
         const val DEFAULT_MINUTES = 0
         const val DEFAULT_MAX_MINUTES = 120
-        // TODO mozna by zrobic pozniej STEP minut co ilestam :')
-
 
         // Frequency Chips
         const val MINUTES = "minutes"

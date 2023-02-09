@@ -18,6 +18,7 @@ import com.example.counter.data.modelentity.Activity
 import com.example.counter.data.relations.OccurrenceWithActivities
 import com.example.counter.databinding.FragmentCounterHomeBinding
 import com.example.counter.util.Constants
+import com.example.counter.util.Constants.Companion.NO_CATEGORY_DEFAULT
 import com.example.counter.viewmodels.CounterViewModel
 
 
@@ -35,8 +36,7 @@ class CounterHomeFragment : Fragment() {
 
     private lateinit var viewModel: CounterViewModel
 
-
-    private var selectedCategoryChip = "All" //const default
+    private var selectedCategoryChip = NO_CATEGORY_DEFAULT
     private var selectedCategoryChipId = 0
 
     private var _binding: FragmentCounterHomeBinding? = null
@@ -52,8 +52,6 @@ class CounterHomeFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentCounterHomeBinding.inflate(inflater, container, false)
-
-
 
         return binding.root
     }
@@ -82,7 +80,6 @@ class CounterHomeFragment : Fragment() {
                     val sortedItems = listSeconds.sorted().map { itemsBySeconds[it] }
                     adapter.submitList(sortedItems)
 
-                    /////////////////////
                     val bigOccurrence = sortedItems.first()
                     binding.occurencyNameLabel.text = bigOccurrence?.occurrence?.occurrenceName
 
@@ -158,8 +155,6 @@ class CounterHomeFragment : Fragment() {
             selectedCategoryChipId = value.filteredCategoryChipId
 
             updateChip(value.filteredCategoryChipId, binding.categoryChipGroup)
-//            updateChip
-            Log.d("Datastore", "$selectedCategoryChipId $selectedCategoryChip")
         }
 
         binding.categoryChipGroup.setOnCheckedStateChangeListener { group, checkedIds ->
