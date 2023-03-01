@@ -39,12 +39,6 @@ class OccurrenceActivitiesListAdapter(private val onItemClicked: (OccurrenceWith
                 if (occ.occurrenceActivities.isNotEmpty()) {
                     lastDateTime = occ.occurrenceActivities.last().fullDate
                     intervalFrequency = occ.occurrence.intervalFrequency
-
-                    /** todo chce z  tym zrobic iluzje uplywania czasu dodajac +1 co sekunde ale tylko w UI
-                    var secondsPassed = getSecondsPassed()
-                    var secondsTo = getSecondsTo(getIntervalSeconds())
-                    */
-
                     timeToNext.text = secondsToComponents(getSecondsTo(getIntervalSeconds()))
                     timeFromLast.text = secondsToComponents(getSecondsPassed())
 
@@ -118,8 +112,8 @@ class OccurrenceActivitiesListAdapter(private val onItemClicked: (OccurrenceWith
             seconds.seconds.toComponents { days, hours, minutes, seconds, _ ->
 
                 return when (days) {
-                    0L -> "${hours}h ${minutes}m ${seconds}s"
-                    else -> "${days}d ${hours}h ${minutes}m ${seconds}s"
+                    0L -> "${hours}h ${minutes}m "
+                    else -> "${days}d ${hours}h ${minutes}m"
                 }
             }
         }
@@ -188,6 +182,9 @@ class OccurrenceActivitiesListAdapter(private val onItemClicked: (OccurrenceWith
                 newItem: OccurrenceWithActivities
             ): Boolean {
                 return oldItem.occurrence.occurrenceName == newItem.occurrence.occurrenceName
+                        && oldItem.occurrence.occurrenceId == newItem.occurrence.occurrenceId
+                        && oldItem.occurrenceActivities[0].secondsPassed == newItem.occurrenceActivities[0].secondsPassed
+                        && oldItem.occurrenceActivities[0].secondsToNext == newItem.occurrenceActivities[0].secondsToNext
             }
         }
     }

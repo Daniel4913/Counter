@@ -42,13 +42,14 @@
             <TextView
                 android:id="@+id/occurence_name"
                 style="@style/Widget.Counter.ListItemTextView"
-                android:layout_width="120dp"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="12dp"
                 android:ellipsize="marquee"
                 android:fontFamily="sans-serif"
                 android:textColor="@color/mediumGray"
                 app:layout_constraintBottom_toBottomOf="@+id/ic_occurrence"
+                app:layout_constraintEnd_toStartOf="@+id/time_to_next"
                 app:layout_constraintStart_toEndOf="@id/ic_occurrence"
                 app:layout_constraintTop_toTopOf="@+id/ic_occurrence"
                 tools:text="Kofeina" />

@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.asLiveData
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.counter.R
@@ -19,12 +20,12 @@ import com.example.counter.data.relations.OccurrenceWithActivities
 import com.example.counter.databinding.FragmentCounterHomeBinding
 import com.example.counter.util.Constants
 import com.example.counter.viewmodels.CounterViewModel
-
-
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
@@ -34,7 +35,6 @@ import java.time.temporal.ChronoUnit
 class CounterHomeFragment : Fragment() {
 
     private lateinit var viewModel: CounterViewModel
-
 
     private var selectedCategoryChip = "All" //const default
     private var selectedCategoryChipId = 0
@@ -52,8 +52,6 @@ class CounterHomeFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentCounterHomeBinding.inflate(inflater, container, false)
-
-
 
         return binding.root
     }
@@ -73,35 +71,27 @@ class CounterHomeFragment : Fragment() {
 
         binding.occurenciesRecyclerView.adapter = adapter
         viewModel.readOccurrencesWithActivities.observe(this.viewLifecycleOwner) { items ->
-            items.let { it ->
-                try {
-                    val items = it
-                    val listSeconds = makeListOfSecondsTo(it)
-                    val itemsBySeconds =
-                        items.associateBy { it.occurrenceActivities.last().secondsToNext }
-                    val sortedItems = listSeconds.sorted().map { itemsBySeconds[it] }
-                    adapter.submitList(sortedItems)
+            items.let { occurrencesList ->
+                lifecycleScope.launch { // dalem to tak o dla jaj zeby zobaczyc co sie stanie
+                    try {
+                        val items = occurrencesList
+                        val listSeconds = makeListOfSecondsTo(occurrencesList)
+                        val itemsBySeconds =
+                            occurrencesList.associateBy { it.occurrenceActivities.last().secondsToNext }
+                        val sortedItems = listSeconds.sorted().map { itemsBySeconds[it] }
+                        adapter.submitList(sortedItems)
+                        Log.d("sortedItems","$sortedItems")
 
-                    /////////////////////
-                    val bigOccurrence = sortedItems.first()
-                    binding.occurencyNameLabel.text = bigOccurrence?.occurrence?.occurrenceName
 
-                    binding.occurencyTimeToLabel.text = getString(
-                        R.string.time_late,
-                        bigOccurrence?.occurrenceActivities?.last()?.secondsToNext.toString()
-                    )
-                    binding.occurencyTimeFromLabel.text = getString(
-                        R.string.time_passed,
-                        bigOccurrence?.occurrenceActivities?.last()?.secondsPassed.toString()
-                    )
+                    } catch (e: java.lang.Exception) {
+                        Toast.makeText(
+                            context,
+                            "List will be sorted when all Occurrences have at least one activity",
+                            Toast.LENGTH_LONG
+                        ).show()
+                        adapter.submitList(occurrencesList)
+                    }
 
-                } catch (e: java.lang.Exception) {
-                    Toast.makeText(
-                        context,
-                        "List will be sorted when all Occurrences have at least one activity",
-                        Toast.LENGTH_LONG
-                    ).show()
-                    adapter.submitList(it)
                 }
             }
         }
@@ -153,12 +143,12 @@ class CounterHomeFragment : Fragment() {
         binding.occurenciesRecyclerView.layoutManager = LinearLayoutManager(this.context)
 
 
-        viewModel.readFilterCategory.asLiveData().observe(viewLifecycleOwner){ value ->
+        viewModel.readFilterCategory.asLiveData().observe(viewLifecycleOwner) { value ->
             selectedCategoryChip = value.filteredCategoryChip
             selectedCategoryChipId = value.filteredCategoryChipId
 
             updateChip(value.filteredCategoryChipId, binding.categoryChipGroup)
-//            updateChip
+
             Log.d("Datastore", "$selectedCategoryChipId $selectedCategoryChip")
         }
 
@@ -169,7 +159,7 @@ class CounterHomeFragment : Fragment() {
             selectedCategoryChip = selectedCategory
             selectedCategoryChipId = checkedIds.first()
 
-            viewModel.saveFilterCategoryTemp(selectedCategoryChip,selectedCategoryChipId)
+            viewModel.saveFilterCategoryTemp(selectedCategoryChip, selectedCategoryChipId)
 
             when (selectedCategoryChip) {
                 "All" -> {
@@ -197,6 +187,7 @@ class CounterHomeFragment : Fragment() {
             this.findNavController().navigate(action)
         }
     }
+
     private fun updateChip(chipId: Int, chipGroup: ChipGroup) {
         if (chipId != 0) {
             try {

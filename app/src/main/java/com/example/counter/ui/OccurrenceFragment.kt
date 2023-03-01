@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -31,6 +32,7 @@ import com.example.counter.util.Constants
 import com.example.counter.viewmodels.CounterViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.launch
 
 @ExperimentalCoroutinesApi
 @AndroidEntryPoint
@@ -101,12 +103,15 @@ class OccurrenceFragment : Fragment() {
 
 
         bindingOccurence.occurenceDetailRecyclerView.adapter = adapter
+lifecycleScope.launch {
 
-        viewModel.getActivities(id).observe(this.viewLifecycleOwner) { selectedOccurrenceList ->
+        viewModel.getActivities(id).observe(viewLifecycleOwner) { selectedOccurrenceList ->
             selectedOccurrenceList.let {
                 adapter.submitList(it as MutableList<Activity>)
             }
-            if (this::occurrence.isInitialized && selectedOccurrenceList.isNotEmpty()) {
+            if (
+//                this::occurrence.isInitialized &&
+                selectedOccurrenceList.isNotEmpty()) {
                 lastActivity = selectedOccurrenceList[0].fullDate
 
                 bindingOccurence.occurencyTimeFrom.text =
@@ -124,6 +129,7 @@ class OccurrenceFragment : Fragment() {
                 updateTimeColor(timeString)
             }
         }
+}
 
 //        bindingOccurence.descriptionsHolder.setOnClickListener {
 //            val idOccurence = navigationArgs.id
