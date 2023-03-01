@@ -27,7 +27,7 @@ class CounterViewModel @Inject constructor(
 
     private lateinit var filterCategory: FilterCategory
 
-    val readFilterCategory = dataStoreRepository.readFilterCategory
+//    val readFilterCategory = dataStoreRepository.readFilterCategory
 
 
     private fun saveFilterCategory(){

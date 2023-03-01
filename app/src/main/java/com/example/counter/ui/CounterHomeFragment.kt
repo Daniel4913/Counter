@@ -150,12 +150,12 @@ class CounterHomeFragment : Fragment() {
         binding.occurenciesRecyclerView.layoutManager = LinearLayoutManager(this.context)
 
 
-        viewModel.readFilterCategory.asLiveData().observe(viewLifecycleOwner){ value ->
-            selectedCategoryChip = value.filteredCategoryChip
-            selectedCategoryChipId = value.filteredCategoryChipId
-
-            updateChip(value.filteredCategoryChipId, binding.categoryChipGroup)
-        }
+//        viewModel.readFilterCategory.asLiveData().observe(viewLifecycleOwner){ value ->
+//            selectedCategoryChip = value.filteredCategoryChip
+//            selectedCategoryChipId = value.filteredCategoryChipId
+//
+//            updateChip(value.filteredCategoryChipId, binding.categoryChipGroup)
+//        }
 
         binding.categoryChipGroup.setOnCheckedStateChangeListener { group, checkedIds ->
             val chip = group.findViewById<Chip>(checkedIds.first())
