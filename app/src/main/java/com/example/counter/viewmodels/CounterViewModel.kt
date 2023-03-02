@@ -3,8 +3,8 @@ package com.example.counter.viewmodels
 import android.app.Application
 import androidx.lifecycle.*
 import com.example.counter.data.*
-import com.example.counter.data.DataStoreRepository
-import com.example.counter.data.DataStoreRepository.FilterCategory
+//import com.example.counter.data.DataStoreRepository
+//import com.example.counter.data.DataStoreRepository.FilterCategory
 import com.example.counter.data.modelentity.Activity
 import com.example.counter.data.modelentity.Description
 import com.example.counter.data.modelentity.Occurrence
@@ -21,36 +21,43 @@ import javax.inject.Inject
 @HiltViewModel
 class CounterViewModel @Inject constructor(
     private val repository: Repository,
-    private val dataStoreRepository: DataStoreRepository,
+//    private val dataStoreRepository: DataStoreRepository,
     application: Application
 ) : AndroidViewModel(application) {
 
-    private lateinit var filterCategory: FilterCategory
+//    private lateinit var filterCategory: FilterCategory
 
-    val readFilterCategory = dataStoreRepository.readFilterCategory
+//    val readFilterCategory = dataStoreRepository.readFilterCategory
+    /////////
 
-
-    private fun saveFilterCategory(){
-        viewModelScope.launch(Dispatchers.IO) {
-            if(this@CounterViewModel::filterCategory.isInitialized){
-                dataStoreRepository.saveFilterCategory(
-                    filterCategory.filteredCategoryChip,
-                    filterCategory.filteredCategoryChipId
-                )
-            }
-        }
+    val emptyDatabase: MutableLiveData<Boolean> = MutableLiveData(false)
+    fun checkIfDatabaseEmpty(description: List<Description>){
+        emptyDatabase.value = description.isEmpty()
     }
 
-    fun saveFilterCategoryTemp(
-        filterCategoryChip: String,
-        filterCategoryChipId: Int
-    ){
-        filterCategory = FilterCategory(
-            filterCategoryChip,
-            filterCategoryChipId
-        )
-        saveFilterCategory()
-    }
+    //////
+
+//    private fun saveFilterCategory(){
+//        viewModelScope.launch(Dispatchers.IO) {
+//            if(this@CounterViewModel::filterCategory.isInitialized){
+//                dataStoreRepository.saveFilterCategory(
+//                    filterCategory.filteredCategoryChip,
+//                    filterCategory.filteredCategoryChipId
+//                )
+//            }
+//        }
+//    }
+//
+//    fun saveFilterCategoryTemp(
+//        filterCategoryChip: String,
+//        filterCategoryChipId: Int
+//    ){
+//        filterCategory = FilterCategory(
+//            filterCategoryChip,
+//            filterCategoryChipId
+//        )
+//        saveFilterCategory()
+//    }
 
 
     val readOccurrencesWithActivities: LiveData<List<OccurrenceWithActivities>> =

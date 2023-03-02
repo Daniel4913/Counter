@@ -13,43 +13,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:text="Edit this activity"
+        android:text="Edit or delete this activity"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/date_label"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:text="Date"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editActivity_label" />
-
-
-    <TextView
-        android:id="@+id/hour_label"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:text="Hour"
-        app:layout_constraintBottom_toBottomOf="@+id/date_label"
-        app:layout_constraintEnd_toStartOf="@id/timeSpend_label"
-        app:layout_constraintStart_toEndOf="@+id/date_label"
-        app:layout_constraintTop_toTopOf="@+id/date_label"
-        app:layout_constraintVertical_bias="0.0" />
-
-    <TextView
-        android:id="@+id/timeSpend_label"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:text="Time spend"
-        app:layout_constraintBottom_toBottomOf="@+id/hour_label"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/hour_label" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/date_textInputLayout"
@@ -58,9 +26,9 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:hint="13.13.1313"
-        app:layout_constraintStart_toStartOf="@+id/date_label"
-        app:layout_constraintTop_toBottomOf="@+id/date_label"
-
+        app:layout_constraintEnd_toStartOf="@id/hour_textInputLayout"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editActivity_label"
         app:placeholderText="13.13.1313">
 
         <EditText
@@ -82,33 +50,13 @@
         android:layout_height="wrap_content"
 
         app:layout_constraintBottom_toBottomOf="@+id/date_textInputLayout"
-        app:layout_constraintStart_toStartOf="@+id/hour_label"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/date_textInputLayout"
         app:layout_constraintTop_toTopOf="@+id/date_textInputLayout"
         app:placeholderText="13:13:13">
 
         <EditText
             android:id="@+id/hour_editText"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:inputType="textCapWords"
-            android:padding="5dp" />
-
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/timeSpend_textInputLayout"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-        android:layout_width="70dp"
-        android:layout_height="wrap_content"
-        android:hint="13:13"
-        app:layout_constraintBottom_toBottomOf="@+id/hour_textInputLayout"
-        app:layout_constraintStart_toStartOf="@id/timeSpend_label"
-        app:layout_constraintTop_toTopOf="@id/hour_textInputLayout"
-        app:placeholderText="13:13">
-
-        <EditText
-            android:id="@+id/timeSpend_editText"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -125,10 +73,20 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
-        android:layout_marginBottom="16dp"
         android:text="Save"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/delete_button"
+        app:layout_constraintTop_toBottomOf="@+id/hour_textInputLayout" />
+
+    <Button
+        android:id="@+id/delete_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="Delete"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/save_button"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/date_textInputLayout" />
 

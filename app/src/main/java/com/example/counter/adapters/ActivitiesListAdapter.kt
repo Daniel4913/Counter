@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.counter.data.modelentity.Activity
 import com.example.counter.databinding.DatesTimesItemBinding
 
-class ActivitiesListAdapter(private val onItemClicked: (Activity) -> Unit):
+class ActivitiesListAdapter(private val onItemClicked: (Activity) -> Unit, private val onLongItemClicked: (Activity)-> Unit):
     ListAdapter<Activity, ActivitiesListAdapter.DatesTimesViewHolder>(DiffCallback) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DatesTimesViewHolder {
@@ -23,6 +23,11 @@ class ActivitiesListAdapter(private val onItemClicked: (Activity) -> Unit):
             onItemClicked(current)
         }
         holder.bind(current)
+
+        holder.itemView.setOnLongClickListener {
+            onLongItemClicked(current)
+            true
+        }
     }
 
     class DatesTimesViewHolder(private var binding: DatesTimesItemBinding) :

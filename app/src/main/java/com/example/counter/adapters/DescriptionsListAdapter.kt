@@ -2,6 +2,7 @@ package com.example.counter.adapters
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.counter.data.modelentity.Description
 import com.example.counter.databinding.DescriptionItemBinding
@@ -10,7 +11,7 @@ import com.example.counter.databinding.DescriptionItemBinding
 class DescriptionsListAdapter :
     RecyclerView.Adapter<DescriptionsListAdapter.DescriptionsViewHolder>() {
 
-    private val descriptions = emptyList<Description>()
+    private var descriptions = emptyList<Description>()
 
     class DescriptionsViewHolder(private val binding: DescriptionItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
@@ -27,7 +28,6 @@ class DescriptionsListAdapter :
             }
         }
 
-
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DescriptionsViewHolder {
@@ -42,9 +42,11 @@ class DescriptionsListAdapter :
         val current = descriptions[position]
         holder.bind(current)
     }
-
-
+    
     fun setData(descriptionsData: List<Description>){
-        val descriptionsDiffUtil = "DescriptionsDiffUtil(descriptions, descriptionsData"
+        val descriptionsDiffUtil = DescriptionsDiffUtil(descriptions, descriptionsData)
+        val descriptionsDiffResult = DiffUtil.calculateDiff(descriptionsDiffUtil)
+        this.descriptions = descriptionsData
+        descriptionsDiffResult.dispatchUpdatesTo(this)
     }
 }

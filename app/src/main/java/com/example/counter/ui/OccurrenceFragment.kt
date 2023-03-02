@@ -8,10 +8,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -32,7 +32,6 @@ import com.example.counter.util.Constants
 import com.example.counter.viewmodels.CounterViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.launch
 
 @ExperimentalCoroutinesApi
 @AndroidEntryPoint
@@ -49,15 +48,17 @@ class OccurrenceFragment : Fragment() {
 
     private var timerStarted = false
     private var time = 0.0
-    private var _bindingOccurence: FragmentOccurenceBinding? = null
-    private val bindingOccurence get() = _bindingOccurence!!
+    private var _bindingOccurrence: FragmentOccurenceBinding? = null
+    private val bindingOccurrence get() = _bindingOccurrence!!
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel = ViewModelProvider(requireActivity())[CounterViewModel::class.java]
+
+
     }
 
     private fun bind(occurrence: Occurrence) {
-        bindingOccurence.apply {
+        bindingOccurrence.apply {
             occurencyName.text = occurrence.occurrenceName
             occurenceCreateDate.text = occurrence.createDate
             occurencyCategory.text = occurrence.category
@@ -71,15 +72,13 @@ class OccurrenceFragment : Fragment() {
     }
 
 
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        viewModel.getOccurrenceWithActivities()
-        _bindingOccurence = FragmentOccurenceBinding.inflate(inflater, container, false)
+        _bindingOccurrence = FragmentOccurenceBinding.inflate(inflater, container, false)
 
-        return bindingOccurence.root
+        return bindingOccurrence.root
     }
 
 
@@ -89,77 +88,96 @@ class OccurrenceFragment : Fragment() {
 
         viewModel.getOccurrence(id).observe(this.viewLifecycleOwner) { selectedOccurence ->
             occurrence = selectedOccurence
-            bind(occurrence)
+            bind(selectedOccurence)
         }
 
-        val adapter = ActivitiesListAdapter {
-            activity = it
+        val adapter = ActivitiesListAdapter(
+            {
+                val action =
+                    OccurrenceFragmentDirections.actionOccurenceFragmentToActivityEditFragment(
+                        it.activityId
+                    )
+                this.findNavController().navigate(action)
+            },
+            {
+                viewModel.deleteActivity(it)
+            }
+        )
 
-//            showConfirmationDialogDeleteDateTime()
-            val action = OccurrenceFragmentDirections.actionOccurenceFragmentToActivityEditFragment(it.activityId)
-            this.findNavController().navigate(action)
-        }
+        bindingOccurrence.occurenceDetailRecyclerView.adapter = adapter
 
-
-
-        bindingOccurence.occurenceDetailRecyclerView.adapter = adapter
-lifecycleScope.launch {
-
-        viewModel.getActivities(id).observe(viewLifecycleOwner) { selectedOccurrenceList ->
-            selectedOccurrenceList.let {
+        viewModel.getActivities(id).observe(viewLifecycleOwner) { occurrenceActivities ->
+            occurrenceActivities.let {
                 adapter.submitList(it as MutableList<Activity>)
             }
             if (
-//                this::occurrence.isInitialized &&
-                selectedOccurrenceList.isNotEmpty()) {
-                lastActivity = selectedOccurrenceList[0].fullDate
+                this::occurrence.isInitialized &&
+                occurrenceActivities.isNotEmpty()
+            ) {
+                lastActivity = occurrenceActivities[0].fullDate
 
-                bindingOccurence.occurencyTimeFrom.text =
+                bindingOccurrence.occurencyTimeFrom.text =
                     secondsToComponents(getSecondsPassed())
 
-                bindingOccurence.occurencyTimeTo.text =
-                    secondsToComponents(getSecondsTo(getIntervalSeconds()))
+                bindingOccurrence.occurencyTimeTo.text =
+                    secondsToComponents(getSecondsTo(getIntervalSeconds(occurrence.intervalFrequency)))
 
-                val datesTimesSize = selectedOccurrenceList.size
-                bindingOccurence.listSizeTextView.text =
+                val datesTimesSize = occurrenceActivities.size
+                bindingOccurrence.listSizeTextView.text =
                     datesTimesSize.toString()
 
-                val timeString = bindingOccurence.occurencyTimeTo.text
+                val timeString = bindingOccurrence.occurencyTimeTo.text
 
                 updateTimeColor(timeString)
+            } else {
+                bindingOccurrence.progressBar.visibility = View.VISIBLE
+                bindingOccurrence.progressBar2.visibility = View.VISIBLE
+                Toast.makeText(
+                    requireContext(),
+                    "Error occurred while calculating time",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
+
         }
-}
 
-//        bindingOccurence.descriptionsHolder.setOnClickListener {
-//            val idOccurence = navigationArgs.id
-//            val action =
-//                OccurenceFragmentDirections.actionOccurenceFragmentToDescriptionFragment(idOccurence)
-//            this.findNavController().navigate(action)
-//        }
+        bindingOccurrence.descriptionsHolder.setOnClickListener {
+            val idOccurence = navigationArgs.id
+            val action =
+                OccurrenceFragmentDirections.actionOccurenceFragmentToDescriptionFragment(
+                    idOccurence
+                )
+            this.findNavController().navigate(action)
+        }
 
-        bindingOccurence.occurenceDetailRecyclerView.layoutManager =
+        bindingOccurrence.occurenceDetailRecyclerView.layoutManager =
             LinearLayoutManager(this.context)
 
         // Set button
-        bindingOccurence.addActivity.setOnClickListener { addNewActivity() }
+        bindingOccurrence.addActivity.setOnClickListener { addNewActivity() }
 
         // start stop timer
         serviceIntent = Intent(context?.applicationContext, TimerService::class.java)
         context?.registerReceiver(updateTime, IntentFilter(TimerService.TIMER_UPDATED))
+
+        Toast.makeText(
+            requireContext(),
+            "One click to edit activity. Click long to delete ",
+            Toast.LENGTH_SHORT
+        ).show()
 
     }
 
     private fun updateTimeColor(timeString: CharSequence) {
 
         if (timeString.contains("-")) {
-            bindingOccurence.occurencyTimeToLabel.setTextColor(
+            bindingOccurrence.occurencyTimeToLabel.setTextColor(
                 ContextCompat.getColor(
                     requireContext(),
                     R.color.red_700
                 )
             )
-            bindingOccurence.occurencyTimeTo.setTextColor(
+            bindingOccurrence.occurencyTimeTo.setTextColor(
                 ContextCompat.getColor(
                     requireContext(),
                     R.color.red_700
@@ -171,13 +189,13 @@ lifecycleScope.launch {
             && !timeString.contains("-")
 
         ) {
-            bindingOccurence.occurencyTimeToLabel.setTextColor(
+            bindingOccurrence.occurencyTimeToLabel.setTextColor(
                 ContextCompat.getColor(
                     requireContext(),
                     R.color.orange
                 )
             )
-            bindingOccurence.occurencyTimeTo.setTextColor(
+            bindingOccurrence.occurencyTimeTo.setTextColor(
                 ContextCompat.getColor(
                     requireContext(),
                     R.color.orange
@@ -185,13 +203,13 @@ lifecycleScope.launch {
             )
         } else {
 
-            bindingOccurence.occurencyTimeToLabel.setTextColor(
+            bindingOccurrence.occurencyTimeToLabel.setTextColor(
                 ContextCompat.getColor(
                     requireContext(),
                     R.color.green
                 )
             )
-            bindingOccurence.occurencyTimeTo.setTextColor(
+            bindingOccurrence.occurencyTimeTo.setTextColor(
                 ContextCompat.getColor(
                     requireContext(),
                     R.color.green
@@ -199,6 +217,7 @@ lifecycleScope.launch {
             )
         }
     }
+
 
     private fun getOccurIcon(): Int {
         val occurMore: Boolean = occurrence.occurMore
@@ -211,8 +230,8 @@ lifecycleScope.launch {
 
     // CALCULATING BLOK
 
-    fun getIntervalSeconds(): Long {
-        val interval = occurrence.intervalFrequency
+    fun getIntervalSeconds(interval: String): Long {
+
 
         val intervalValue = interval.split(" ")[0].toLong()
         val intervalFrequency = interval.split(" ")[1]
@@ -291,7 +310,7 @@ lifecycleScope.launch {
             getDate(),
             timerValue,
             0,
-            getIntervalSeconds(),
+            getIntervalSeconds(occurrence.intervalFrequency),
             0
         )
     }
@@ -302,10 +321,6 @@ lifecycleScope.launch {
 
     private fun getHour(): String {
         return viewModel.getHour()
-    }
-
-    private fun deleteDateTime() {
-        viewModel.deleteActivity(activity)
     }
 
     private fun deleteOccurrence() {
@@ -323,7 +338,7 @@ lifecycleScope.launch {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        _bindingOccurence = null
+        _bindingOccurrence = null
     }
 
     private fun showConfirmationDialog() {
@@ -338,30 +353,6 @@ lifecycleScope.launch {
             .show()
     }
 
-    private fun showConfirmationDialogDeleteDateTime() {
-        MaterialAlertDialogBuilder(requireContext())
-            .setTitle(getString(android.R.string.dialog_alert_title))
-            .setMessage(getString(string.delete_dateTime_question))
-            .setCancelable(false)
-            .setNegativeButton(getString(string.no)) { _, _ -> }
-            .setPositiveButton(getString(string.yes)) { _, _ ->
-                deleteDateTime()
-            }
-            .show()
-    }
-
-    private fun showSaveTimeDialog() {
-        MaterialAlertDialogBuilder(requireContext())
-            .setTitle(getString(android.R.string.dialog_alert_title))
-            .setMessage(getString(string.save_timer_question, timePassed))
-            .setCancelable(false)
-            .setNegativeButton(getString(string.no)) { _, _ -> }
-            .setPositiveButton(getString(string.yes)) { _, _ ->
-                addNewActivity(timePassed)
-            }
-            .show()
-    }
-
 
     /**
      * Timer block for measure how long occurrence activity was
@@ -369,10 +360,10 @@ lifecycleScope.launch {
     // https://www.youtube.com/watch?v=LPjhP9D3pm8
     private fun resetTimer() {
         timePassed = getTimeStringFromDouble(time)
-        showSaveTimeDialog()
+
         stopTimer()
         time = 0.0
-        bindingOccurence.timerCounter.text = getTimeStringFromDouble(time)
+        bindingOccurrence.timerCounter.text = getTimeStringFromDouble(time)
     }
 
     private fun startStopTimer() {
@@ -385,20 +376,20 @@ lifecycleScope.launch {
     private fun startTimer() {
         serviceIntent.putExtra(TimerService.TIME_EXTRA, time)
         context?.startService(serviceIntent)
-        bindingOccurence.startTimer.text = "stop"
+        bindingOccurrence.startTimer.text = "stop"
         timerStarted = true
     }
 
     private fun stopTimer() {
         context?.stopService(serviceIntent)
-        bindingOccurence.startTimer.text = "start"
+        bindingOccurrence.startTimer.text = "start"
         timerStarted = false
     }
 
     private val updateTime: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent) {
             time = intent.getDoubleExtra(TimerService.TIME_EXTRA, 0.0)
-            bindingOccurence.timerCounter.text = getTimeStringFromDouble(time)
+            bindingOccurrence.timerCounter.text = getTimeStringFromDouble(time)
 
         }
     }

@@ -8,13 +8,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.asLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.counter.R
 import com.example.counter.adapters.OccurrenceActivitiesListAdapter
-import com.example.counter.data.DataStoreRepository
+//import com.example.counter.data.DataStoreRepository
 import com.example.counter.data.modelentity.Activity
 import com.example.counter.data.relations.OccurrenceWithActivities
 import com.example.counter.databinding.FragmentCounterHomeBinding
@@ -24,7 +23,7 @@ import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.delay
+
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -143,14 +142,14 @@ class CounterHomeFragment : Fragment() {
         binding.occurenciesRecyclerView.layoutManager = LinearLayoutManager(this.context)
 
 
-        viewModel.readFilterCategory.asLiveData().observe(viewLifecycleOwner) { value ->
-            selectedCategoryChip = value.filteredCategoryChip
-            selectedCategoryChipId = value.filteredCategoryChipId
-
-            updateChip(value.filteredCategoryChipId, binding.categoryChipGroup)
-
-            Log.d("Datastore", "$selectedCategoryChipId $selectedCategoryChip")
-        }
+//        viewModel.readFilterCategory.asLiveData().observe(viewLifecycleOwner) { value ->
+//            selectedCategoryChip = value.filteredCategoryChip
+//            selectedCategoryChipId = value.filteredCategoryChipId
+//
+//            updateChip(value.filteredCategoryChipId, binding.categoryChipGroup)
+//
+//            Log.d("Datastore", "$selectedCategoryChipId $selectedCategoryChip")
+//        }
 
         binding.categoryChipGroup.setOnCheckedStateChangeListener { group, checkedIds ->
             val chip = group.findViewById<Chip>(checkedIds.first())
@@ -159,7 +158,7 @@ class CounterHomeFragment : Fragment() {
             selectedCategoryChip = selectedCategory
             selectedCategoryChipId = checkedIds.first()
 
-            viewModel.saveFilterCategoryTemp(selectedCategoryChip, selectedCategoryChipId)
+//            viewModel.saveFilterCategoryTemp(selectedCategoryChip, selectedCategoryChipId)
 
             when (selectedCategoryChip) {
                 "All" -> {

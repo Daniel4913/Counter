@@ -30,7 +30,8 @@ class OccurrenceActivitiesListAdapter(private val onItemClicked: (OccurrenceWith
 
         fun bind(occ: OccurrenceWithActivities) {
             binding.apply {
-                icOccurrence.text = occ.occurrence.occurrenceName[1].toString()
+                icOccurrence.text = "a${occ.occurrenceActivities.first().activityId.toString()}o${occ.occurrence.occurrenceId} "
+//                icOccurrence.text = occ.occurrence.occurrenceName[1].toString()
                 occurenceName.text = occ.occurrence.occurrenceName
                 occurenceName.isSelected = true
                 occurenceName.setSingleLine()
@@ -181,8 +182,8 @@ class OccurrenceActivitiesListAdapter(private val onItemClicked: (OccurrenceWith
                 oldItem: OccurrenceWithActivities,
                 newItem: OccurrenceWithActivities
             ): Boolean {
-                return oldItem.occurrence.occurrenceName == newItem.occurrence.occurrenceName
-                        && oldItem.occurrence.occurrenceId == newItem.occurrence.occurrenceId
+                return oldItem.occurrence.occurrenceId == newItem.occurrence.occurrenceId
+                        && oldItem.occurrence.occurrenceName == newItem.occurrence.occurrenceName
                         && oldItem.occurrenceActivities[0].secondsPassed == newItem.occurrenceActivities[0].secondsPassed
                         && oldItem.occurrenceActivities[0].secondsToNext == newItem.occurrenceActivities[0].secondsToNext
             }
