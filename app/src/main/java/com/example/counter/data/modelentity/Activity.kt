@@ -17,9 +17,6 @@ data class Activity(
     @ColumnInfo(name="full_date")
     val fullDate: String,
 
-    @ColumnInfo(name= "time_spend")
-    val timeSpend: String?,
-
     @ColumnInfo(name="seconds_passed")
     val secondsPassed: Long?,
 

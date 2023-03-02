@@ -1,9 +1,5 @@
 package com.example.counter.ui
 
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -20,12 +16,10 @@ import com.example.counter.R.string
 import com.example.counter.data.modelentity.Activity
 import com.example.counter.data.modelentity.Occurrence
 import com.example.counter.databinding.FragmentOccurenceBinding
-import com.example.counter.services.TimerService
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import java.time.*
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
-import kotlin.math.roundToInt
 import kotlin.time.Duration.Companion.seconds
 import com.example.counter.R
 import com.example.counter.util.Constants
@@ -40,71 +34,62 @@ class OccurrenceFragment : Fragment() {
     private val navigationArgs: OccurrenceFragmentArgs by navArgs()
 
     private lateinit var viewModel: CounterViewModel
-    private lateinit var serviceIntent: Intent
     private lateinit var occurrence: Occurrence
-    private lateinit var activity: Activity // counter.data.modelentity.Activity
-    private lateinit var timePassed: String
     private lateinit var lastActivity: String
 
-    private var timerStarted = false
-    private var time = 0.0
-    private var _bindingOccurrence: FragmentOccurenceBinding? = null
-    private val bindingOccurrence get() = _bindingOccurrence!!
+    private var _binding: FragmentOccurenceBinding? = null
+    private val binding get() = _binding!!
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel = ViewModelProvider(requireActivity())[CounterViewModel::class.java]
-
-
     }
 
     private fun bind(occurrence: Occurrence) {
-        bindingOccurrence.apply {
+        binding.apply {
             occurencyName.text = occurrence.occurrenceName
             occurenceCreateDate.text = occurrence.createDate
             occurencyCategory.text = occurrence.category
-            occurIcon.setImageResource(getOccurIcon())
             deleteBtn.setOnClickListener { showConfirmationDialog() }
             editBtn.setOnClickListener { editOccurrence() }
-            startTimer.setOnClickListener { startStopTimer() }
-            resetTimer.setOnClickListener { resetTimer() }
             intervalTextView.text = occurrence.intervalFrequency
+            addActivity.setOnClickListener { addNewActivity() }
         }
     }
-
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _bindingOccurrence = FragmentOccurenceBinding.inflate(inflater, container, false)
+        _binding = FragmentOccurenceBinding.inflate(inflater, container, false)
 
-        return bindingOccurrence.root
+        return binding.root
     }
-
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val id = navigationArgs.id
 
-        viewModel.getOccurrence(id).observe(this.viewLifecycleOwner) { selectedOccurence ->
-            occurrence = selectedOccurence
-            bind(selectedOccurence)
+        viewModel.getOccurrence(id).observe(this.viewLifecycleOwner) { selectedOccurrence ->
+            occurrence = selectedOccurrence
+            bind(selectedOccurrence)
         }
 
         val adapter = ActivitiesListAdapter(
-            {
+            { activity ->
                 val action =
                     OccurrenceFragmentDirections.actionOccurenceFragmentToActivityEditFragment(
-                        it.activityId
+                        activity.activityId
                     )
                 this.findNavController().navigate(action)
             },
-            {
-                viewModel.deleteActivity(it)
+            { activity ->
+                viewModel.deleteActivity(activity)
             }
         )
 
-        bindingOccurrence.occurenceDetailRecyclerView.adapter = adapter
+        binding.occurenceDetailRecyclerView.adapter = adapter
+        binding.occurenceDetailRecyclerView.layoutManager =
+            LinearLayoutManager(this.context)
 
         viewModel.getActivities(id).observe(viewLifecycleOwner) { occurrenceActivities ->
             occurrenceActivities.let {
@@ -116,49 +101,29 @@ class OccurrenceFragment : Fragment() {
             ) {
                 lastActivity = occurrenceActivities[0].fullDate
 
-                bindingOccurrence.occurencyTimeFrom.text =
+                binding.occurencyTimeFrom.text =
                     secondsToComponents(getSecondsPassed())
 
-                bindingOccurrence.occurencyTimeTo.text =
+                binding.occurencyTimeTo.text =
                     secondsToComponents(getSecondsTo(getIntervalSeconds(occurrence.intervalFrequency)))
 
                 val datesTimesSize = occurrenceActivities.size
-                bindingOccurrence.listSizeTextView.text =
+                binding.listSizeTextView.text =
                     datesTimesSize.toString()
 
-                val timeString = bindingOccurrence.occurencyTimeTo.text
+                val timeString = binding.occurencyTimeTo.text
 
                 updateTimeColor(timeString)
             } else {
-                bindingOccurrence.progressBar.visibility = View.VISIBLE
-                bindingOccurrence.progressBar2.visibility = View.VISIBLE
+                binding.progressBar.visibility = View.VISIBLE
+                binding.progressBar2.visibility = View.VISIBLE
                 Toast.makeText(
                     requireContext(),
                     "Error occurred while calculating time",
                     Toast.LENGTH_SHORT
                 ).show()
             }
-
         }
-
-        bindingOccurrence.descriptionsHolder.setOnClickListener {
-            val idOccurence = navigationArgs.id
-            val action =
-                OccurrenceFragmentDirections.actionOccurenceFragmentToDescriptionFragment(
-                    idOccurence
-                )
-            this.findNavController().navigate(action)
-        }
-
-        bindingOccurrence.occurenceDetailRecyclerView.layoutManager =
-            LinearLayoutManager(this.context)
-
-        // Set button
-        bindingOccurrence.addActivity.setOnClickListener { addNewActivity() }
-
-        // start stop timer
-        serviceIntent = Intent(context?.applicationContext, TimerService::class.java)
-        context?.registerReceiver(updateTime, IntentFilter(TimerService.TIMER_UPDATED))
 
         Toast.makeText(
             requireContext(),
@@ -171,13 +136,13 @@ class OccurrenceFragment : Fragment() {
     private fun updateTimeColor(timeString: CharSequence) {
 
         if (timeString.contains("-")) {
-            bindingOccurrence.occurencyTimeToLabel.setTextColor(
+            binding.occurencyTimeToLabel.setTextColor(
                 ContextCompat.getColor(
                     requireContext(),
                     R.color.red_700
                 )
             )
-            bindingOccurrence.occurencyTimeTo.setTextColor(
+            binding.occurencyTimeTo.setTextColor(
                 ContextCompat.getColor(
                     requireContext(),
                     R.color.red_700
@@ -189,13 +154,13 @@ class OccurrenceFragment : Fragment() {
             && !timeString.contains("-")
 
         ) {
-            bindingOccurrence.occurencyTimeToLabel.setTextColor(
+            binding.occurencyTimeToLabel.setTextColor(
                 ContextCompat.getColor(
                     requireContext(),
                     R.color.orange
                 )
             )
-            bindingOccurrence.occurencyTimeTo.setTextColor(
+            binding.occurencyTimeTo.setTextColor(
                 ContextCompat.getColor(
                     requireContext(),
                     R.color.orange
@@ -203,35 +168,24 @@ class OccurrenceFragment : Fragment() {
             )
         } else {
 
-            bindingOccurrence.occurencyTimeToLabel.setTextColor(
+            binding.occurencyTimeToLabel.setTextColor(
                 ContextCompat.getColor(
                     requireContext(),
                     R.color.green
                 )
             )
-            bindingOccurrence.occurencyTimeTo.setTextColor(
+            binding.occurencyTimeTo.setTextColor(
                 ContextCompat.getColor(
                     requireContext(),
                     R.color.green
                 )
             )
-        }
-    }
-
-
-    private fun getOccurIcon(): Int {
-        val occurMore: Boolean = occurrence.occurMore
-        return if (occurMore) {
-            R.drawable.ic_expand_more
-        } else {
-            R.drawable.ic_expand_less
         }
     }
 
     // CALCULATING BLOK
 
     fun getIntervalSeconds(interval: String): Long {
-
 
         val intervalValue = interval.split(" ")[0].toLong()
         val intervalFrequency = interval.split(" ")[1]
@@ -302,13 +256,10 @@ class OccurrenceFragment : Fragment() {
         }
     }
 
-    // DB SRATATATA
-
-    private fun addNewActivity(timerValue: String = "") {
+    private fun addNewActivity() {
         viewModel.addNewActivity(
             navigationArgs.id,
             getDate(),
-            timerValue,
             0,
             getIntervalSeconds(occurrence.intervalFrequency),
             0
@@ -338,7 +289,7 @@ class OccurrenceFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        _bindingOccurrence = null
+        _binding = null
     }
 
     private fun showConfirmationDialog() {
@@ -353,56 +304,5 @@ class OccurrenceFragment : Fragment() {
             .show()
     }
 
-
-    /**
-     * Timer block for measure how long occurrence activity was
-     */
-    // https://www.youtube.com/watch?v=LPjhP9D3pm8
-    private fun resetTimer() {
-        timePassed = getTimeStringFromDouble(time)
-
-        stopTimer()
-        time = 0.0
-        bindingOccurrence.timerCounter.text = getTimeStringFromDouble(time)
-    }
-
-    private fun startStopTimer() {
-        if (timerStarted)
-            stopTimer()
-        else
-            startTimer()
-    }
-
-    private fun startTimer() {
-        serviceIntent.putExtra(TimerService.TIME_EXTRA, time)
-        context?.startService(serviceIntent)
-        bindingOccurrence.startTimer.text = "stop"
-        timerStarted = true
-    }
-
-    private fun stopTimer() {
-        context?.stopService(serviceIntent)
-        bindingOccurrence.startTimer.text = "start"
-        timerStarted = false
-    }
-
-    private val updateTime: BroadcastReceiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context?, intent: Intent) {
-            time = intent.getDoubleExtra(TimerService.TIME_EXTRA, 0.0)
-            bindingOccurrence.timerCounter.text = getTimeStringFromDouble(time)
-
-        }
-    }
-
-    private fun getTimeStringFromDouble(time: Double): String {
-        val resultInt = time.roundToInt()
-        val hrs = resultInt % 86400 / 3600
-        val min = resultInt % 86400 % 3600 / 60
-        val sec = resultInt % 86400 % 3600 % 60
-        return makeTimeString(hrs, min, sec)
-    }
-
-    private fun makeTimeString(hrs: Int, mins: Int, sec: Int): String =
-        String.format("%02d:%02d:%02d", hrs, mins, sec)
 }
 

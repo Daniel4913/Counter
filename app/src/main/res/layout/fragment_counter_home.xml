@@ -4,114 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.CounterHomeFragment">
+    tools:context=".ui.HomeFragment">
 
-
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/occurence_cardView"
-        android:layout_width="match_parent"
-        android:layout_height="150dp"
-        android:layout_margin="10dp"
-        android:padding="8dp"
-        app:cardBackgroundColor="#20FF2CDF"
-        app:cardCornerRadius="10dp"
-        app:cardElevation="0.5dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <ImageView
-                android:id="@+id/profile_imageView"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:srcCompat="@tools:sample/avatars" />
-
-            <ImageView
-                android:id="@+id/occurence_icon"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="24dp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/ic_fox" />
-
-            <TextView
-                android:id="@+id/occurency_name_label"
-                style="@style/Widget.Counter.Header"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="12dp"
-                android:layout_marginBottom="17dp"
-                android:maxLines="1"
-                android:text="nazwa occurence"
-                android:textColor="@color/lightGray"
-                android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="@+id/occurence_icon"
-                app:layout_constraintHorizontal_weight="2"
-                app:layout_constraintStart_toEndOf="@+id/occurence_icon"
-                app:layout_constraintTop_toTopOf="@+id/occurence_icon"
-                app:layout_constraintVertical_bias="0.0" />
-
-            <TextView
-                android:id="@+id/textView3"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:maxLines="1"
-                android:overScrollMode="ifContentScrolls"
-                android:text="@string/affirmation"
-                android:textColor="@color/lightGray"
-                android:textSize="12sp"
-                app:layout_constraintStart_toStartOf="@+id/occurence_icon"
-                app:layout_constraintTop_toBottomOf="@+id/occurence_icon" />
-
-            <TextView
-                android:id="@+id/occurency_time_to_label"
-                style="@style/Widget.Counter.Header"
-                android:layout_below="@+id/occurency_name_label"
-                android:text="@string/time_late"
-                android:textAlignment="center"
-                android:textColor="@color/lightGray"
-                android:textSize="8dp"
-                app:layout_constraintBottom_toTopOf="@+id/occurency_time_from_label"
-                app:layout_constraintHorizontal_weight="1"
-                app:layout_constraintStart_toStartOf="@+id/occurence_icon"
-                app:layout_constraintTop_toBottomOf="@+id/textView3" />
-
-            <TextView
-                android:id="@+id/occurency_time_from_label"
-                style="@style/Widget.Counter.Header"
-                android:layout_alignParentEnd="true"
-                android:layout_marginBottom="24dp"
-                android:text="@string/time_passed"
-                android:textAlignment="center"
-                android:textColor="@color/lightGray"
-                android:textSize="8dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintHorizontal_weight="1"
-                app:layout_constraintStart_toStartOf="@+id/occurency_time_to_label" />
-
-            <ImageView
-                android:id="@+id/imageView3"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_marginEnd="24dp"
-                android:layout_marginBottom="24dp"
-                android:src="@drawable/occur_more_ic"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent" />
-
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-    </com.google.android.material.card.MaterialCardView>
 
     <HorizontalScrollView
         android:id="@+id/category_scrollView"
@@ -122,7 +16,7 @@
         app:layout_constraintBottom_toTopOf="@+id/occurrence_name_label"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/occurence_cardView">
+        app:layout_constraintTop_toTopOf="parent">
 
 
         <LinearLayout
@@ -217,7 +111,7 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/occurencies_recycler_view"
         android:layout_width="match_parent"
-        android:layout_height="500dp"
+        android:layout_height="0dp"
         android:orientation="vertical"
         android:scrollbars="vertical"
         app:layout_constraintBottom_toBottomOf="parent"

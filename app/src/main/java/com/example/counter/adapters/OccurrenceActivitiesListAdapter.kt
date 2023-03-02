@@ -30,12 +30,11 @@ class OccurrenceActivitiesListAdapter(private val onItemClicked: (OccurrenceWith
 
         fun bind(occ: OccurrenceWithActivities) {
             binding.apply {
-                icOccurrence.text = "a${occ.occurrenceActivities.first().activityId.toString()}o${occ.occurrence.occurrenceId} "
 //                icOccurrence.text = occ.occurrence.occurrenceName[1].toString()
                 occurenceName.text = occ.occurrence.occurrenceName
                 occurenceName.isSelected = true
                 occurenceName.setSingleLine()
-                occurIcon.setImageResource(getOccurIcon(occ.occurrence))
+
 
                 if (occ.occurrenceActivities.isNotEmpty()) {
                     lastDateTime = occ.occurrenceActivities.last().fullDate
@@ -44,6 +43,7 @@ class OccurrenceActivitiesListAdapter(private val onItemClicked: (OccurrenceWith
                     timeFromLast.text = secondsToComponents(getSecondsPassed())
 
                     applyTimeColor(secondsToComponents(getSecondsTo(getIntervalSeconds())))
+                    
                 } else {
                     timeFromLast.text = "- -"
                     timeToNext.text = "- -"
@@ -51,14 +51,6 @@ class OccurrenceActivitiesListAdapter(private val onItemClicked: (OccurrenceWith
             }
         }
 
-        private fun getOccurIcon(occurrence: Occurrence): Int {
-            val occurMore: Boolean = occurrence.occurMore
-            return if (occurMore) {
-                R.drawable.ic_expand_more
-            } else {
-                R.drawable.ic_expand_less
-            }
-        }
 
         fun getIntervalSeconds(): Long {
             val interval = intervalFrequency
@@ -184,6 +176,13 @@ class OccurrenceActivitiesListAdapter(private val onItemClicked: (OccurrenceWith
             ): Boolean {
                 return oldItem.occurrence.occurrenceId == newItem.occurrence.occurrenceId
                         && oldItem.occurrence.occurrenceName == newItem.occurrence.occurrenceName
+                        && oldItem.occurrence.category == newItem.occurrence.category
+                        && oldItem.occurrence.intervalFrequency == newItem.occurrence.intervalFrequency
+                        && oldItem.occurrence.createDate == newItem.occurrence.createDate
+                        && oldItem.occurrenceActivities[0].activityId == newItem.occurrenceActivities[0].activityId
+                        && oldItem.occurrenceActivities[0].occurrenceOwnerId == newItem.occurrenceActivities[0].occurrenceOwnerId
+                        && oldItem.occurrenceActivities[0].fullDate == newItem.occurrenceActivities[0].fullDate
+                        && oldItem.occurrenceActivities[0].intervalSeconds == newItem.occurrenceActivities[0].intervalSeconds
                         && oldItem.occurrenceActivities[0].secondsPassed == newItem.occurrenceActivities[0].secondsPassed
                         && oldItem.occurrenceActivities[0].secondsToNext == newItem.occurrenceActivities[0].secondsToNext
             }

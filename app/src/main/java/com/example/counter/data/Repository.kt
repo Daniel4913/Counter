@@ -6,7 +6,6 @@ import javax.inject.Inject
 @ViewModelScoped
 class Repository @Inject constructor(
         occurrenceDataSource: DataSource,
-//        affirmationRemoteDataSource: Affirmation
 ) {
     val dataSource = occurrenceDataSource
 }

@@ -79,7 +79,6 @@ class ActivityEditBottomSheet : BottomSheetDialogFragment() {
                             binding.dateEditText.text.toString(),
                             binding.hourEditText.text.toString()
                         ),
-                        activity.timeSpend,
                         activity.secondsPassed,
                         activity.intervalSeconds,
                         activity.secondsToNext,
@@ -98,7 +97,6 @@ class ActivityEditBottomSheet : BottomSheetDialogFragment() {
                     activity.activityId,
                     activity.occurrenceOwnerId,
                     activity.fullDate,
-                    activity.timeSpend,
                     activity.secondsPassed,
                     activity.intervalSeconds,
                     activity.secondsToNext

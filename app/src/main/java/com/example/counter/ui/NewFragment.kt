@@ -37,7 +37,7 @@ class NewFragment : Fragment() {
 
     private var intervalFrequencyChip = MINUTES
     private var intervalFrequencyChipId = 0
-    private var intervalValue = DEFAULT_HOURS
+    private var intervalValue = 0
 
 //    lateinit var emojiProvider: EmojiProvider
 
@@ -94,7 +94,6 @@ class NewFragment : Fragment() {
 
         binding.tvDate.setOnClickListener { getDate() }
         binding.tvTime.setOnClickListener { getTime() }
-        binding.frequencySwitch.setOnClickListener { updateFrequencySwitchText() }
 
         Toast.makeText(requireContext(), "Click on date and time to change it", Toast.LENGTH_LONG)
             .show()
@@ -114,8 +113,8 @@ class NewFragment : Fragment() {
 
         binding.frequencyChipGroup.setOnCheckedStateChangeListener { group, selectedChipId ->
             val chip = group.findViewById<Chip>(selectedChipId.first())
-            val selectedFrequency = chip.text.toString().lowercase(Locale.ROOT)
-            intervalFrequencyChip = selectedFrequency
+            val selectedFrequencyChip = chip.text.toString().lowercase(Locale.ROOT)
+            intervalFrequencyChip = selectedFrequencyChip
             intervalFrequencyChipId = selectedChipId.first()
         }
 
@@ -151,18 +150,6 @@ class NewFragment : Fragment() {
 
         binding.intervalNumberPicker.value = pickerValue
         binding.frequencyChipGroup.check(value)
-    }
-
-    private fun updateFrequencySwitchText() {
-        val switch = binding.frequencySwitch
-        when (switch.isChecked) {
-            true -> {
-                switch.text = getText(R.string.more_often)
-            }
-            false -> {
-                switch.text = getText(R.string.less)
-            }
-        }
     }
 
 
@@ -244,7 +231,6 @@ class NewFragment : Fragment() {
             viewModel.addNewOccurrence(
                 occIconAndName(),
                 createDate,
-                binding.frequencySwitch.isChecked,
                 binding.categoryDropdown.text.toString(),
                 getIntervalFrequency(intervalValue, intervalFrequencyChip)
             )
@@ -268,7 +254,6 @@ class NewFragment : Fragment() {
                 occurrence.occurrenceId,
                 binding.occurenceName.text.toString(),
                 createDate,
-                binding.frequencySwitch.isChecked,
                 binding.categoryDropdown.text.toString(),
                 getIntervalFrequency(intervalValue, intervalFrequencyChip)
             )

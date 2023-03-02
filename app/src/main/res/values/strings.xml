@@ -29,7 +29,7 @@
     <string name="colon_time">%d:%d</string>
     <string name="minus_date">%d-%d-%d </string>
     <string name="dawno_temu">dawno temu</string>
-    <string name="affirmation">Wzrasta to, czemu poświęcasz uwagę. ~ T. Harv Eker</string>
+    <string name="affirmation">Wzrasta to, \nczemu poświęcasz uwagę.\n ~ T. Harv Eker</string>
     <string name="time_passed">It passed %s since you did it last time...</string>
 
 

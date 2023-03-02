@@ -36,9 +36,4 @@ object DatabaseModule {
     @Provides
     fun provideActivityDao(database: CounterDatabase) = database.activityDao()
 
-
-    @Singleton
-    @Provides
-    fun provideDescriptionDao(database: CounterDatabase) = database.descriptionDao()
-
 }

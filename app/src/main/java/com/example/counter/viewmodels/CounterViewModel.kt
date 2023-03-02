@@ -6,13 +6,10 @@ import com.example.counter.data.*
 //import com.example.counter.data.DataStoreRepository
 //import com.example.counter.data.DataStoreRepository.FilterCategory
 import com.example.counter.data.modelentity.Activity
-import com.example.counter.data.modelentity.Description
 import com.example.counter.data.modelentity.Occurrence
 import com.example.counter.data.relations.OccurrenceWithActivities
-import com.example.counter.data.relations.OccurrenceWithDescripion
 import com.example.counter.util.Constants
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -28,14 +25,7 @@ class CounterViewModel @Inject constructor(
 //    private lateinit var filterCategory: FilterCategory
 
 //    val readFilterCategory = dataStoreRepository.readFilterCategory
-    /////////
 
-    val emptyDatabase: MutableLiveData<Boolean> = MutableLiveData(false)
-    fun checkIfDatabaseEmpty(description: List<Description>){
-        emptyDatabase.value = description.isEmpty()
-    }
-
-    //////
 
 //    private fun saveFilterCategory(){
 //        viewModelScope.launch(Dispatchers.IO) {
@@ -93,13 +83,6 @@ class CounterViewModel @Inject constructor(
         viewModelScope.launch { repository.dataSource.updateActivity(activity) }
     }
 
-    fun retrieveOccurrenceWithDescriptions(): LiveData<List<OccurrenceWithDescripion>> {
-        return repository.dataSource.getOccurrenceWithDescriptions().asLiveData()
-    }
-
-    fun getDescriptions(id: Int): LiveData<List<Description>> {
-        return repository.dataSource.getDescriptions(id).asLiveData()
-    }
 
     private fun insertOccurence(occurrence: Occurrence) {
         viewModelScope.launch {
@@ -119,24 +102,17 @@ class CounterViewModel @Inject constructor(
         }
     }
 
-//    fun updateDateTime(dateTime: OccurrenceWithDatesTimes){
-//        viewModelScope.launch {
-//            occurenceDao.updateOccurrenceWithDateTime(dateTime)
-//        }
-//    }
-
-
     private fun getNewOccurrenceEntry(
         occurrenceName: String,
         createDate: String,
-        occurMore: Boolean,
+
         category: String,
         intervalFrequency: String
     ): Occurrence {
         return Occurrence(
             occurrenceName = occurrenceName,
             createDate = createDate,
-            occurMore = occurMore,
+
             category = category,
             intervalFrequency = intervalFrequency
         )
@@ -145,12 +121,12 @@ class CounterViewModel @Inject constructor(
     fun addNewOccurrence(
         occurrenceName: String,
         createDate: String,
-        occurMore: Boolean,
+
         category: String,
         intervalFrequency: String
     ) {
         val newOccurrence =
-            getNewOccurrenceEntry(occurrenceName, createDate, occurMore, category, intervalFrequency)
+            getNewOccurrenceEntry(occurrenceName, createDate, category, intervalFrequency)
         insertOccurence(newOccurrence)
     }
 
@@ -158,7 +134,7 @@ class CounterViewModel @Inject constructor(
         occurrenceId: Int,
         occurrenceName: String,
         createDate: String,
-        occurMore: Boolean,
+
         category: String,
         intervalFrequency: String
     ) {
@@ -166,7 +142,7 @@ class CounterViewModel @Inject constructor(
             occurrenceId = occurrenceId,
             occurrenceName = occurrenceName,
             createDate = createDate,
-            occurMore = occurMore,
+
             category = category,
             intervalFrequency = intervalFrequency
         )
@@ -177,7 +153,6 @@ class CounterViewModel @Inject constructor(
         occurrenceId: Int,
         occurrenceName: String,
         createDate: String,
-        occurMore: Boolean,
         category: String,
         intervalFrequency: String
     ): Occurrence {
@@ -185,7 +160,7 @@ class CounterViewModel @Inject constructor(
             occurrenceId = occurrenceId,
             occurrenceName = occurrenceName,
             createDate = createDate,
-            occurMore = occurMore,
+
             category = category,
             intervalFrequency = intervalFrequency
         )
@@ -218,7 +193,7 @@ class CounterViewModel @Inject constructor(
     private fun getNewActivity(
         occurenceOwnerId: Int,
         fullDate: String,
-        timeStart: String,
+
         secondsFromLast: Long,
         intervalSeconds: Long,
         secondsToNext: Long,
@@ -227,7 +202,7 @@ class CounterViewModel @Inject constructor(
         return Activity(
             occurrenceOwnerId = occurenceOwnerId,
             fullDate = fullDate,
-            timeSpend = timeStart,
+
             secondsPassed = secondsFromLast,
             intervalSeconds = intervalSeconds,
             secondsToNext = secondsToNext
@@ -237,7 +212,7 @@ class CounterViewModel @Inject constructor(
     fun addNewActivity(
         occurenceOwnerId: Int,
         fullDate: String,
-        timeSpend: String,
+
         secondsFromLast: Long,
         intervalSeconds: Long,
         secondsToNext: Long
@@ -245,7 +220,7 @@ class CounterViewModel @Inject constructor(
         val newDateTime = getNewActivity(
             occurenceOwnerId,
             fullDate,
-            timeSpend,
+
             secondsFromLast,
             intervalSeconds,
             secondsToNext
@@ -263,64 +238,4 @@ class CounterViewModel @Inject constructor(
         return currentTime.format(DateTimeFormatter.ofPattern("HH:mm:ss"))
     }
 
-    /**
-     * Description block
-     */
-
-    private fun insertDescription(description: Description) {
-        viewModelScope.launch {
-            repository.dataSource.insertDescription(description)
-        }
-    }
-
-    fun deleteDescription(description: Description) {
-        viewModelScope.launch {
-            repository.dataSource.deleteDescription(description)
-        }
-    }
-
-    private fun getNewDescriptionEntry(
-        descriptionNote: String,
-        occurenceOwnerId: Int
-    ): Description {
-        return Description(
-            descriptionDate = LocalDateTime.now().toString(),
-            descriptionNote = descriptionNote,
-            occurrenceOwnerId = occurenceOwnerId
-        )
-    }
-
-    fun addNewDescription(
-        descriptionNote: String,
-        occurenceOwnerId: Int
-    ) {
-        val newDescription = getNewDescriptionEntry(descriptionNote, occurenceOwnerId)
-        insertDescription(newDescription)
-    }
-
-
-    /**
-     * Counting bloc, to calculate how much time passed between occurences
-     */
-
-
-    /**
-     * Counting bloc, to calculate how much time passed between occurences
-     */
-
-
-    ////CHRONO UTNIT
-//        val date1 = LocalDateTime.now()
-//        val date2 = LocalDateTime.of(2022,Month.OCTOBER,30,11,0,0)
-//        val date3 = LocalDateTime.of(2022,Month.OCTOBER,30,11,0,0)
-//        val pattern = "HH:mm:ss dd-MM-yyyy"
-//        val formatter = DateTimeFormatter.ofPattern(pattern)
-
-//        val date4 = LocalDateTime.parse(lastDateTime, formatter)
-
-//        println("ChronoUnit.DAYS.between(date1, date2) ${ChronoUnit.DAYS.between(date3, date1)}")
-//        println("ChronoUnit.DAYS.between(date1, date2) ${ChronoUnit.HOURS.between(date4, date1)}")
-//        println("Duration.between(date1, date2).toDays() ${Duration.between(date1, date2).toDays()}")
-//        println("date1.until(date2, ChronoUnit.DAYS) ${date1.until(date2, ChronoUnit.DAYS)}")
-//        println()
 }

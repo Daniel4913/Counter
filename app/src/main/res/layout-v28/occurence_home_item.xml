@@ -71,27 +71,14 @@
                 android:id="@+id/time_from_last"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
                 android:fontFamily="sans-serif-medium"
                 android:textAlignment="center"
                 android:textColor="@color/lightMediumGray"
                 app:layout_constraintBottom_toBottomOf="@+id/occurence_name"
-                app:layout_constraintEnd_toStartOf="@+id/occurIcon"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/occurence_name"
                 tools:text="44444444" />
 
-            <ImageView
-                android:id="@+id/occurIcon"
-                android:layout_width="15dp"
-                android:layout_height="15dp"
-                android:layout_marginEnd="12dp"
-                android:importantForAccessibility="no"
-                android:outlineAmbientShadowColor="@color/red"
-                app:layout_constraintBottom_toBottomOf="@+id/time_from_last"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/time_from_last"
-                app:srcCompat="@drawable/occur_more_ic"
-                 />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </com.google.android.material.card.MaterialCardView>
 </androidx.constraintlayout.widget.ConstraintLayout>

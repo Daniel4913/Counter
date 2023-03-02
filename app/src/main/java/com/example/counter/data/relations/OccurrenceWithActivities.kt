@@ -14,13 +14,4 @@ data class OccurrenceWithActivities (
         entityColumn = "occurrence_owner_id"
     )
     val occurrenceActivities: List<Activity>
-){
-    companion object{
-
-//        fun sortByDateTime(): Comparator<DateTime> = object :Comparator<DateTime>{
-//            override fun compare(p0: DateTime?, p1: DateTime?): Int {
-//                return p0!!.secondsToNext!!.compareTo(p1!!.secondsToNext!!)
-//            }
-//        }
-    }
-}
+)

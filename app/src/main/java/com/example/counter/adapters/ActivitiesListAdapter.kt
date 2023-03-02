@@ -37,7 +37,7 @@ class ActivitiesListAdapter(private val onItemClicked: (Activity) -> Unit, priva
                 dateFull.text = activity.fullDate
                 timeFrom.text =  activity.secondsToNext.toString()
                 timeLast.text = activity.secondsPassed.toString()
-                timeSpentWithTimer.text = activity.timeSpend.toString()
+
             }
 
         }

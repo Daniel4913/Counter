@@ -15,7 +15,7 @@ class TimeCounter(private val occurrence: Occurrence, activity: Activity) {
 
     private val getIntervalSeconds = activity.intervalSeconds
 
-    private val occurrenceActivities = OccurrenceWithActivities
+//    private val occurrenceActivities = OccurrenceWithActivities
 
     // CALCULATING BLOK
 

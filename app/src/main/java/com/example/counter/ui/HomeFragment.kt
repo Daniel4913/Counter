@@ -23,7 +23,6 @@ import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -31,7 +30,7 @@ import java.time.temporal.ChronoUnit
 
 @ExperimentalCoroutinesApi
 @AndroidEntryPoint
-class CounterHomeFragment : Fragment() {
+class HomeFragment : Fragment() {
 
     private lateinit var viewModel: CounterViewModel
 
@@ -40,6 +39,8 @@ class CounterHomeFragment : Fragment() {
 
     private var _binding: FragmentCounterHomeBinding? = null
     private val binding get() = _binding!!
+
+    private var refreshedOnce = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,13 +56,12 @@ class CounterHomeFragment : Fragment() {
         return binding.root
     }
 
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         val adapter = OccurrenceActivitiesListAdapter {
             val action =
-                CounterHomeFragmentDirections.actionCounterHomeFragmentToOccurenceFragment(
+                HomeFragmentDirections.actionCounterHomeFragmentToOccurenceFragment(
                     it.occurrence.occurrenceId,
                     it.occurrence.occurrenceName
                 )
@@ -71,65 +71,31 @@ class CounterHomeFragment : Fragment() {
         binding.occurenciesRecyclerView.adapter = adapter
         viewModel.readOccurrencesWithActivities.observe(this.viewLifecycleOwner) { items ->
             items.let { occurrencesList ->
-                lifecycleScope.launch { // dalem to tak o dla jaj zeby zobaczyc co sie stanie
-                    try {
-                        val items = occurrencesList
-                        val listSeconds = makeListOfSecondsTo(occurrencesList)
-                        val itemsBySeconds =
-                            occurrencesList.associateBy { it.occurrenceActivities.last().secondsToNext }
-                        val sortedItems = listSeconds.sorted().map { itemsBySeconds[it] }
-                        adapter.submitList(sortedItems)
-                        Log.d("sortedItems","$sortedItems")
-
-
-                    } catch (e: java.lang.Exception) {
-                        Toast.makeText(
-                            context,
-                            "List will be sorted when all Occurrences have at least one activity",
-                            Toast.LENGTH_LONG
-                        ).show()
-                        adapter.submitList(occurrencesList)
+                try {
+                    val listSeconds = makeListOfSecondsTo(occurrencesList)
+                    val itemsBySeconds =
+                        occurrencesList.associateBy { it.occurrenceActivities.last().secondsToNext }
+                    val sortedItems = listSeconds.sorted().map { itemsBySeconds[it] }
+                    adapter.submitList(sortedItems)
+                    if(refreshedOnce){
+                        refreshList()
+                        refreshedOnce = false
                     }
-
+                } catch (e: java.lang.Exception) {
+                    Toast.makeText(
+                        context,
+                        "List will be sorted when all Occurrences have at least one activity",
+                        Toast.LENGTH_LONG
+                    ).show()
+                    adapter.submitList(occurrencesList)
                 }
+
             }
         }
 
         binding.refresh.setOnClickListener {
             try {
-                val data = viewModel.readOccurrencesWithActivities.value
-                data?.forEach {
-                    val secondsPassed: Long? =
-                        getSecondsPassed(it.occurrenceActivities.last().fullDate)
-                    val id = it.occurrenceActivities.last().activityId
-                    val owner = it.occurrenceActivities.last().occurrenceOwnerId
-                    val fullDate = it.occurrenceActivities.last().fullDate
-
-                    val intervalSeconds =
-                        it.occurrenceActivities.last().intervalSeconds
-
-                    val secondsTo = intervalSeconds?.let { it1 ->
-                        getSecondsTo(
-                            it1,
-                            it.occurrenceActivities.last().fullDate
-                        )
-                    }
-
-                    fun getActivityToUpdate(): Activity {
-                        val aktiwiti = Activity(
-                            id,
-                            owner,
-                            fullDate,
-                            it.occurrenceActivities.last().timeSpend,
-                            secondsPassed,
-                            it.occurrenceActivities.last().intervalSeconds,
-                            secondsTo
-                        )
-                        Log.d("To update: ", "$aktiwiti")
-                        return aktiwiti
-                    }
-                    viewModel.updateActivity(getActivityToUpdate())
-                }
+                refreshList()
             } catch (e: Exception) {
                 Toast.makeText(
                     context,
@@ -182,8 +148,43 @@ class CounterHomeFragment : Fragment() {
         binding.newOccurency.rippleColor = resources.getColor(R.color.heavenBlue)
         binding.newOccurency.setOnClickListener {
             val action =
-                CounterHomeFragmentDirections.actionCounterHomeFragmentToNewFragment("Create new Occurrence")
+                HomeFragmentDirections.actionCounterHomeFragmentToNewFragment("Create new Occurrence")
             this.findNavController().navigate(action)
+        }
+    }
+
+    private fun refreshList() {
+        val data = viewModel.readOccurrencesWithActivities.value
+        data?.forEach {
+            val secondsPassed: Long? =
+                getSecondsPassed(it.occurrenceActivities.last().fullDate)
+            val id = it.occurrenceActivities.last().activityId
+            val owner = it.occurrenceActivities.last().occurrenceOwnerId
+            val fullDate = it.occurrenceActivities.last().fullDate
+
+            val intervalSeconds =
+                it.occurrenceActivities.last().intervalSeconds
+
+            val secondsTo = intervalSeconds?.let { it1 ->
+                getSecondsTo(
+                    it1,
+                    it.occurrenceActivities.last().fullDate
+                )
+            }
+
+            fun getActivityToUpdate(): Activity {
+                val aktiwiti = Activity(
+                    id,
+                    owner,
+                    fullDate,
+                    secondsPassed,
+                    it.occurrenceActivities.last().intervalSeconds,
+                    secondsTo
+                )
+                Log.d("To update: ", "$aktiwiti")
+                return aktiwiti
+            }
+            viewModel.updateActivity(getActivityToUpdate())
         }
     }
 
@@ -232,6 +233,10 @@ class CounterHomeFragment : Fragment() {
         )
         return secondsPassed
     }
-
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+        refreshedOnce = false
+    }
 
 }

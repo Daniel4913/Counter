@@ -19,25 +19,10 @@ data class Occurrence(
     @ColumnInfo(name = "create_date")
     val createDate: String,
 
-    @ColumnInfo(name ="occur_more")
-    val occurMore: Boolean,
-
     @ColumnInfo(name = "category")
     val category: String,
 
-    @ColumnInfo(name = "description_id")
-    val descriptionId: Int = 0,
-
     @ColumnInfo(name = "interval_frequency")
-    val intervalFrequency: String = "hours"
+    val intervalFrequency: String
 
-    ){
-    companion object{
-
-        fun sortByDateTime(): Comparator<Activity> = object :Comparator<Activity>{
-            override fun compare(p0: Activity?, p1: Activity?): Int {
-                 return p0!!.secondsToNext!!.compareTo(p1!!.secondsToNext!!)
-            }
-        }
-    }
-}
+    )

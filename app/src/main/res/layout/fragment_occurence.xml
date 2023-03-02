@@ -8,15 +8,13 @@
     tools:context=".ui.OccurrenceFragment">
 
     <EditText
-        android:id="@+id/occurence_icon_imageView"
+        android:id="@+id/occurence_icon_editText"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:elevation=".33dp"
-        android:outlineAmbientShadowColor="@color/red"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_baseline_category_24"
-        app:tint="@color/lightMediumGray" />
+        />
 
     <TextView
         android:id="@+id/occurency_name"
@@ -26,9 +24,9 @@
         android:layout_marginStart="8dp"
         android:padding="10dp"
         android:text="Zadzwon do mamy"
-        app:layout_constraintBottom_toBottomOf="@+id/occurence_icon_imageView"
-        app:layout_constraintStart_toEndOf="@+id/occurence_icon_imageView"
-        app:layout_constraintTop_toTopOf="@+id/occurence_icon_imageView" />
+        app:layout_constraintBottom_toBottomOf="@+id/occurence_icon_editText"
+        app:layout_constraintStart_toEndOf="@+id/occurence_icon_editText"
+        app:layout_constraintTop_toTopOf="@+id/occurence_icon_editText" />
 
     <TextView
         android:id="@+id/list_size_textView"
@@ -74,28 +72,6 @@
         app:layout_constraintTop_toTopOf="@+id/occurency_name"
         app:layout_constraintVertical_bias="0.0" />
 
-    <ImageView
-        android:id="@+id/occur_icon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:src="@drawable/ic_expand_less"
-        app:layout_constraintBottom_toBottomOf="@+id/occurency_category"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/occurency_category"
-        tools:srcCompat="@drawable/ic_expand_less" />
-
-    <TextView
-        android:id="@+id/timer_counter"
-        style="@style/Widget.Counter.TextView"
-        android:layout_width="wrap_content"
-        android:layout_marginTop="50dp"
-        android:padding="10dp"
-        android:text="00:00:00"
-        android:textColor="#4574ac"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/occur_icon" />
-
     <TextView
         android:id="@+id/occurency_time_from_label"
         style="@style/Widget.Counter.TextView"
@@ -103,7 +79,7 @@
         android:layout_marginTop="8dp"
         android:text="@string/time_from_last"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/occurence_icon_imageView" />
+        app:layout_constraintTop_toBottomOf="@+id/occurence_icon_editText" />
 
     <TextView
         android:id="@+id/occurency_time_from"
@@ -181,39 +157,7 @@
         app:layout_constraintStart_toStartOf="@+id/occurency_time_to"
         app:layout_constraintTop_toTopOf="@+id/occurence_interval_label" />
 
-    <TextView
-        android:id="@+id/how_long_textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:maxLines="1"
-        android:text="Na podstawie timera wykonanie tego srednio zajmuje ci 10 dni"
-        android:textColor="#8C74FF"
-        app:layout_constraintStart_toStartOf="@+id/occurence_interval_label"
-        app:layout_constraintTop_toBottomOf="@+id/occurence_interval_label" />
 
-    <com.google.android.material.card.MaterialCardView
-        android:id="@id/descriptions_holder"
-        android:layout_width="match_parent"
-        android:layout_height="35dp"
-        android:layout_marginTop="8dp"
-        app:cardBackgroundColor="#2000A8FF"
-        app:cardElevation="0dp"
-        app:layout_constraintBottom_toTopOf="@id/divider"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/how_long_textView">
-
-        <TextView
-            android:id="@+id/desciption"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:padding="7dp"
-
-            tools:text="blablalbalb" />
-
-
-    </com.google.android.material.card.MaterialCardView>
 
     <View
         android:id="@+id/divider"
@@ -221,68 +165,25 @@
         android:layout_marginTop="@dimen/margin_between_elements"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/descriptions_holder" />
+        app:layout_constraintTop_toBottomOf="@+id/interval_textView" />
 
 
     <!--        todo GRAPH/LIST -->
-    <ImageView
-        android:id="@+id/toggle_view"
-        android:layout_width="34dp"
-        android:layout_height="34dp"
-        android:layout_marginTop="16dp"
-        android:src="@drawable/ic_graph"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/divider"
-        app:tint="#D5C8C8C8" />
 
-
-    <Button
-        android:id="@+id/start_timer"
-        android:layout_width="wrap_content"
-        android:layout_height="22dp"
-        android:layout_marginStart="16dp"
-        android:background="#0800A8FF"
-        android:padding="0dp"
-        android:text="startstop"
-        android:textColor="#8C74FF"
-        android:textSize="8sp"
-        app:layout_constraintBottom_toBottomOf="@+id/toggle_view"
-        app:layout_constraintStart_toEndOf="@+id/toggle_view"
-        app:layout_constraintTop_toTopOf="@+id/toggle_view"
-        app:layout_constraintVertical_bias="0.0" />
-
-    <Button
-        android:id="@+id/reset_timer"
-        android:layout_width="wrap_content"
-        android:layout_height="22dp"
-        android:background="#0800A8FF"
-        android:padding="0dp"
-        android:shadowColor="#30284f2b"
-        android:shadowRadius="8"
-        android:text="reset"
-        android:textColor="#284f2b"
-        android:textColorHighlight="#4574ac"
-
-        android:textSize="8sp"
-        app:layout_constraintBottom_toBottomOf="@+id/start_timer"
-        app:layout_constraintEnd_toStartOf="@+id/add_activity"
-        app:layout_constraintStart_toEndOf="@+id/start_timer"
-        app:layout_constraintTop_toBottomOf="@id/divider"
-        app:layout_constraintVertical_bias="1.0" />
 
     <Button
         android:id="@+id/add_activity"
         android:layout_width="wrap_content"
-        android:layout_height="24dp"
-        android:layout_marginEnd="-10dp"
+        android:layout_height="wrap_content"
         android:background="#2046C0FF"
         android:padding="0dp"
         android:text="add"
         android:textColor="#FF5722"
-        android:textSize="8sp"
-        app:layout_constraintBottom_toBottomOf="@+id/reset_timer"
+
+        app:layout_constraintBottom_toTopOf="@+id/textView6"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/reset_timer" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/divider" />
 
     <androidx.recyclerview.widget.RecyclerView
 
@@ -319,10 +220,10 @@
         android:id="@+id/date_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
         android:text="Date"
-        app:layout_constraintStart_toStartOf="@+id/toggle_view"
-        app:layout_constraintTop_toBottomOf="@+id/toggle_view" />
+        app:layout_constraintBottom_toTopOf="@+id/occurence_detail_recycler_view"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/divider" />
 
     <TextView
         android:id="@+id/textView5"
