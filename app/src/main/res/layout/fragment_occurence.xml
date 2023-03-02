@@ -110,7 +110,18 @@
         style="@style/Widget.Counter.TextView"
         android:layout_width="wrap_content"
         android:layout_marginStart="8dp"
-        android:text="000"
+        app:layout_constraintBottom_toBottomOf="@+id/occurency_time_from_label"
+        app:layout_constraintStart_toEndOf="@+id/occurency_time_from_label"
+        app:layout_constraintTop_toTopOf="@+id/occurency_time_from_label"
+        tools:text="000" />
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginStart="16dp"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="@+id/occurency_time_from_label"
         app:layout_constraintStart_toEndOf="@+id/occurency_time_from_label"
         app:layout_constraintTop_toTopOf="@+id/occurency_time_from_label" />
@@ -128,9 +139,21 @@
         android:id="@+id/occurency_time_to"
         style="@style/Widget.Counter.TextView"
         android:layout_width="wrap_content"
-        android:text="-000"
         app:layout_constraintBottom_toBottomOf="@+id/occurency_time_to_label"
         app:layout_constraintStart_toStartOf="@+id/occurency_time_from"
+        app:layout_constraintTop_toTopOf="@+id/occurency_time_to_label"
+        tools:text="-000" />
+
+    <ProgressBar
+        android:id="@+id/progressBar2"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginStart="16dp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@+id/occurency_time_to_label"
+        app:layout_constraintEnd_toEndOf="@+id/progressBar"
+        app:layout_constraintStart_toStartOf="@+id/progressBar"
         app:layout_constraintTop_toTopOf="@+id/occurency_time_to_label" />
 
     <TextView
@@ -320,6 +343,8 @@
         app:layout_constraintBottom_toBottomOf="@+id/textView5"
         app:layout_constraintStart_toEndOf="@+id/textView5"
         app:layout_constraintTop_toTopOf="@+id/textView5" />
+
+
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

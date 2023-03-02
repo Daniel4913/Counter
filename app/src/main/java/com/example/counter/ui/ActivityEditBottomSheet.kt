@@ -18,6 +18,8 @@ import com.example.counter.util.Constants.Companion.DEFAULT_FORMATTER
 import com.example.counter.viewmodels.CounterViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -41,14 +43,11 @@ class ActivityEditBottomSheet : BottomSheetDialogFragment() {
     }
 
     private fun bind(activity: Activity) {
-
         binding.apply {
             dateTextInputLayout.hint = splitFullDate()[1]
             dateEditText.setText(splitFullDate()[1])
             hourTextInputLayout.hint = splitFullDate()[0]
             hourEditText.setText(splitFullDate()[0])
-            timeSpendTextInputLayout.hint = activity.timeSpend
-            timeSpendEditText.setText(activity.timeSpend)
         }
     }
 
@@ -90,6 +89,22 @@ class ActivityEditBottomSheet : BottomSheetDialogFragment() {
             } else {
                 Toast.makeText(context, "Date or hour format is invalid", Toast.LENGTH_SHORT).show()
             }
+        }
+
+        binding.deleteButton.setOnClickListener {
+
+            viewModel.deleteActivity(
+                Activity(
+                    activity.activityId,
+                    activity.occurrenceOwnerId,
+                    activity.fullDate,
+                    activity.timeSpend,
+                    activity.secondsPassed,
+                    activity.intervalSeconds,
+                    activity.secondsToNext
+                )
+            )
+//            requireActivity().onBackPressedDispatcher.onBackPressed()
         }
     }
 

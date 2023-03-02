@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.counter.data.modelentity.Activity
 import com.example.counter.databinding.DatesTimesItemBinding
 
-class ActivitiesListAdapter(private val onItemClicked: (Activity) -> Unit):
+class ActivitiesListAdapter(private val onItemClicked: (Activity) -> Unit, private val onLongItemClicked: (Activity)-> Unit):
     ListAdapter<Activity, ActivitiesListAdapter.DatesTimesViewHolder>(DiffCallback) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DatesTimesViewHolder {
@@ -17,14 +17,17 @@ class ActivitiesListAdapter(private val onItemClicked: (Activity) -> Unit):
         )
     }
 
-
-
     override fun onBindViewHolder(holder: DatesTimesViewHolder, position: Int) {
         val current = getItem(position)
         holder.itemView.setOnClickListener {
             onItemClicked(current)
         }
         holder.bind(current)
+
+        holder.itemView.setOnLongClickListener {
+            onLongItemClicked(current)
+            true
+        }
     }
 
     class DatesTimesViewHolder(private var binding: DatesTimesItemBinding) :
@@ -40,8 +43,6 @@ class ActivitiesListAdapter(private val onItemClicked: (Activity) -> Unit):
         }
 
     }
-
-
 
     companion object {
         private val DiffCallback = object : DiffUtil.ItemCallback<Activity>(){
