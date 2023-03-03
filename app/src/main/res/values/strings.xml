@@ -32,6 +32,8 @@
     <string name="affirmation">Wzrasta to, \nczemu poświęcasz uwagę.\n ~ T. Harv Eker</string>
     <string name="time_passed">It passed %s since you did it last time...</string>
 
+    // change fragment title
+    <string name="fragmentTitle">%s</string>
 
     <string-array name="categories">
         <item>Substancje</item>

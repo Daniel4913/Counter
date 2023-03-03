@@ -2,12 +2,14 @@ package com.example.counter.ui
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.activity.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.NavigationUI.setupActionBarWithNavController
 import androidx.navigation.ui.setupActionBarWithNavController
 import com.example.counter.R
 import com.example.counter.databinding.ActivityMainBinding
+import com.example.counter.viewmodels.CounterViewModel
 import com.google.android.material.elevation.SurfaceColors
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -16,6 +18,8 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var navController: NavController
 
+    private val viewModel: CounterViewModel by viewModels<CounterViewModel>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val binding = ActivityMainBinding.inflate(layoutInflater)
@@ -23,10 +27,8 @@ class MainActivity : AppCompatActivity() {
 
         setContentView(binding.root)
         setSupportActionBar(toolbar)
-//        toolbar.isTitleCentered
 
-//        toolbar.setBackgroundColor(SurfaceColors.SURFACE_0.getColor(this))
-
+        toolbar.title = "viewModel.currentOccurrence"
 
         val navHostFragment = supportFragmentManager
             .findFragmentById(R.id.nav_host_fragment) as NavHostFragment

@@ -1,12 +1,14 @@
 package com.example.counter.ui
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.view.MenuHost
+import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -42,6 +44,8 @@ class OccurrenceFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel = ViewModelProvider(requireActivity())[CounterViewModel::class.java]
+
+
     }
 
     private fun bind(occurrence: Occurrence) {
@@ -49,8 +53,6 @@ class OccurrenceFragment : Fragment() {
             occurencyName.text = occurrence.occurrenceName
             occurenceCreateDate.text = occurrence.createDate
             occurencyCategory.text = occurrence.category
-            deleteBtn.setOnClickListener { showConfirmationDialog() }
-            editBtn.setOnClickListener { editOccurrence() }
             intervalTextView.text = occurrence.intervalFrequency
             addActivity.setOnClickListener { addNewActivity() }
         }
@@ -62,6 +64,26 @@ class OccurrenceFragment : Fragment() {
     ): View? {
         _binding = FragmentOccurenceBinding.inflate(inflater, container, false)
 
+        val menuHost: MenuHost = requireActivity()
+        menuHost.addMenuProvider(object : MenuProvider {
+            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+                menuInflater.inflate(R.menu.occurrence_menu, menu)
+            }
+
+            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+                when (menuItem.itemId) {
+                    R.id.occurrence_delete -> {
+                        showConfirmationDialog()
+                    }
+                    R.id.occurrence_edit -> {
+                        editOccurrence()
+                    }
+                }
+                return true
+            }
+
+        }, viewLifecycleOwner, Lifecycle.State.RESUMED)
+
         return binding.root
     }
 
@@ -72,7 +94,13 @@ class OccurrenceFragment : Fragment() {
         viewModel.getOccurrence(id).observe(this.viewLifecycleOwner) { selectedOccurrence ->
             occurrence = selectedOccurrence
             bind(selectedOccurrence)
+
+           val fragmentTitle = getString(string.fragmentTitle, occurrence.occurrenceName)
+            (activity as? AppCompatActivity)?.supportActionBar?.title = fragmentTitle
+
         }
+
+
 
         val adapter = ActivitiesListAdapter(
             { activity ->

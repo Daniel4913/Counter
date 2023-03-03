@@ -9,6 +9,7 @@ import com.example.counter.data.modelentity.Activity
 import com.example.counter.data.modelentity.Occurrence
 import com.example.counter.data.relations.OccurrenceWithActivities
 import com.example.counter.util.Constants
+import com.google.android.material.appbar.MaterialToolbar
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -50,6 +51,16 @@ class CounterViewModel @Inject constructor(
 //        saveFilterCategory()
 //    }
 
+    var currentOccurrence = ""
+
+    fun changeToolbarTitle(occName: String){
+        currentOccurrence = occName
+
+    }
+
+    fun sendTitle(toolbar: MaterialToolbar){
+
+    }
 
     val readOccurrencesWithActivities: LiveData<List<OccurrenceWithActivities>> =
         repository.dataSource.getOccurrencesWithActivities().asLiveData()

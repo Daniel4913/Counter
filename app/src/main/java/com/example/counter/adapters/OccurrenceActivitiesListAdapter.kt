@@ -30,7 +30,7 @@ class OccurrenceActivitiesListAdapter(private val onItemClicked: (OccurrenceWith
 
         fun bind(occ: OccurrenceWithActivities) {
             binding.apply {
-                icOccurrence.text = occ.occurrence.occurrenceName.first().toString()
+//                icOccurrence.text = occ.occurrence.occurrenceName.first().toString()
                 occurenceName.text = occ.occurrence.occurrenceName
                 occurenceName.isSelected = true
                 occurenceName.setSingleLine()
@@ -138,7 +138,7 @@ class OccurrenceActivitiesListAdapter(private val onItemClicked: (OccurrenceWith
                 binding.timeToNext.setTextColor(
                     ContextCompat.getColor(
                         context,
-                        R.color.design_default_color_on_primary
+                        R.color.material_on_surface_emphasis_high_type
                     )
                 )
             }

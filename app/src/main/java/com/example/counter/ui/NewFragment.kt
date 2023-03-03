@@ -55,7 +55,7 @@ class NewFragment : Fragment() {
         binding.apply {
             occurenceName.setText(occurrence.occurrenceName, TextView.BufferType.SPANNABLE)
             categoryDropdown.setText(occurrence.category, TextView.BufferType.SPANNABLE)
-            addBtn.setOnClickListener { updateOccurrence() }
+            addOccurrence.setOnClickListener { updateOccurrence() }
             tvDate.setText(splitCreateDate()[0])
             tvTime.setText(splitCreateDate()[1])
             intervalNumberPicker.minValue = DEFAULT_HOURS
@@ -129,7 +129,7 @@ class NewFragment : Fragment() {
                 bind(occurrence)
             }
         } else {
-            binding.addBtn.setOnClickListener { addNewOccurrence() }
+            binding.addOccurrence.setOnClickListener { addNewOccurrence() }
         }
     }
 

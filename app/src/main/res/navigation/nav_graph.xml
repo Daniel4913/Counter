@@ -27,7 +27,7 @@
     <fragment
         android:id="@+id/occurenceFragment"
         android:name="com.example.counter.ui.OccurrenceFragment"
-        android:label="Occurence"
+        android:label="@string/fragmentTitle"
         tools:layout="@layout/fragment_occurence">
         <argument
             android:name="id"
@@ -35,9 +35,6 @@
         <action
             android:id="@+id/action_occurenceFragment_to_newFragment"
             app:destination="@id/newFragment" />
-        <argument
-            android:name="title"
-            app:argType="string" />
         <action
             android:id="@+id/action_occurenceFragment_to_activityEditFragment"
             app:destination="@id/activityEditFragment" />
