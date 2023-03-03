@@ -30,7 +30,7 @@ class OccurrenceActivitiesListAdapter(private val onItemClicked: (OccurrenceWith
 
         fun bind(occ: OccurrenceWithActivities) {
             binding.apply {
-//                icOccurrence.text = occ.occurrence.occurrenceName[1].toString()
+                icOccurrence.text = occ.occurrence.occurrenceName.first().toString()
                 occurenceName.text = occ.occurrence.occurrenceName
                 occurenceName.isSelected = true
                 occurenceName.setSingleLine()
@@ -43,7 +43,7 @@ class OccurrenceActivitiesListAdapter(private val onItemClicked: (OccurrenceWith
                     timeFromLast.text = secondsToComponents(getSecondsPassed())
 
                     applyTimeColor(secondsToComponents(getSecondsTo(getIntervalSeconds())))
-                    
+
                 } else {
                     timeFromLast.text = "- -"
                     timeToNext.text = "- -"
@@ -124,21 +124,21 @@ class OccurrenceActivitiesListAdapter(private val onItemClicked: (OccurrenceWith
                 binding.timeToNext.setTextColor(
                     ContextCompat.getColor(
                         context,
-                        R.color.orange
+                        R.color.cardview_light_background
                     )
                 )
             } else if (timeString.contains("-")) {
                 binding.timeToNext.setTextColor(
                     ContextCompat.getColor(
                         context,
-                        R.color.red_700
+                        R.color.md_theme_dark_error
                     )
                 )
             } else {
                 binding.timeToNext.setTextColor(
                     ContextCompat.getColor(
                         context,
-                        R.color.green
+                        R.color.design_default_color_on_primary
                     )
                 )
             }

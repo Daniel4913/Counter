@@ -13,7 +13,9 @@
 
         <action
             android:id="@+id/action_newFragment_to_counterHomeFragment"
-            app:destination="@id/counterHomeFragment" />
+            app:destination="@id/counterHomeFragment"
+            app:popUpTo="@+id/counterHomeFragment"
+            app:popUpToInclusive="true"/>
         <argument
             android:name="title"
             app:argType="string" />

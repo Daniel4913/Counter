@@ -18,7 +18,6 @@
 
     <TextView
         android:id="@+id/occurency_name"
-        style="@style/Widget.Counter.TextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -33,26 +32,24 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="3"
-        android:textColor="#B08C74FF"
+
         app:layout_constraintEnd_toStartOf="@id/since"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/occurence_create_date_"
-        style="@style/Widget.Counter.TextViewSmall"
         android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:padding="1dp"
         android:text="date;date;date"
-        android:textColor="#9000A8FF"
         app:layout_constraintBottom_toBottomOf="@+id/since"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/since" />
 
     <TextView
         android:id="@+id/since"
-        style="@style/Widget.Counter.TextViewSmall"
         android:layout_width="wrap_content"
-
+android:layout_height="wrap_content"
         android:padding="1dp"
         android:text="since: "
         android:textColor="#9000A8FF"
@@ -62,7 +59,7 @@
 
     <TextView
         android:id="@+id/occurency_category"
-        style="@style/Widget.Counter.TextView"
+
         android:layout_width="wrap_content"
         android:layout_marginStart="8dp"
         android:padding="10dp"
@@ -70,12 +67,12 @@
         app:layout_constraintBottom_toBottomOf="@+id/occurency_name"
         app:layout_constraintStart_toEndOf="@+id/occurency_name"
         app:layout_constraintTop_toTopOf="@+id/occurency_name"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintVertical_bias="0.0"  android:layout_height="wrap_content"/>
 
     <TextView
         android:id="@+id/occurency_time_from_label"
-        style="@style/Widget.Counter.TextView"
         android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:text="@string/time_from_last"
         app:layout_constraintStart_toStartOf="parent"
@@ -83,7 +80,7 @@
 
     <TextView
         android:id="@+id/occurency_time_from"
-        style="@style/Widget.Counter.TextView"
+        android:layout_height="wrap_content"
         android:layout_width="wrap_content"
         android:layout_marginStart="8dp"
         app:layout_constraintBottom_toBottomOf="@+id/occurency_time_from_label"
@@ -104,7 +101,7 @@
 
     <TextView
         android:id="@+id/occurency_time_to_label"
-        style="@style/Widget.Counter.TextView"
+        android:layout_height="wrap_content"
         android:layout_width="wrap_content"
         android:layout_marginTop="8dp"
         android:text="@string/time_to"
@@ -113,7 +110,7 @@
 
     <TextView
         android:id="@+id/occurency_time_to"
-        style="@style/Widget.Counter.TextView"
+        android:layout_height="wrap_content"
         android:layout_width="wrap_content"
         app:layout_constraintBottom_toBottomOf="@+id/occurency_time_to_label"
         app:layout_constraintStart_toStartOf="@+id/occurency_time_from"
@@ -135,9 +132,9 @@
     <TextView
 
         android:id="@+id/occurence_interval_label"
-        style="@style/Widget.Counter.TextView"
-        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+
         android:layout_marginTop="8dp"
         android:text="Rob to co:"
         app:layout_constraintStart_toStartOf="@+id/occurency_time_to_label"
@@ -146,7 +143,7 @@
 
     <TextView
         android:id="@+id/interval_textView"
-        style="@style/Widget.Counter.TextView"
+
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="32dp"
@@ -161,7 +158,8 @@
 
     <View
         android:id="@+id/divider"
-        style="@style/Divider"
+        android:layout_height="1dp"
+        android:layout_width="match_parent"
         android:layout_marginTop="@dimen/margin_between_elements"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -175,11 +173,7 @@
         android:id="@+id/add_activity"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="#2046C0FF"
-        android:padding="0dp"
-        android:text="add"
-        android:textColor="#FF5722"
-
+        android:text="Add"
         app:layout_constraintBottom_toTopOf="@+id/textView6"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

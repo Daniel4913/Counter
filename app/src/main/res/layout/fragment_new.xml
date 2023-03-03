@@ -80,7 +80,8 @@
 
         <View
             android:id="@+id/divider1"
-            style="@style/Divider"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
             android:layout_marginTop="16dp"
             app:layout_constraintBottom_toTopOf="@+id/setIntervalsBox"
             app:layout_constraintEnd_toEndOf="parent"
@@ -128,7 +129,6 @@
 
                     <com.google.android.material.chip.ChipGroup
                         android:id="@+id/frequency_chipGroup"
-                        style="@style/CustomChipStyle"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         app:checkedChip="@+id/chip_minutes"
@@ -138,35 +138,30 @@
 
                         <com.google.android.material.chip.Chip
                             android:id="@+id/chip_minutes"
-                            style="@style/CustomChipStyle"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Minutes" />
 
                         <com.google.android.material.chip.Chip
                             android:id="@+id/chip_hours"
-                            style="@style/CustomChipStyle"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Hours" />
 
                         <com.google.android.material.chip.Chip
                             android:id="@+id/chip_days"
-                            style="@style/CustomChipStyle"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Days" />
 
                         <com.google.android.material.chip.Chip
                             android:id="@+id/chip_weeks"
-                            style="@style/CustomChipStyle"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Weeks" />
 
                         <com.google.android.material.chip.Chip
                             android:id="@+id/chip_months"
-                            style="@style/CustomChipStyle"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Months" />
@@ -209,14 +204,14 @@
 
         <View
             android:id="@+id/divider"
-            style="@style/Divider"
+            android:layout_height="1dp"
+            android:layout_width="match_parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/setIntervalsBox" />
 
         <TextView
             android:id="@+id/choose_category_text"
-            style="@style/Widget.Counter.TextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
@@ -266,7 +261,6 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/category_label" />
-
 
 
 

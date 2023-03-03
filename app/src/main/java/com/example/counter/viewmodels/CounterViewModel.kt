@@ -10,6 +10,7 @@ import com.example.counter.data.modelentity.Occurrence
 import com.example.counter.data.relations.OccurrenceWithActivities
 import com.example.counter.util.Constants
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -80,24 +81,30 @@ class CounterViewModel @Inject constructor(
     }
 
     fun updateActivity(activity: Activity) {
-        viewModelScope.launch { repository.dataSource.updateActivity(activity) }
+        viewModelScope.launch(Dispatchers.IO) { repository.dataSource.updateActivity(activity) }
     }
 
 
     private fun insertOccurence(occurrence: Occurrence) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             repository.dataSource.insertOccurrence(occurrence)
         }
     }
 
     fun deleteOccurence(occurrence: Occurrence) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             repository.dataSource.deleteOccurrence(occurrence)
         }
     }
 
+    fun deleteAllOccurrences() {
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.dataSource.deleteAllOccurrences()
+        }
+    }
+
     fun updateOccurrence(occurrence: Occurrence) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             repository.dataSource.updateOccurrence(occurrence)
         }
     }
@@ -175,13 +182,13 @@ class CounterViewModel @Inject constructor(
 
     // DATES TIMES BLOCK
     private fun insertActivity(activity: Activity) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             repository.dataSource.insertActivity(activity)
         }
     }
 
     fun deleteActivity(activity: Activity) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             repository.dataSource.deleteActivity(activity)
         }
     }

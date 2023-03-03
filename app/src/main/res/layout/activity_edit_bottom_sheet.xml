@@ -5,7 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     tools:context=".ui.ActivityEditBottomSheet"
-    android:background="#1E00A8FF"
     >
 
     <TextView
@@ -21,7 +20,6 @@
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/date_textInputLayout"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="120dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
@@ -45,10 +43,8 @@
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/hour_textInputLayout"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="120dp"
         android:layout_height="wrap_content"
-
         app:layout_constraintBottom_toBottomOf="@+id/date_textInputLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/date_textInputLayout"
@@ -64,9 +60,6 @@
             android:padding="5dp" />
 
     </com.google.android.material.textfield.TextInputLayout>
-
-
-    <!--    //////////-->
 
     <Button
         android:id="@+id/save_button"

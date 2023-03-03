@@ -2,11 +2,12 @@ package com.example.counter.ui
 
 import android.os.Bundle
 import android.util.Log
+import android.view.*
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.view.MenuHost
+import androidx.core.view.MenuProvider
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -53,6 +54,27 @@ class HomeFragment : Fragment() {
     ): View? {
         _binding = FragmentCounterHomeBinding.inflate(inflater, container, false)
 
+        val menuHost: MenuHost = requireActivity()
+        menuHost.addMenuProvider(object : MenuProvider {
+            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+                menuInflater.inflate(R.menu.home_menu, menu)
+            }
+
+            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+
+                when (menuItem.itemId) {
+                    R.id.occurrences_delete_all -> {
+                        viewModel.deleteAllOccurrences()
+                    }
+                    R.id.home_refresh -> {
+                        refreshList()
+                    }
+                }
+                return true
+
+            }
+        }, viewLifecycleOwner, Lifecycle.State.RESUMED)
+
         return binding.root
     }
 
@@ -77,7 +99,7 @@ class HomeFragment : Fragment() {
                         occurrencesList.associateBy { it.occurrenceActivities.last().secondsToNext }
                     val sortedItems = listSeconds.sorted().map { itemsBySeconds[it] }
                     adapter.submitList(sortedItems)
-                    if(refreshedOnce){
+                    if (refreshedOnce) {
                         refreshList()
                         refreshedOnce = false
                     }
@@ -145,13 +167,16 @@ class HomeFragment : Fragment() {
             }
         }
 
-        binding.newOccurency.rippleColor = resources.getColor(R.color.heavenBlue)
+
         binding.newOccurency.setOnClickListener {
             val action =
                 HomeFragmentDirections.actionCounterHomeFragmentToNewFragment("Create new Occurrence")
             this.findNavController().navigate(action)
         }
+
+
     }
+
 
     private fun refreshList() {
         val data = viewModel.readOccurrencesWithActivities.value
@@ -233,6 +258,7 @@ class HomeFragment : Fragment() {
         )
         return secondsPassed
     }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null

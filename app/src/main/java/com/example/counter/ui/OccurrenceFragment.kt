@@ -139,13 +139,13 @@ class OccurrenceFragment : Fragment() {
             binding.occurencyTimeToLabel.setTextColor(
                 ContextCompat.getColor(
                     requireContext(),
-                    R.color.red_700
+                    R.color.md_theme_light_error
                 )
             )
             binding.occurencyTimeTo.setTextColor(
                 ContextCompat.getColor(
                     requireContext(),
-                    R.color.red_700
+                    R.color.md_theme_light_error
                 )
             )
         } else if (
@@ -157,13 +157,13 @@ class OccurrenceFragment : Fragment() {
             binding.occurencyTimeToLabel.setTextColor(
                 ContextCompat.getColor(
                     requireContext(),
-                    R.color.orange
+                    R.color.md_theme_dark_inverseSurface
                 )
             )
             binding.occurencyTimeTo.setTextColor(
                 ContextCompat.getColor(
                     requireContext(),
-                    R.color.orange
+                    R.color.md_theme_dark_inverseSurface
                 )
             )
         } else {
@@ -171,13 +171,13 @@ class OccurrenceFragment : Fragment() {
             binding.occurencyTimeToLabel.setTextColor(
                 ContextCompat.getColor(
                     requireContext(),
-                    R.color.green
+                    R.color.seed
                 )
             )
             binding.occurencyTimeTo.setTextColor(
                 ContextCompat.getColor(
                     requireContext(),
-                    R.color.green
+                    R.color.seed
                 )
             )
         }

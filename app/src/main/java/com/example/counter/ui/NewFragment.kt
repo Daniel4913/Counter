@@ -63,7 +63,6 @@ class NewFragment : Fragment() {
             emojiEditText.setText(emojiIcon)
 
             //populate category list on edit
-            //TODO ALLOW USER TO CREATE OWN CATEGORY (NEED TO IMPLEMENT DATA STORE FIRST)
             val categories: Array<String> = resources.getStringArray(R.array.categories)
             val arrayAdapter = ArrayAdapter(requireContext(), R.layout.category_item, categories)
             binding.categoryDropdown.setAdapter(arrayAdapter)
