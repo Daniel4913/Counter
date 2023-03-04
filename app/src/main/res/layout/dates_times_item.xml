@@ -26,25 +26,37 @@
             android:layout_height="match_parent"
             >
 
+
             <TextView
-                android:id="@+id/date_full"
+                android:id="@+id/date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:layout_constraintBottom_toBottomOf="@+id/time_from"
+                android:layout_marginStart="16dp"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/time_from"
-                tools:text="01.01.1111 15:25:21" />
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="01.01.1111" />
+
+            <TextView
+                android:id="@+id/hour"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:text=" 15:25:21"
+                app:layout_constraintBottom_toBottomOf="@+id/date"
+                app:layout_constraintStart_toEndOf="@+id/date"
+                app:layout_constraintTop_toTopOf="@+id/date" />
 
             <TextView
                 android:id="@+id/time_from"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/date_full"
-                android:layout_marginStart="8dp"
-                android:textAlignment="center"
-                app:layout_constraintBottom_toBottomOf="@+id/time_last"
-                app:layout_constraintStart_toEndOf="@+id/date_full"
-                app:layout_constraintTop_toTopOf="@+id/time_last"
+                android:layout_below="@+id/date"
+                android:layout_marginEnd="8dp"
+
+                app:layout_constraintBottom_toBottomOf="@+id/hour"
+                app:layout_constraintTop_toTopOf="@id/hour"
+                app:layout_constraintEnd_toStartOf="@id/time_last"
 
                 tools:text="3:21:26" />
 
@@ -52,35 +64,13 @@
                 android:id="@+id/time_last"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_marginStart="20dp"
-                app:layout_constraintBottom_toBottomOf="@+id/time_spent_with_timer"
-                app:layout_constraintStart_toEndOf="@id/time_from"
-                app:layout_constraintTop_toTopOf="@+id/time_spent_with_timer"
+                app:layout_constraintBottom_toBottomOf="@id/time_from"
+                app:layout_constraintEnd_toEndOf="parent"
+
+                app:layout_constraintTop_toTopOf="@id/time_from"
                 tools:text="3:00" />
 
-            <TextView
-                android:id="@+id/time_spent_with_timer"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_constraintBottom_toBottomOf="@+id/occurIcon"
-                app:layout_constraintEnd_toStartOf="@+id/occurIcon"
-                app:layout_constraintStart_toEndOf="@+id/time_last"
-                app:layout_constraintTop_toTopOf="@+id/occurIcon"
-                tools:text="0:20" />
 
-            <ImageView
-                android:id="@+id/occurIcon"
-                android:layout_width="18dp"
-                android:layout_height="18dp"
-                android:layout_marginTop="4dp"
-                android:layout_marginEnd="12dp"
-                android:layout_marginBottom="4dp"
-                android:importantForAccessibility="no"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
- />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </com.google.android.material.card.MaterialCardView>

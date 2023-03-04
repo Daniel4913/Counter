@@ -50,7 +50,6 @@ class OccurrenceFragment : Fragment() {
 
     private fun bind(occurrence: Occurrence) {
         binding.apply {
-            occurencyName.text = occurrence.occurrenceName
             occurenceCreateDate.text = occurrence.createDate
             occurencyCategory.text = occurrence.category
             intervalTextView.text = occurrence.intervalFrequency
@@ -95,11 +94,10 @@ class OccurrenceFragment : Fragment() {
             occurrence = selectedOccurrence
             bind(selectedOccurrence)
 
-           val fragmentTitle = getString(string.fragmentTitle, occurrence.occurrenceName)
+            val fragmentTitle = getString(string.fragmentTitle, occurrence.occurrenceName)
             (activity as? AppCompatActivity)?.supportActionBar?.title = fragmentTitle
 
         }
-
 
 
         val adapter = ActivitiesListAdapter(

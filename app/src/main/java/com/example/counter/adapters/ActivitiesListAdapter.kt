@@ -34,7 +34,7 @@ class ActivitiesListAdapter(private val onItemClicked: (Activity) -> Unit, priva
         RecyclerView.ViewHolder(binding.root){
         fun bind(activity: Activity){
             binding.apply {
-                dateFull.text = activity.fullDate
+                date.text = activity.fullDate
                 timeFrom.text =  activity.secondsToNext.toString()
                 timeLast.text = activity.secondsPassed.toString()
 
