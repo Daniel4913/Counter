@@ -4,8 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="65dp"
-    android:padding="5dp"
-
+    android:padding="10dp"
     >
 
             <ImageView
@@ -14,13 +13,13 @@
                 android:layout_height="wrap_content"
                 app:srcCompat="@drawable/ic_fox"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/occurence_name"
+                app:layout_constraintEnd_toStartOf="@+id/occurrence_name"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 />
 
             <TextView
-                android:id="@+id/occurence_name"
+                android:id="@+id/occurrence_name"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="12dp"
@@ -40,9 +39,9 @@
                 android:layout_marginEnd="16dp"
                 android:fontFamily="sans-serif-medium"
                 android:textAlignment="center"
-                app:layout_constraintBottom_toBottomOf="@+id/occurence_name"
+                app:layout_constraintBottom_toBottomOf="@+id/occurrence_name"
                 app:layout_constraintEnd_toStartOf="@id/time_from_last"
-                app:layout_constraintTop_toTopOf="@+id/occurence_name"
+                app:layout_constraintTop_toTopOf="@+id/occurrence_name"
                 tools:text="3:333333" />
 
             <TextView
@@ -51,12 +50,13 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif-medium"
                 android:textAlignment="center"
-                app:layout_constraintBottom_toBottomOf="@+id/occurence_name"
+                app:layout_constraintBottom_toBottomOf="@+id/occurrence_name"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/occurence_name"
+                app:layout_constraintTop_toTopOf="@+id/occurrence_name"
                 tools:text="44444444" />
-<!--    todo kolor dividera to kolor kategorii-->
+
     <View
+        android:id="@+id/category_underscore"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_marginTop="5dp"

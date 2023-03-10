@@ -95,8 +95,8 @@ class HomeFragment : Fragment() {
 
         }
 
-        binding.occurenciesRecyclerView.adapter = adapter
-        binding.occurenciesRecyclerView.layoutManager = LinearLayoutManager(this.context)
+        binding.homeRecyclerView.adapter = adapter
+        binding.homeRecyclerView.layoutManager = LinearLayoutManager(this.context)
 
         //todo 3 razy robie to samo ;// a jeszcze musialbym to zrobic w refresh list.
         // Musze stworzyc funkcje do fetchowania tego

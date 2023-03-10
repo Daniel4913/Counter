@@ -31,9 +31,9 @@ class OccurrenceActivitiesListAdapter(private val onItemClicked: (OccurrenceWith
         fun bind(occ: OccurrenceWithActivities) {
             binding.apply {
 //                icOccurrence.text = occ.occurrence.occurrenceName.first().toString()
-                occurenceName.text = occ.occurrence.occurrenceName
-                occurenceName.isSelected = true
-                occurenceName.setSingleLine()
+                occurrenceName.text = occ.occurrence.occurrenceName
+                occurrenceName.isSelected = true
+                occurrenceName.setSingleLine()
 
 
                 if (occ.occurrenceActivities.isNotEmpty()) {
@@ -117,28 +117,28 @@ class OccurrenceActivitiesListAdapter(private val onItemClicked: (OccurrenceWith
                 !timeString.contains("-") &&
                 timeString.contains("0h") ||
                 timeString.contains("1h") &&
-                timeString.contains("11h") &&
-                timeString.contains("21h") &&
+                !timeString.contains("11h") &&
+                !timeString.contains("21h") &&
                 !timeString.contains("d")
             ) {
                 binding.timeToNext.setTextColor(
                     ContextCompat.getColor(
                         context,
-                        R.color.cardview_light_background
+                        R.color.orange
                     )
                 )
             } else if (timeString.contains("-")) {
                 binding.timeToNext.setTextColor(
                     ContextCompat.getColor(
                         context,
-                        R.color.md_theme_dark_error
+                        R.color.red
                     )
                 )
             } else {
                 binding.timeToNext.setTextColor(
                     ContextCompat.getColor(
                         context,
-                        R.color.material_on_surface_emphasis_high_type
+                        R.color.green
                     )
                 )
             }

@@ -40,7 +40,7 @@
             app:layout_constraintTop_toTopOf="@+id/emoji_editText">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/occurence_name"
+                android:id="@+id/occurrence_name"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"

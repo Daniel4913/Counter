@@ -4,8 +4,8 @@ package com.example.counter.data.modelentity
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.example.counter.data.modelentity.Activity
 import com.example.counter.util.Constants.Companion.OCCURRENCES_TABLE
+import java.time.Instant
 
 @Entity(tableName = OCCURRENCES_TABLE)
 data class Occurrence(
@@ -17,12 +17,15 @@ data class Occurrence(
     val occurrenceName: String,
 
     @ColumnInfo(name = "create_date")
-    val createDate: String,
+    val createDate: Instant,
 
     @ColumnInfo(name = "category")
-    val category: String,
+    val category: Category,
 
     @ColumnInfo(name = "interval_frequency")
-    val intervalFrequency: String
+    val intervalFrequency: String,
+
+    @ColumnInfo(name ="status")
+    val status: CounterStatus // po czasie(czerwony), blisko wykonania(orange), na spokojnie(zielony)
 
     )

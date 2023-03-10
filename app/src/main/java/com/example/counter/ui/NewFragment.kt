@@ -53,7 +53,7 @@ class NewFragment : Fragment() {
 
     private fun bind(occurrence: Occurrence) {
         binding.apply {
-            occurenceName.setText(occurrence.occurrenceName, TextView.BufferType.SPANNABLE)
+            occurrenceName.setText(occurrence.occurrenceName, TextView.BufferType.SPANNABLE)
             categoryDropdown.setText(occurrence.category, TextView.BufferType.SPANNABLE)
             addOccurrence.setOnClickListener { updateOccurrence() }
             tvDate.setText(splitCreateDate()[0])
@@ -216,7 +216,7 @@ class NewFragment : Fragment() {
 
     private fun occIconAndName(): String {
         val icon = binding.emojiEditText.text
-        val name = binding.occurenceName.text
+        val name = binding.occurrenceName.text
         binding.emojiEditText.installForceSingleEmoji()
         binding.emojiEditText.isEmojiCompatEnabled
 
@@ -240,7 +240,7 @@ class NewFragment : Fragment() {
 
     private fun isEntryValid(): Boolean {
         return viewModel.isEntryValid(
-            binding.occurenceName.text.toString(),
+            binding.occurrenceName.text.toString(),
         )
     }
 
@@ -251,7 +251,7 @@ class NewFragment : Fragment() {
 
             viewModel.updateOccurrence(
                 occurrence.occurrenceId,
-                binding.occurenceName.text.toString(),
+                binding.occurrenceName.text.toString(),
                 createDate,
                 binding.categoryDropdown.text.toString(),
                 getIntervalFrequency(intervalValue, intervalFrequencyChip)
