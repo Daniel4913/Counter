@@ -1,5 +1,6 @@
 package com.example.counter.adapters
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
@@ -7,11 +8,13 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.counter.R
+import com.example.counter.data.modelentity.CounterStatus
 import com.example.counter.data.modelentity.Occurrence
 import com.example.counter.data.relations.OccurrenceWithActivities
 import com.example.counter.databinding.OccurenceHomeItemBinding
 import com.example.counter.util.Constants
 import com.example.counter.util.Constants.Companion.DEFAULT_FORMATTER
+import kotlinx.coroutines.coroutineScope
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
@@ -30,20 +33,22 @@ class OccurrenceActivitiesListAdapter(private val onItemClicked: (OccurrenceWith
 
         fun bind(occ: OccurrenceWithActivities) {
             binding.apply {
-//                icOccurrence.text = occ.occurrence.occurrenceName.first().toString()
+                icOccurrence.text = occ.occurrence.occurrenceIcon
                 occurrenceName.text = occ.occurrence.occurrenceName
                 occurrenceName.isSelected = true
                 occurrenceName.setSingleLine()
 
+                applyUnderscoreColor(occ.occurrence.category.underscoreColor)
 
                 if (occ.occurrenceActivities.isNotEmpty()) {
                     lastDateTime = occ.occurrenceActivities.last().fullDate
                     intervalFrequency = occ.occurrence.intervalFrequency
                     timeToNext.text = secondsToComponents(getSecondsTo(getIntervalSeconds()))
                     timeFromLast.text = secondsToComponents(getSecondsPassed())
+                    if (occ.occurrence.status != null) {
+                        applyTimeColor(occ.occurrence.status!!)
 
-                    applyTimeColor(secondsToComponents(getSecondsTo(getIntervalSeconds())))
-
+                    }
                 } else {
                     timeFromLast.text = "- -"
                     timeToNext.text = "- -"
@@ -111,37 +116,45 @@ class OccurrenceActivitiesListAdapter(private val onItemClicked: (OccurrenceWith
             }
         }
 
-        private fun applyTimeColor(timeString: String) {
+        private fun applyTimeColor(status: CounterStatus) {
             val context = binding.timeToNext.context
-            if (
-                !timeString.contains("-") &&
-                timeString.contains("0h") ||
-                timeString.contains("1h") &&
-                !timeString.contains("11h") &&
-                !timeString.contains("21h") &&
-                !timeString.contains("d")
-            ) {
-                binding.timeToNext.setTextColor(
-                    ContextCompat.getColor(
-                        context,
-                        R.color.orange
+            when (status.name) {
+                "Enough" -> {
+                    binding.timeToNext.setTextColor(
+                        ContextCompat.getColor(
+                            context,
+                            R.color.green
+                        )
                     )
-                )
-            } else if (timeString.contains("-")) {
-                binding.timeToNext.setTextColor(
-                    ContextCompat.getColor(
-                        context,
-                        R.color.red
+                }
+                "Late" -> {
+                    binding.timeToNext.setTextColor(
+                        ContextCompat.getColor(
+                            context,
+                            R.color.red
+                        )
                     )
-                )
-            } else {
-                binding.timeToNext.setTextColor(
-                    ContextCompat.getColor(
-                        context,
-                        R.color.green
+                }
+                "CloseTo" -> {
+                    binding.timeToNext.setTextColor(
+                        ContextCompat.getColor(
+                            context,
+                            R.color.orange
+                        )
                     )
-                )
+                }
             }
+        }
+
+        private fun applyUnderscoreColor(color: Int) {
+            val context = binding.categoryUnderscore.context
+
+            binding.categoryUnderscore.setBackgroundColor(
+                ContextCompat.getColor(
+                    context,
+                    color
+                )
+            )
         }
     }
 

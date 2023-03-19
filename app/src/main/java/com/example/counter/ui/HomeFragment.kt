@@ -1,6 +1,6 @@
 package com.example.counter.ui
 
-//import com.example.counter.data.DataStoreRepository
+
 import android.os.Bundle
 import android.util.Log
 import android.view.*
@@ -15,6 +15,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.counter.R
 import com.example.counter.adapters.OccurrenceActivitiesListAdapter
 import com.example.counter.data.modelentity.Activity
+import com.example.counter.data.modelentity.Category
+import com.example.counter.data.modelentity.CounterStatus
+import com.example.counter.data.modelentity.Occurrence
 import com.example.counter.data.relations.OccurrenceWithActivities
 import com.example.counter.databinding.FragmentCounterHomeBinding
 import com.example.counter.util.Constants
@@ -23,6 +26,7 @@ import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.coroutineScope
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
@@ -92,16 +96,18 @@ class HomeFragment : Fragment() {
                     it.occurrence.occurrenceId
                 )
             this.findNavController().navigate(action)
-
         }
 
         binding.homeRecyclerView.adapter = adapter
         binding.homeRecyclerView.layoutManager = LinearLayoutManager(this.context)
 
+
         //todo 3 razy robie to samo ;// a jeszcze musialbym to zrobic w refresh list.
         // Musze stworzyc funkcje do fetchowania tego
         viewModel.readOccurrencesWithActivities.observe(this.viewLifecycleOwner) { items ->
+
             items.let { occurrencesList ->
+
                 try {
                     val listSeconds = makeListOfSecondsTo(occurrencesList)
                     val itemsBySeconds =
@@ -120,7 +126,6 @@ class HomeFragment : Fragment() {
                     ).show()
                     adapter.submitList(occurrencesList)
                 }
-
             }
         }
 
@@ -195,10 +200,12 @@ class HomeFragment : Fragment() {
         }
     }
 
-
     private fun refreshList() {
         val data = viewModel.readOccurrencesWithActivities.value
         data?.forEach {
+            val lastActivitySeconds = it.occurrenceActivities.last()
+            val occurrence = it.occurrence
+
             val secondsPassed: Long? =
                 getSecondsPassed(it.occurrenceActivities.last().fullDate)
             val id = it.occurrenceActivities.last().activityId
@@ -228,6 +235,10 @@ class HomeFragment : Fragment() {
                 return aktiwiti
             }
             viewModel.updateActivity(getActivityToUpdate())
+            lastActivitySeconds.intervalSeconds?.let { it1 ->
+                viewModel.setOccurrenceStatus(lastActivitySeconds.secondsToNext,
+                    it1, occurrence = occurrence)
+            }
         }
 
     }

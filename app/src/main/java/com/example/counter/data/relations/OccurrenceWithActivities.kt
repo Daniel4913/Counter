@@ -10,7 +10,7 @@ data class OccurrenceWithActivities (
     val occurrence: Occurrence,
 
     @Relation(
-        parentColumn = "occurrence_id",
+        parentColumn = "occurrenceId",
         entityColumn = "occurrence_owner_id"
     )
     val occurrenceActivities: List<Activity>

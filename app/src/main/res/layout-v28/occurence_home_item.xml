@@ -2,17 +2,19 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:layout_marginTop="8dp"
+    android:layout_marginBottom="8dp"
     android:layout_width="match_parent"
-    android:layout_height="65dp"
-    android:padding="10dp"
+    android:layout_height="wrap_content"
+    android:padding="5dp"
     >
 
-            <ImageView
+            <TextView
                 android:id="@+id/ic_occurrence"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:srcCompat="@drawable/ic_fox"
-                app:layout_constraintBottom_toBottomOf="parent"
+                android:textSize="25dp"
+                app:layout_constraintBottom_toTopOf="@id/category_underscore"
                 app:layout_constraintEnd_toStartOf="@+id/occurrence_name"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -57,13 +59,12 @@
 
     <View
         android:id="@+id/category_underscore"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginBottom="2dp"
-        android:background="@color/md_theme_light_tertiary"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        android:layout_width="30dp"
+        android:layout_height="0.8dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/ic_occurrence"
+        app:layout_constraintStart_toStartOf="@id/ic_occurrence"
+        app:layout_constraintTop_toBottomOf="@id/ic_occurrence" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

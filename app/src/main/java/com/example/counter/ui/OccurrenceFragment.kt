@@ -51,7 +51,7 @@ class OccurrenceFragment : Fragment() {
     private fun bind(occurrence: Occurrence) {
         binding.apply {
             occurenceCreateDate.text = occurrence.createDate
-            occurencyCategory.text = occurrence.category
+            occurencyCategory.text = occurrence.category.name
             intervalTextView.text = occurrence.intervalFrequency
             addActivity.setOnClickListener { addNewActivity() }
         }
@@ -301,7 +301,7 @@ class OccurrenceFragment : Fragment() {
     }
 
     private fun deleteOccurrence() {
-        viewModel.deleteOccurence(occurrence)
+        viewModel.deleteOccurrence(occurrence)
         findNavController().navigateUp()
     }
 

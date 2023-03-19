@@ -1,13 +1,17 @@
 package com.example.counter.ui
 
 import android.content.Context.INPUT_METHOD_SERVICE
+import android.os.Build
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
+import androidx.annotation.RequiresApi
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -16,13 +20,17 @@ import com.example.counter.util.Constants.Companion.DEFAULT_MAX_DAYS
 import com.example.counter.util.Constants.Companion.DEFAULT_MAX_HOURS
 import com.example.counter.util.Constants.Companion.MINUTES
 import com.example.counter.R
+import com.example.counter.data.modelentity.Category
+import com.example.counter.data.modelentity.CounterStatus
 import com.example.counter.data.modelentity.Occurrence
 import com.example.counter.databinding.FragmentNewBinding
 import com.example.counter.pickers.DatePickerFragment
 import com.example.counter.pickers.TimePickerFragment
+import com.example.counter.util.Converter
 import com.example.counter.viewmodels.CounterViewModel
 import com.google.android.material.chip.Chip
-import com.vanniktech.emoji.installForceSingleEmoji
+import com.vanniktech.emoji.EmojiPopup
+import com.vanniktech.emoji.installDisableKeyboardInput
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import java.util.*
@@ -39,12 +47,12 @@ class NewFragment : Fragment() {
     private var intervalFrequencyChipId = 0
     private var intervalValue = 0
 
-//    lateinit var emojiProvider: EmojiProvider
 
     private var _binding: FragmentNewBinding? = null
     private val binding get() = _binding!!
-    private var emojiIcon = ""
+    private lateinit var emojiPopup: EmojiPopup
 
+    private var defaultCategories = mutableListOf<String>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,20 +61,20 @@ class NewFragment : Fragment() {
 
     private fun bind(occurrence: Occurrence) {
         binding.apply {
+            emojiEditText.setText(occurrence.occurrenceIcon)
             occurrenceName.setText(occurrence.occurrenceName, TextView.BufferType.SPANNABLE)
-            categoryDropdown.setText(occurrence.category, TextView.BufferType.SPANNABLE)
+            categoryDropdown.setText(occurrence.category.name, TextView.BufferType.SPANNABLE)
             addOccurrence.setOnClickListener { updateOccurrence() }
             tvDate.setText(splitCreateDate()[0])
             tvTime.setText(splitCreateDate()[1])
             intervalNumberPicker.minValue = DEFAULT_HOURS
             intervalNumberPicker.maxValue = DEFAULT_MAX_HOURS
-            emojiEditText.setText(emojiIcon)
 
-            //populate category list on edit
-            val categories: Array<String> = resources.getStringArray(R.array.categories)
-            val arrayAdapter = ArrayAdapter(requireContext(), R.layout.category_item, categories)
+            // populate category list on edit
+            val array: Array<String> = emptyArray()
+            val populated = array.plus(defaultCategories.toTypedArray())
+            val arrayAdapter = ArrayAdapter(requireContext(), R.layout.category_item, populated)
             binding.categoryDropdown.setAdapter(arrayAdapter)
-
         }
     }
 
@@ -76,26 +84,33 @@ class NewFragment : Fragment() {
     ): View? {
         _binding = FragmentNewBinding.inflate(inflater, container, false)
 
+        emojiPopup = EmojiPopup(binding.root, binding.emojiEditText, onEmojiClickListener = {
+            binding.emojiEditText.isCursorVisible = false
+        })
 
-//        val emojiManager = EmojiManager.install(emojiProvider)
-//        val emojiPopup = EmojiPopup(binding.root, binding.emojiEditText)
-//        binding.iconInfinity.setOnClickListener { emojiPopup.show() }
+        Category.values().forEach {
+            defaultCategories.add(it.name)
+        }
 
         return binding.root
     }
 
+    @RequiresApi(Build.VERSION_CODES.Q)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val id = navigationArgs.occurenceId
+        val emojiContext = binding.emojiEditText.context
+        binding.emojiEditText.apply {
+            textCursorDrawable = ContextCompat.getDrawable(emojiContext, R.drawable.ic_emoji_indicator)
+            installDisableKeyboardInput(emojiPopup)
+            requestFocus()
+        }
 
+        val id = navigationArgs.occurenceId
         setIntervalValues()
 
         binding.tvDate.setOnClickListener { getDate() }
         binding.tvTime.setOnClickListener { getTime() }
-
-        Toast.makeText(requireContext(), "Click on date and time to change it", Toast.LENGTH_LONG)
-            .show()
 
         val c = Calendar.getInstance()
         val year = c.get(Calendar.YEAR)
@@ -116,16 +131,27 @@ class NewFragment : Fragment() {
             intervalFrequencyChip = selectedFrequencyChip
             intervalFrequencyChipId = selectedChipId.first()
         }
+        //todo
+        /**        fun addCategoryChip(categoryName: String) {
+        val chipGroup = binding.root.findViewById<ChipGroup>(R.id.category_chipGroup)
+        val newChip = Chip(chipGroup.context)
+        newChip.text = categoryName
+        chipGroup.addView(newChip)
+        }
+        // po dodaniu nowej kategorii
+        val newCategoryName = "Nowa kategoria"
+        addCategoryChip(newCategoryName) */
+
+
+
 
         if (id > 0) {
             viewModel.getOccurrence(id).observe(this.viewLifecycleOwner) { selectedOccurrence ->
                 occurrence = selectedOccurrence
-
-                val readFrequence = splitFrequence()
-                updateChipAndValue(readFrequence)
-                intervalValue = readFrequence[0].toInt()
-                intervalFrequencyChip = readFrequence[1]
-
+                val readFrequency = splitFrequency()
+                updateChipAndValue(readFrequency)
+                intervalValue = readFrequency[0].toInt()
+                intervalFrequencyChip = readFrequency[1]
                 bind(occurrence)
             }
         } else {
@@ -172,10 +198,10 @@ class NewFragment : Fragment() {
         return createDate.split(" ")
     }
 
-    private fun splitFrequence(): List<String> {
-        val frequence = occurrence.intervalFrequency
+    private fun splitFrequency(): List<String> {
+        val frequency = occurrence.intervalFrequency
 
-        return frequence.split(" ")
+        return frequency.split(" ")
     }
 
     private fun getNewDateTime(date: String, time: String): String {
@@ -214,24 +240,21 @@ class NewFragment : Fragment() {
         timePickerFragment.show(supportFragmentManagerTime, "TimePickerFragment")
     }
 
-    private fun occIconAndName(): String {
-        val icon = binding.emojiEditText.text
-        val name = binding.occurrenceName.text
-        binding.emojiEditText.installForceSingleEmoji()
-        binding.emojiEditText.isEmojiCompatEnabled
-
-        return "$icon $name"
-    }
-
     private fun addNewOccurrence() {
+        val occurrenceIcon = binding.emojiEditText.text.toString()
+        val occurrenceName = binding.occurrenceName.text.toString()
+        val createDate =
+            getNewDateTime(binding.tvDate.text.toString(), binding.tvTime.text.toString())
+        val category = Category.valueOf(binding.categoryDropdown.text.toString())
+        val frequency = getIntervalFrequency(intervalValue, intervalFrequencyChip)
+
         if (isEntryValid()) {
-            val createDate =
-                getNewDateTime(binding.tvDate.text.toString(), binding.tvTime.text.toString())
             viewModel.addNewOccurrence(
-                occIconAndName(),
+                occurrenceIcon,
+                occurrenceName,
                 createDate,
-                binding.categoryDropdown.text.toString(),
-                getIntervalFrequency(intervalValue, intervalFrequencyChip)
+                category,
+                frequency
             )
         }
         val action = NewFragmentDirections.actionNewFragmentToCounterHomeFragment()
@@ -249,23 +272,28 @@ class NewFragment : Fragment() {
             val createDate =
                 getNewDateTime(binding.tvDate.text.toString(), binding.tvTime.text.toString())
 
-            viewModel.updateOccurrence(
-                occurrence.occurrenceId,
-                binding.occurrenceName.text.toString(),
-                createDate,
-                binding.categoryDropdown.text.toString(),
-                getIntervalFrequency(intervalValue, intervalFrequencyChip)
-            )
+            occurrence.status?.let {
+                viewModel.updateOccurrence(
+                    occurrence.occurrenceId,
+                    occurrence.occurrenceIcon,
+                    binding.occurrenceName.text.toString(),
+                    createDate,
+                    Category.valueOf(binding.categoryDropdown.text.toString()),
+                    getIntervalFrequency(intervalValue, intervalFrequencyChip),
+                    it
+                )
+            }
             val action = NewFragmentDirections.actionNewFragmentToCounterHomeFragment()
             findNavController().navigate(action)
         }
     }
 
-    //     to prevent of disappear category items from list
     override fun onResume() {
         super.onResume()
-        val categories = resources.getStringArray(R.array.categories)
-        val arrayAdapter = ArrayAdapter(requireContext(), R.layout.category_item, categories)
+
+        val array: Array<String> = emptyArray()
+        val populated = array.plus(defaultCategories.toTypedArray())
+        val arrayAdapter = ArrayAdapter(requireContext(), R.layout.category_item, populated)
         binding.categoryDropdown.setAdapter(arrayAdapter)
     }
 
@@ -280,3 +308,12 @@ class NewFragment : Fragment() {
 
 
 }
+
+data class CurrentOccurrence(
+    val occurrenceId: Int = 0,
+    val occurrenceName: String,
+    val createDate: String,
+    val category: String,
+    val intervalFrequency: String,
+    val status: CounterStatus? = null
+)

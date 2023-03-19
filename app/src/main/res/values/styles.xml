@@ -12,7 +12,8 @@
         /// change your font. no nie dziala ;//
     </style>
 
-    <style name="CustomChipStyle" parent="Widget.Material3.Chip.Filter">
-
+    <style name="CustomChipStyle" parent="Widget.Material3.Chip.Filter.Elevated">
+        <item name="chipIconEnabled">true</item>
+        <item name="checkedIconVisible">false</item>
     </style>
 </resources>

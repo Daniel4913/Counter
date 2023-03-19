@@ -61,7 +61,17 @@
     <color name="md_theme_dark_outlineVariant">#4B4639</color>
     <color name="md_theme_dark_scrim">#000000</color>
 
+    // time colors
     <color name="red">#C60919</color>
     <color name="orange">#FB8C00</color>
     <color name="green">#BAD065</color>
+
+    // category colors
+    <color name="hygiene">#039BE5</color>
+    <color name="exercises">#D81B60</color>
+    <color name="household">#FFB300</color>
+    <color name="learning">#00897B</color>
+    <color name="work">#F4511E</color>
+    <color name="relations">#EEFF41</color>
+
 </resources>

@@ -4,6 +4,7 @@ plugins {
     id 'kotlin-kapt'
     id 'androidx.navigation.safeargs.kotlin'
     id 'dagger.hilt.android.plugin'
+    id 'kotlin-parcelize'
 }
 
 android {
@@ -71,4 +72,8 @@ dependencies {
     // Dagger - Hilt
     implementation "com.google.dagger:hilt-android:2.44.2"
     kapt "com.google.dagger:hilt-android-compiler:2.44.2"
+
+    // emoji
+//    implementation "com.vanniktech:emoji-material:0.15.0"
+    implementation "com.vanniktech:emoji-google-compat:0.15.0"
 }

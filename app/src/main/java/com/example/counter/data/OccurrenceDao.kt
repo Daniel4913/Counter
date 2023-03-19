@@ -7,10 +7,10 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface OccurrenceDao {
-    @Query("SELECT * from occurrences_table ORDER BY create_date ASC")
+    @Query("SELECT * from occurrences_table ORDER BY createDate ASC")
     fun getOccurrences(): Flow<List<Occurrence>>
 
-    @Query("SELECT * from occurrences_table WHERE occurrence_id = :id")
+    @Query("SELECT * from occurrences_table WHERE occurrenceId = :id")
     fun getOccurrence(id: Int): Flow<Occurrence>
 
     @Transaction
