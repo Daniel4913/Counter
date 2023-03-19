@@ -14,6 +14,7 @@ import com.example.counter.databinding.ActivityMainBinding
 import com.example.counter.viewmodels.CounterViewModel
 import com.google.android.material.elevation.SurfaceColors
 import dagger.hilt.android.AndroidEntryPoint
+import timber.log.Timber
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {

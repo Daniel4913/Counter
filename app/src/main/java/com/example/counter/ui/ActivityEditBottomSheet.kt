@@ -1,6 +1,7 @@
 package com.example.counter.ui
 
 import android.content.Context
+import android.content.DialogInterface
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -8,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -20,11 +22,13 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
+import timber.log.Timber
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 @AndroidEntryPoint
 class ActivityEditBottomSheet : BottomSheetDialogFragment() {
+
 
     private val navigationArgs: ActivityEditBottomSheetArgs by navArgs()
 
@@ -58,6 +62,7 @@ class ActivityEditBottomSheet : BottomSheetDialogFragment() {
         _binding = ActivityEditBottomSheetBinding.inflate(layoutInflater, container, false)
         getDate = binding.dateEditText.text.toString()
         getHour = binding.hourEditText.text.toString()
+
         return binding.root
     }
 
@@ -91,7 +96,7 @@ class ActivityEditBottomSheet : BottomSheetDialogFragment() {
         }
 
         binding.deleteButton.setOnClickListener {
-
+            requireActivity().onBackPressedDispatcher.onBackPressed()
             viewModel.deleteActivity(
                 Activity(
                     activity.activityId,
@@ -102,9 +107,9 @@ class ActivityEditBottomSheet : BottomSheetDialogFragment() {
                     activity.secondsToNext
                 )
             )
-//            requireActivity().onBackPressedDispatcher.onBackPressed()
         }
     }
+
 
     private fun validateDateTime(): Boolean {
         val formatter = DateTimeFormatter.ofPattern(DEFAULT_FORMATTER)
@@ -129,6 +134,16 @@ class ActivityEditBottomSheet : BottomSheetDialogFragment() {
     private fun splitFullDate(): List<String> {
         val createDate = activity.fullDate
         return createDate.split(" ")
+    }
+
+
+    override fun onDismiss(dialog: DialogInterface) {
+        super.onDismiss(dialog)
+
+        //nie dziala
+        val fragmentTitle = getString(R.string.fragmentTitle, navigationArgs.occurrenceTitle)
+        (requireActivity() as? AppCompatActivity)?.supportActionBar?.title = fragmentTitle
+        Timber.d("requireactivity: ${requireActivity()}")
     }
 
     override fun onDestroyView() {

@@ -11,10 +11,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
         android:text="3"
-        app:layout_constraintEnd_toStartOf="@id/since"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintStart_toStartOf="@+id/occurrence_interval_label"
+        app:layout_constraintTop_toBottomOf="@+id/occurrence_interval_label" />
 
     <TextView
         android:id="@+id/occurence_create_date_"
@@ -23,7 +22,6 @@
         android:layout_marginStart="8dp"
         android:text="date;date;date"
         app:layout_constraintBottom_toBottomOf="@+id/since"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/since" />
 
     <TextView
@@ -37,41 +35,35 @@
         app:layout_constraintTop_toTopOf="@+id/list_size_textView" />
 
     <TextView
-        android:id="@+id/label_category"
+        android:id="@+id/occurrency_category"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="Category:"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        android:text="zdrowie"
+        app:layout_constraintBottom_toTopOf="@+id/category_icon"
+        app:layout_constraintEnd_toEndOf="@+id/category_icon"
+        app:layout_constraintStart_toStartOf="@+id/category_icon"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/occurrence_time_from_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:text="@string/time_from_last"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/occurency_category"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:text="zdrowie"
-        app:layout_constraintBottom_toBottomOf="@+id/label_category"
-        app:layout_constraintStart_toEndOf="@+id/label_category"
-        app:layout_constraintTop_toTopOf="@+id/label_category" />
-
-    <TextView
-        android:id="@+id/occurency_time_from_label"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="@string/time_from_last"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/label_category" />
-
-    <TextView
-        android:id="@+id/occurency_time_from"
+        android:id="@+id/occurrence_time_from"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        app:layout_constraintBottom_toBottomOf="@+id/occurency_time_from_label"
-        app:layout_constraintStart_toEndOf="@+id/occurency_time_from_label"
-        app:layout_constraintTop_toTopOf="@+id/occurency_time_from_label"
+        app:layout_constraintBottom_toBottomOf="@+id/occurrence_time_from_label"
+        app:layout_constraintStart_toEndOf="@+id/occurrence_time_from_label"
+        app:layout_constraintTop_toTopOf="@+id/occurrence_time_from_label"
         tools:text="000" />
 
     <ProgressBar
@@ -81,26 +73,26 @@
         android:layout_height="20dp"
         android:layout_marginStart="16dp"
         android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="@+id/occurency_time_from_label"
-        app:layout_constraintStart_toEndOf="@+id/occurency_time_from_label"
-        app:layout_constraintTop_toTopOf="@+id/occurency_time_from_label" />
+        app:layout_constraintBottom_toBottomOf="@+id/occurrence_time_from_label"
+        app:layout_constraintStart_toEndOf="@+id/occurrence_time_from_label"
+        app:layout_constraintTop_toTopOf="@+id/occurrence_time_from_label" />
 
     <TextView
-        android:id="@+id/occurency_time_to_label"
+        android:id="@+id/occurrence_time_to_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:text="@string/time_to"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/occurency_time_from" />
+        app:layout_constraintStart_toStartOf="@+id/occurrence_time_from_label"
+        app:layout_constraintTop_toBottomOf="@+id/occurrence_time_from" />
 
     <TextView
-        android:id="@+id/occurency_time_to"
+        android:id="@+id/occurrence_time_to"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="@+id/occurency_time_to_label"
-        app:layout_constraintStart_toStartOf="@+id/occurency_time_from"
-        app:layout_constraintTop_toTopOf="@+id/occurency_time_to_label"
+        app:layout_constraintBottom_toBottomOf="@+id/occurrence_time_to_label"
+        app:layout_constraintStart_toStartOf="@+id/occurrence_time_from"
+        app:layout_constraintTop_toTopOf="@+id/occurrence_time_to_label"
         tools:text="-000" />
 
     <ProgressBar
@@ -110,19 +102,19 @@
         android:layout_height="20dp"
         android:layout_marginStart="16dp"
         android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="@+id/occurency_time_to_label"
+        app:layout_constraintBottom_toBottomOf="@+id/occurrence_time_to_label"
         app:layout_constraintEnd_toEndOf="@+id/progressBar"
         app:layout_constraintStart_toStartOf="@+id/progressBar"
-        app:layout_constraintTop_toTopOf="@+id/occurency_time_to_label" />
+        app:layout_constraintTop_toTopOf="@+id/occurrence_time_to_label" />
 
     <TextView
-        android:id="@+id/occurence_interval_label"
+        android:id="@+id/occurrence_interval_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:text="Interval"
-        app:layout_constraintStart_toStartOf="@+id/occurency_time_to_label"
-        app:layout_constraintTop_toBottomOf="@+id/occurency_time_to_label" />
+        app:layout_constraintStart_toStartOf="@+id/occurrence_time_to_label"
+        app:layout_constraintTop_toBottomOf="@+id/occurrence_time_to_label" />
 
 
     <TextView
@@ -133,69 +125,101 @@
         android:layout_marginEnd="32dp"
         android:text="2 days"
         android:textSize="16sp"
-        app:layout_constraintBottom_toBottomOf="@+id/occurence_interval_label"
+        app:layout_constraintBottom_toBottomOf="@+id/occurrence_interval_label"
 
-        app:layout_constraintStart_toStartOf="@+id/occurency_time_to"
-        app:layout_constraintTop_toTopOf="@+id/occurence_interval_label" />
+        app:layout_constraintStart_toStartOf="@+id/occurrence_time_to"
+        app:layout_constraintTop_toTopOf="@+id/occurrence_interval_label" />
+
+    <com.vanniktech.emoji.EmojiTextView
+        android:id="@+id/occurrence_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toStartOf="@id/category_icon"
+        app:layout_constraintTop_toTopOf="@id/category_icon"
+        app:layout_constraintBottom_toBottomOf="@id/category_icon"
+        android:textSize="40sp"
+        tools:text="IC"
+        android:layout_marginEnd="16dp"
+        />
+
+    <ImageView
+        android:id="@+id/category_icon"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/occurrency_category"
+        tools:src="@drawable/ic_categories" />
 
 
     <View
         android:id="@+id/divider"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/interval_textView" />
-
-
-    <!--        todo GRAPH/LIST -->
-
+        app:layout_constraintTop_toBottomOf="@+id/occurence_create_date_" />
 
     <androidx.recyclerview.widget.RecyclerView
 
-        android:id="@+id/occurence_detail_recycler_view"
+        android:id="@+id/occurrence_details_recycler_view"
         android:layout_width="match_parent"
-        android:layout_height="350dp"
-        android:layout_marginTop="8dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
         android:orientation="vertical"
         android:scrollbars="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/date_label" />
+        app:layout_constraintTop_toBottomOf="@+id/secondsToNext" />
 
 
     <TextView
         android:id="@+id/date_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
         android:text="Date"
-        app:layout_constraintBottom_toTopOf="@+id/occurence_detail_recycler_view"
+        app:layout_constraintBottom_toBottomOf="@+id/hour_label"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/divider" />
+        app:layout_constraintTop_toTopOf="@+id/hour_label" />
 
     <TextView
         android:id="@+id/hour_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="144dp"
         android:text="godzina"
-        app:layout_constraintBottom_toBottomOf="@+id/date_label"
-        app:layout_constraintStart_toEndOf="@+id/date_label"
-        app:layout_constraintTop_toTopOf="@+id/date_label"
+        android:textAlignment="center"
+        app:layout_constraintBottom_toBottomOf="@+id/secondsToNext"
+        app:layout_constraintStart_toStartOf="@+id/interval_textView"
+        app:layout_constraintTop_toTopOf="@+id/secondsToNext"
+        app:layout_constraintVertical_bias="0.56" />
+
+    <TextView
+        android:id="@+id/secondsToNext"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:text="seconds\n to"
+        android:textAlignment="center"
+        app:layout_constraintBottom_toBottomOf="@+id/secondsPassed"
+        app:layout_constraintEnd_toStartOf="@id/secondsPassed"
+        app:layout_constraintTop_toTopOf="@+id/secondsPassed"
         app:layout_constraintVertical_bias="0.0" />
 
     <TextView
-        android:id="@+id/textView6"
+        android:id="@+id/secondsPassed"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:text="keep goin"
+        android:layout_marginEnd="16dp"
+        android:text="seconds\n passed"
+        android:textAlignment="center"
         app:layout_constraintBottom_toBottomOf="@+id/hour_label"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.917"
-        app:layout_constraintStart_toEndOf="@+id/hour_label"
-        app:layout_constraintTop_toTopOf="@+id/hour_label"
+        app:layout_constraintTop_toBottomOf="@+id/divider"
         app:layout_constraintVertical_bias="0.0" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton

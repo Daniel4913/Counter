@@ -76,4 +76,7 @@ dependencies {
     // emoji
 //    implementation "com.vanniktech:emoji-material:0.15.0"
     implementation "com.vanniktech:emoji-google-compat:0.15.0"
+
+    // Timber logs
+    implementation 'com.jakewharton.timber:timber:5.0.1'
 }

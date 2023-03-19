@@ -1,7 +1,9 @@
 package com.example.counter.viewmodels
 
 import android.app.Application
-import android.util.Log
+import android.app.NotificationManager
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.lifecycle.*
 import com.example.counter.data.*
 //import com.example.counter.data.DataStoreRepository
@@ -23,12 +25,15 @@ import javax.inject.Inject
 class CounterViewModel @Inject constructor(
     private val repository: Repository,
 //    private val dataStoreRepository: DataStoreRepository,
+//    private val notificationBuilder: NotificationCompat.Builder,
+//    private val notificationManager: NotificationManagerCompat,
     application: Application
 ) : AndroidViewModel(application) {
 
+
     val occurrence = repository.dataSource.getOccurrencesWithActivities().asLiveData()
 
-    val readOccurrencesWithActivities: LiveData<List<OccurrenceWithActivities>> =
+    val readAllOccurrencesWithActivities: LiveData<List<OccurrenceWithActivities>> =
         repository.dataSource.getOccurrencesWithActivities().asLiveData()
 
     fun getOccurrence(id: Int): LiveData<Occurrence> {
@@ -39,28 +44,13 @@ class CounterViewModel @Inject constructor(
         return repository.dataSource.getOccurrencesByCategory(category).asLiveData()
     }
 
-    fun getOccurrenceWithActivities(): LiveData<List<OccurrenceWithActivities>> {
-        return repository.dataSource.getOccurrencesWithActivities().asLiveData()
-    }
-
     fun getActivities(id: Int): LiveData<List<Activity>> {
         return repository.dataSource.getOccurrenceActivities(id).asLiveData()
-    }
-
-    fun getAllActivities(): LiveData<List<Activity>> {
-        return repository.dataSource.getAllActivities().asLiveData()
-    }
-
-    fun updateSeconds(activityId: Int, secondsFrom: Long, secondsTo: Long) {
-        viewModelScope.launch {
-            repository.dataSource.updateSeconds(activityId, secondsFrom, secondsTo)
-        }
     }
 
     fun updateActivity(activity: Activity) {
         viewModelScope.launch(Dispatchers.IO) { repository.dataSource.updateActivity(activity) }
     }
-
 
     private fun insertOccurrence(occurrence: Occurrence) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -112,7 +102,7 @@ class CounterViewModel @Inject constructor(
         intervalFrequency: String,
         status: CounterStatus
     ) {
-        val updatedOccurence = Occurrence(
+        val updatedOccurrence = Occurrence(
             occurrenceId = occurrenceId,
             occurrenceIcon = occurrenceIcon,
             occurrenceName = occurrenceName,
@@ -121,7 +111,7 @@ class CounterViewModel @Inject constructor(
             intervalFrequency = intervalFrequency,
             status = status
         )
-        updateOccurrence(updatedOccurence)
+        updateOccurrence(updatedOccurrence)
     }
 
     fun setOccurrenceStatus(secondsTo: Long?, intervalSeconds: Long, occurrence: Occurrence) {
@@ -132,7 +122,6 @@ class CounterViewModel @Inject constructor(
         } else {
             CounterStatus.Enough
         }
-
         updateOccurrence(occurrence.apply { status = newStatus })
     }
 

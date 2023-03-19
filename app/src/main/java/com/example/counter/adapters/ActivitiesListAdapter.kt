@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.counter.data.modelentity.Activity
 import com.example.counter.databinding.DatesTimesItemBinding
+import kotlin.time.Duration.Companion.seconds
 
 class ActivitiesListAdapter(private val onItemClicked: (Activity) -> Unit, private val onLongItemClicked: (Activity)-> Unit):
     ListAdapter<Activity, ActivitiesListAdapter.DatesTimesViewHolder>(DiffCallback) {
@@ -32,17 +33,33 @@ class ActivitiesListAdapter(private val onItemClicked: (Activity) -> Unit, priva
 
     class DatesTimesViewHolder(private var binding: DatesTimesItemBinding) :
         RecyclerView.ViewHolder(binding.root){
+
         fun bind(activity: Activity){
             binding.apply {
-                date.text = activity.fullDate
-                timeFrom.text =  activity.secondsToNext.toString()
-                timeLast.text = activity.secondsPassed.toString()
+                date.text = activity.fullDate.split(" ")[1]
+                hour.text = activity.fullDate.split(" ")[0]
+                timeFrom.text = activity.secondsToNext?.let { secondsToComponents(it) }
+                timeLast.text = activity.secondsPassed?.let { secondsToComponents(it) }
+
 
             }
 
+
+        }
+
+        private fun secondsToComponents(seconds: Long): String {
+            seconds.seconds.toComponents { days, hours, minutes, seconds, _ ->
+
+                return when (days) {
+                    0L -> "${hours}h ${minutes}m "
+                    else -> "${days}d ${hours}h ${minutes}m"
+                }
+            }
         }
 
     }
+
+
 
     companion object {
         private val DiffCallback = object : DiffUtil.ItemCallback<Activity>(){

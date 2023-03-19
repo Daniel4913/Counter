@@ -32,6 +32,7 @@
         <argument
             android:name="id"
             app:argType="integer" />
+
         <action
             android:id="@+id/action_occurenceFragment_to_newFragment"
             app:destination="@id/newFragment" />
@@ -61,5 +62,9 @@
         <argument
             android:name="id"
             app:argType="integer" />
+        <argument
+            android:name="occurrenceTitle"
+            app:argType="string"
+            android:defaultValue='""' />
     </dialog>
 </navigation>

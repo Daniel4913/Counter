@@ -26,5 +26,10 @@
         <item name="colorOnSurfaceInverse">@color/md_theme_dark_inverseOnSurface</item>
         <item name="colorSurfaceInverse">@color/md_theme_dark_inverseSurface</item>
         <item name="colorPrimaryInverse">@color/md_theme_dark_inversePrimary</item>
+        /////
+        <item name="android:tint">@color/md_theme_dark_onSurfaceVariant</item>
+        <item name="iconTint">@color/md_theme_dark_onSurfaceVariant</item>
+        <item name="chipIconTint">@color/md_theme_dark_primary</item>
     </style>
+
 </resources>

@@ -1,10 +1,12 @@
 package com.example.counter.ui
 
+import android.content.Context
 import android.os.Bundle
 import android.view.*
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
@@ -24,10 +26,13 @@ import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 import kotlin.time.Duration.Companion.seconds
 import com.example.counter.R
+import com.example.counter.data.modelentity.Category
+import com.example.counter.data.modelentity.CounterStatus
 import com.example.counter.util.Constants
 import com.example.counter.viewmodels.CounterViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import timber.log.Timber
 
 @ExperimentalCoroutinesApi
 @AndroidEntryPoint
@@ -41,19 +46,23 @@ class OccurrenceFragment : Fragment() {
 
     private var _binding: FragmentOccurenceBinding? = null
     private val binding get() = _binding!!
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel = ViewModelProvider(requireActivity())[CounterViewModel::class.java]
-
 
     }
 
     private fun bind(occurrence: Occurrence) {
         binding.apply {
             occurenceCreateDate.text = occurrence.createDate
-            occurencyCategory.text = occurrence.category.name
+            occurrencyCategory.text = occurrence.category.name
+            categoryIcon.setImageResource(Category.valueOf(occurrence.category.name).icon)
+            occurrenceIcon.text = occurrence.occurrenceIcon
             intervalTextView.text = occurrence.intervalFrequency
             addActivity.setOnClickListener { addNewActivity() }
+            divider.setBackgroundColor(Category.valueOf(occurrence.category.name).underscoreColor)
         }
     }
 
@@ -97,6 +106,8 @@ class OccurrenceFragment : Fragment() {
             val fragmentTitle = getString(string.fragmentTitle, occurrence.occurrenceName)
             (activity as? AppCompatActivity)?.supportActionBar?.title = fragmentTitle
 
+
+
         }
 
 
@@ -104,7 +115,7 @@ class OccurrenceFragment : Fragment() {
             { activity ->
                 val action =
                     OccurrenceFragmentDirections.actionOccurenceFragmentToActivityEditFragment(
-                        activity.activityId
+                        activity.activityId,occurrence.occurrenceName
                     )
                 this.findNavController().navigate(action)
             },
@@ -113,8 +124,8 @@ class OccurrenceFragment : Fragment() {
             }
         )
 
-        binding.occurenceDetailRecyclerView.adapter = adapter
-        binding.occurenceDetailRecyclerView.layoutManager =
+        binding.occurrenceDetailsRecyclerView.adapter = adapter
+        binding.occurrenceDetailsRecyclerView.layoutManager =
             LinearLayoutManager(this.context)
 
         viewModel.getActivities(id).observe(viewLifecycleOwner) { occurrenceActivities ->
@@ -127,19 +138,18 @@ class OccurrenceFragment : Fragment() {
             ) {
                 lastActivity = occurrenceActivities[0].fullDate
 
-                binding.occurencyTimeFrom.text =
+
+                binding.occurrenceTimeFrom.text =
                     secondsToComponents(getSecondsPassed())
 
-                binding.occurencyTimeTo.text =
+                binding.occurrenceTimeTo.text =
                     secondsToComponents(getSecondsTo(getIntervalSeconds(occurrence.intervalFrequency)))
 
                 val datesTimesSize = occurrenceActivities.size
                 binding.listSizeTextView.text =
                     datesTimesSize.toString()
 
-                val timeString = binding.occurencyTimeTo.text
-
-                updateTimeColor(timeString)
+                occurrence.status?.let { applyTimeColor(it) }
             } else {
                 binding.progressBar.visibility = View.VISIBLE
                 binding.progressBar2.visibility = View.VISIBLE
@@ -150,62 +160,35 @@ class OccurrenceFragment : Fragment() {
                 ).show()
             }
         }
-
-        Toast.makeText(
-            requireContext(),
-            "One click to edit activity. Click long to delete ",
-            Toast.LENGTH_SHORT
-        ).show()
-
     }
 
-    private fun updateTimeColor(timeString: CharSequence) {
-
-        if (timeString.contains("-")) {
-            binding.occurencyTimeToLabel.setTextColor(
-                ContextCompat.getColor(
-                    requireContext(),
-                    R.color.md_theme_light_error
+    private fun applyTimeColor(status: CounterStatus) {
+        val context = binding.occurrenceTimeTo.context
+        when (status.name) {
+            "Enough" -> {
+                binding.occurrenceTimeTo.setTextColor(
+                    ContextCompat.getColor(
+                        context,
+                        R.color.green
+                    )
                 )
-            )
-            binding.occurencyTimeTo.setTextColor(
-                ContextCompat.getColor(
-                    requireContext(),
-                    R.color.md_theme_light_error
+            }
+            "Late" -> {
+                binding.occurrenceTimeTo.setTextColor(
+                    ContextCompat.getColor(
+                        context,
+                        R.color.red
+                    )
                 )
-            )
-        } else if (
-            timeString.contains("0h")
-            || timeString.contains("1h")
-            && !timeString.contains("-")
-
-        ) {
-            binding.occurencyTimeToLabel.setTextColor(
-                ContextCompat.getColor(
-                    requireContext(),
-                    R.color.md_theme_dark_inverseSurface
+            }
+            "CloseTo" -> {
+                binding.occurrenceTimeTo.setTextColor(
+                    ContextCompat.getColor(
+                        context,
+                        R.color.orange
+                    )
                 )
-            )
-            binding.occurencyTimeTo.setTextColor(
-                ContextCompat.getColor(
-                    requireContext(),
-                    R.color.md_theme_dark_inverseSurface
-                )
-            )
-        } else {
-
-            binding.occurencyTimeToLabel.setTextColor(
-                ContextCompat.getColor(
-                    requireContext(),
-                    R.color.seed
-                )
-            )
-            binding.occurencyTimeTo.setTextColor(
-                ContextCompat.getColor(
-                    requireContext(),
-                    R.color.seed
-                )
-            )
+            }
         }
     }
 
@@ -272,17 +255,14 @@ class OccurrenceFragment : Fragment() {
                 else -> calculated = "${days}d ${hours}h ${minutes}m ${seconds}s"
             }
 
-            //TODO
-//             when (hours) {
-//                0 -> calculated = "${minutes}m ${seconds}m "
-//                else -> calculated =  "${hours}h ${minutes}m"
-//            }
-
             return calculated
         }
     }
 
+    // database operations
     private fun addNewActivity() {
+        binding.progressBar.visibility = View.INVISIBLE
+        binding.progressBar2.visibility = View.INVISIBLE
         viewModel.addNewActivity(
             navigationArgs.id,
             getDate(),
@@ -294,10 +274,6 @@ class OccurrenceFragment : Fragment() {
 
     private fun getDate(): String {
         return viewModel.getDate()
-    }
-
-    private fun getHour(): String {
-        return viewModel.getHour()
     }
 
     private fun deleteOccurrence() {
@@ -313,11 +289,7 @@ class OccurrenceFragment : Fragment() {
         this.findNavController().navigate(action)
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
-
+    // dialog for delete
     private fun showConfirmationDialog() {
         MaterialAlertDialogBuilder(requireContext())
             .setTitle(getString(android.R.string.dialog_alert_title))
@@ -330,5 +302,17 @@ class OccurrenceFragment : Fragment() {
             .show()
     }
 
+    override fun onResume() {
+        super.onResume()
+
+
+    }
+
+
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
 }
 

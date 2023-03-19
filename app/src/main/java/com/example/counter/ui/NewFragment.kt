@@ -47,7 +47,6 @@ class NewFragment : Fragment() {
     private var intervalFrequencyChipId = 0
     private var intervalValue = 0
 
-
     private var _binding: FragmentNewBinding? = null
     private val binding get() = _binding!!
     private lateinit var emojiPopup: EmojiPopup
@@ -69,6 +68,8 @@ class NewFragment : Fragment() {
             tvTime.setText(splitCreateDate()[1])
             intervalNumberPicker.minValue = DEFAULT_HOURS
             intervalNumberPicker.maxValue = DEFAULT_MAX_HOURS
+
+            if(emojiEditText.text?.isNotEmpty() == true) emojiEditText.isCursorVisible = false
 
             // populate category list on edit
             val array: Array<String> = emptyArray()

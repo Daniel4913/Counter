@@ -7,11 +7,13 @@ import androidx.emoji.text.EmojiCompat
 import androidx.emoji.text.FontRequestEmojiCompatConfig
 import com.vanniktech.emoji.EmojiManager
 import com.vanniktech.emoji.googlecompat.GoogleCompatEmojiProvider
+import timber.log.Timber
 
 @HiltAndroidApp
 class CounterApplication : Application() {
     override fun onCreate() {
         super.onCreate()
+        Timber.plant(Timber.DebugTree())
         val emojis =
             EmojiManager.install(
                 GoogleCompatEmojiProvider(

@@ -15,9 +15,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.counter.R
 import com.example.counter.adapters.OccurrenceActivitiesListAdapter
 import com.example.counter.data.modelentity.Activity
-import com.example.counter.data.modelentity.Category
-import com.example.counter.data.modelentity.CounterStatus
-import com.example.counter.data.modelentity.Occurrence
 import com.example.counter.data.relations.OccurrenceWithActivities
 import com.example.counter.databinding.FragmentCounterHomeBinding
 import com.example.counter.util.Constants
@@ -26,7 +23,7 @@ import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.coroutineScope
+import timber.log.Timber
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
@@ -80,7 +77,6 @@ class HomeFragment : Fragment() {
                     }
                 }
                 return true
-
             }
         }, viewLifecycleOwner, Lifecycle.State.RESUMED)
 
@@ -104,27 +100,30 @@ class HomeFragment : Fragment() {
 
         //todo 3 razy robie to samo ;// a jeszcze musialbym to zrobic w refresh list.
         // Musze stworzyc funkcje do fetchowania tego
-        viewModel.readOccurrencesWithActivities.observe(this.viewLifecycleOwner) { items ->
 
-            items.let { occurrencesList ->
 
-                try {
-                    val listSeconds = makeListOfSecondsTo(occurrencesList)
-                    val itemsBySeconds =
-                        occurrencesList.associateBy { it.occurrenceActivities.last().secondsToNext }
-                    val sortedItems = listSeconds.sorted().map { itemsBySeconds[it] }
-                    adapter.submitList(sortedItems)
-                    if (refreshedOnce) {
-                        refreshList()
-                        refreshedOnce = false
+        if (selectedCategoryChip == "All") {
+            viewModel.readAllOccurrencesWithActivities.observe(this.viewLifecycleOwner) { items ->
+                items.let { occurrencesList ->
+                    try {
+                        val listSeconds = makeListOfSecondsTo(occurrencesList)
+                        val itemsBySeconds =
+                            occurrencesList.associateBy { it.occurrenceActivities.last().secondsToNext }
+                        val sortedItems = listSeconds.sorted().map { itemsBySeconds[it] }
+
+                        adapter.submitList(sortedItems)
+                        if (refreshedOnce) {
+                            refreshList()
+                            refreshedOnce = false
+                        }
+                    } catch (e: java.lang.Exception) {
+                        Toast.makeText(
+                            context,
+                            "List will be sorted when all Occurrences have at least one activity",
+                            Toast.LENGTH_LONG
+                        ).show()
+                        adapter.submitList(occurrencesList)
                     }
-                } catch (e: java.lang.Exception) {
-                    Toast.makeText(
-                        context,
-                        "List will be sorted when all Occurrences have at least one activity",
-                        Toast.LENGTH_LONG
-                    ).show()
-                    adapter.submitList(occurrencesList)
                 }
             }
         }
@@ -139,7 +138,7 @@ class HomeFragment : Fragment() {
 
             when (selectedCategoryChip) {
                 "All" -> {
-                    viewModel.readOccurrencesWithActivities.observe(this.viewLifecycleOwner) { items ->
+                    viewModel.readAllOccurrencesWithActivities.observe(this.viewLifecycleOwner) { items ->
                         items.let { occurrencesList ->
                             try {
                                 val listSeconds = makeListOfSecondsTo(occurrencesList)
@@ -192,7 +191,6 @@ class HomeFragment : Fragment() {
             }
         }
 
-
         binding.newOccurency.setOnClickListener {
             val action =
                 HomeFragmentDirections.actionCounterHomeFragmentToNewFragment("Create new Occurrence")
@@ -201,7 +199,8 @@ class HomeFragment : Fragment() {
     }
 
     private fun refreshList() {
-        val data = viewModel.readOccurrencesWithActivities.value
+        Timber.d("refreshList chip: $selectedCategoryChip")
+        val data = viewModel.readAllOccurrencesWithActivities.value
         data?.forEach {
             val lastActivitySeconds = it.occurrenceActivities.last()
             val occurrence = it.occurrence
@@ -231,13 +230,14 @@ class HomeFragment : Fragment() {
                     it.occurrenceActivities.last().intervalSeconds,
                     secondsTo
                 )
-                Log.d("To update: ", "$aktiwiti")
                 return aktiwiti
             }
             viewModel.updateActivity(getActivityToUpdate())
             lastActivitySeconds.intervalSeconds?.let { it1 ->
-                viewModel.setOccurrenceStatus(lastActivitySeconds.secondsToNext,
-                    it1, occurrence = occurrence)
+                viewModel.setOccurrenceStatus(
+                    lastActivitySeconds.secondsToNext,
+                    it1, occurrence = occurrence
+                )
             }
         }
 
@@ -255,9 +255,9 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private fun makeListOfSecondsTo(it: List<OccurrenceWithActivities>): MutableList<Long> {
+    private fun makeListOfSecondsTo(occurrencesList: List<OccurrenceWithActivities>): MutableList<Long> {
         val listOfSeconds = mutableListOf<Long>()
-        it.forEach {
+        occurrencesList.forEach {
             listOfSeconds.add(
                 it.occurrenceActivities.last().secondsToNext!!
             )
