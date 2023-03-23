@@ -1,18 +1,15 @@
 package com.example.counter.viewmodels
 
 import android.app.Application
-import android.app.NotificationManager
-import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationManagerCompat
 import androidx.lifecycle.*
 import com.example.counter.data.*
 //import com.example.counter.data.DataStoreRepository
 //import com.example.counter.data.DataStoreRepository.FilterCategory
-import com.example.counter.data.modelentity.Activity
+import com.example.counter.data.modelentity.EventLog
 import com.example.counter.data.modelentity.Category
 import com.example.counter.data.modelentity.CounterStatus
-import com.example.counter.data.modelentity.Occurrence
-import com.example.counter.data.relations.OccurrenceWithActivities
+import com.example.counter.data.modelentity.Event
+import com.example.counter.data.relations.EventWithEventLogs
 import com.example.counter.util.Constants
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -31,48 +28,50 @@ class CounterViewModel @Inject constructor(
 ) : AndroidViewModel(application) {
 
 
-    val occurrence = repository.dataSource.getOccurrencesWithActivities().asLiveData()
+    val occurrence = repository.dataSource.getAllEventsWithEventLogs().asLiveData()
 
-    val readAllOccurrencesWithActivities: LiveData<List<OccurrenceWithActivities>> =
-        repository.dataSource.getOccurrencesWithActivities().asLiveData()
+    val readAllOccurrencesWithActivities: LiveData<List<EventWithEventLogs>> =
+        repository.dataSource.getAllEventsWithEventLogs().asLiveData()
 
-    fun getOccurrence(id: Int): LiveData<Occurrence> {
+    fun getOccurrence(id: Int): LiveData<Event> {
         return repository.dataSource.getOccurrence(id).asLiveData()
     }
 
-    fun getOccurrencesByCategory(category: String): LiveData<List<OccurrenceWithActivities>> {
-        return repository.dataSource.getOccurrencesByCategory(category).asLiveData()
+    fun getOccurrencesByCategory(category: String): LiveData<List<EventWithEventLogs>> {
+        return repository.dataSource.getEventsByCategory(category).asLiveData()
     }
 
-    fun getActivities(id: Int): LiveData<List<Activity>> {
-        return repository.dataSource.getOccurrenceActivities(id).asLiveData()
+    fun getActivities(occurrenceId: Int): LiveData<List<EventLog>> {
+        return repository.dataSource.getEventWithEventLogs(occurrenceId).asLiveData()
     }
 
-    fun updateActivity(activity: Activity) {
-        viewModelScope.launch(Dispatchers.IO) { repository.dataSource.updateActivity(activity) }
+    fun updateActivity(eventLog: EventLog) {
+        viewModelScope.launch(Dispatchers.IO) { repository.dataSource.updateActivity(eventLog) }
     }
 
-    private fun insertOccurrence(occurrence: Occurrence) {
+    private fun insertOccurrence(event: Event) {
         viewModelScope.launch(Dispatchers.IO) {
-            repository.dataSource.insertOccurrence(occurrence)
+            repository.dataSource.insertEvent(event)
         }
     }
 
-    fun deleteOccurrence(occurrence: Occurrence) {
+    fun deleteOccurrence(event: Event) {
         viewModelScope.launch(Dispatchers.IO) {
-            repository.dataSource.deleteOccurrence(occurrence)
+            repository.dataSource.deleteEvent(event)
+            repository.dataSource.deleteSingleEventLogs(event.eventId)
         }
     }
 
     fun deleteAllOccurrences() {
         viewModelScope.launch(Dispatchers.IO) {
-            repository.dataSource.deleteAllOccurrences()
+            repository.dataSource.deleteAllEvents()
+            repository.dataSource.deleteAllEventLogs()
         }
     }
 
-    fun updateOccurrence(occurrence: Occurrence) {
+    private fun updateEvent(event: Event) {
         viewModelScope.launch(Dispatchers.IO) {
-            repository.dataSource.updateOccurrence(occurrence)
+            repository.dataSource.updateEvent(event)
         }
     }
 
@@ -83,17 +82,17 @@ class CounterViewModel @Inject constructor(
         category: Category,
         intervalFrequency: String
     ) {
-        val newOccurrence = Occurrence(
-            occurrenceIcon = occurrenceIcon,
-            occurrenceName = occurrenceName,
+        val newEvent = Event(
+            eventIcon = occurrenceIcon,
+            eventName = occurrenceName,
             createDate = createDate,
             category = category,
             intervalFrequency = intervalFrequency
         )
-        insertOccurrence(newOccurrence)
+        insertOccurrence(newEvent)
     }
 
-    fun updateOccurrence(
+    fun updateEvent(
         occurrenceId: Int,
         occurrenceIcon: String,
         occurrenceName: String,
@@ -102,19 +101,19 @@ class CounterViewModel @Inject constructor(
         intervalFrequency: String,
         status: CounterStatus
     ) {
-        val updatedOccurrence = Occurrence(
-            occurrenceId = occurrenceId,
-            occurrenceIcon = occurrenceIcon,
-            occurrenceName = occurrenceName,
+        val updatedEvent = Event(
+            eventId = occurrenceId,
+            eventIcon = occurrenceIcon,
+            eventName = occurrenceName,
             createDate = createDate,
             category = category,
             intervalFrequency = intervalFrequency,
             status = status
         )
-        updateOccurrence(updatedOccurrence)
+        updateEvent(updatedEvent)
     }
 
-    fun setOccurrenceStatus(secondsTo: Long?, intervalSeconds: Long, occurrence: Occurrence) {
+    fun setEventStatus(secondsTo: Long?, intervalSeconds: Long, event: Event) {
         var newStatus: CounterStatus? = if (secondsTo!! < 0) {
             CounterStatus.Late
         } else if (secondsTo!! < (intervalSeconds * 0.2)) {
@@ -122,7 +121,7 @@ class CounterViewModel @Inject constructor(
         } else {
             CounterStatus.Enough
         }
-        updateOccurrence(occurrence.apply { status = newStatus })
+        updateEvent(event.apply { status = newStatus })
     }
 
     fun isEntryValid(occurrenceName: String): Boolean {
@@ -133,32 +132,32 @@ class CounterViewModel @Inject constructor(
     }
 
     // DATES TIMES BLOCK
-    private fun insertActivity(activity: Activity) {
+    private fun insertEventLog(eventLog: EventLog) {
         viewModelScope.launch(Dispatchers.IO) {
-            repository.dataSource.insertActivity(activity)
+            repository.dataSource.insertEventLog(eventLog)
         }
     }
 
-    fun deleteActivity(activity: Activity) {
+    fun deleteEventLog(eventLog: EventLog) {
         viewModelScope.launch(Dispatchers.IO) {
-            repository.dataSource.deleteActivity(activity)
+            repository.dataSource.deleteActivity(eventLog)
         }
     }
 
-    fun getActivity(id: Int): LiveData<Activity> {
+    fun getEventLog(id: Int): LiveData<EventLog> {
         return repository.dataSource.getActivity(id).asLiveData()
     }
 
-    private fun getNewActivity(
-        occurenceOwnerId: Int,
+    private fun getNewEventLog(
+        occurrenceOwnerId: Int,
         fullDate: String,
         secondsFromLast: Long,
         intervalSeconds: Long,
         secondsToNext: Long,
 
-        ): Activity {
-        return Activity(
-            occurrenceOwnerId = occurenceOwnerId,
+        ): EventLog {
+        return EventLog(
+            eventOwnerId = occurrenceOwnerId,
             fullDate = fullDate,
             secondsPassed = secondsFromLast,
             intervalSeconds = intervalSeconds,
@@ -166,22 +165,21 @@ class CounterViewModel @Inject constructor(
         )
     }
 
-    fun addNewActivity(
-        occurenceOwnerId: Int,
+    fun addNewEventLog(
+        occurrenceOwnerId: Int,
         fullDate: String,
         secondsFromLast: Long,
         intervalSeconds: Long,
         secondsToNext: Long
     ) {
-        val newDateTime = getNewActivity(
-            occurenceOwnerId,
+        val newDateTime = getNewEventLog(
+            occurrenceOwnerId,
             fullDate,
-
             secondsFromLast,
             intervalSeconds,
             secondsToNext
         )
-        insertActivity(newDateTime)
+        insertEventLog(newDateTime)
     }
 
     fun getDate(): String {

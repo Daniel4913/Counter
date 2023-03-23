@@ -5,12 +5,12 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.counter.data.modelentity.Activity
+import com.example.counter.data.modelentity.EventLog
 import com.example.counter.databinding.DatesTimesItemBinding
 import kotlin.time.Duration.Companion.seconds
 
-class ActivitiesListAdapter(private val onItemClicked: (Activity) -> Unit, private val onLongItemClicked: (Activity)-> Unit):
-    ListAdapter<Activity, ActivitiesListAdapter.DatesTimesViewHolder>(DiffCallback) {
+class ActivitiesListAdapter(private val onItemClicked: (EventLog) -> Unit, private val onLongItemClicked: (EventLog)-> Unit):
+    ListAdapter<EventLog, ActivitiesListAdapter.DatesTimesViewHolder>(DiffCallback) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DatesTimesViewHolder {
         return DatesTimesViewHolder(
@@ -34,12 +34,12 @@ class ActivitiesListAdapter(private val onItemClicked: (Activity) -> Unit, priva
     class DatesTimesViewHolder(private var binding: DatesTimesItemBinding) :
         RecyclerView.ViewHolder(binding.root){
 
-        fun bind(activity: Activity){
+        fun bind(eventLog: EventLog){
             binding.apply {
-                date.text = activity.fullDate.split(" ")[1]
-                hour.text = activity.fullDate.split(" ")[0]
-                timeFrom.text = activity.secondsToNext?.let { secondsToComponents(it) }
-                timeLast.text = activity.secondsPassed?.let { secondsToComponents(it) }
+                date.text = eventLog.fullDate.split(" ")[1]
+                hour.text = eventLog.fullDate.split(" ")[0]
+                timeFrom.text = eventLog.secondsToNext?.let { secondsToComponents(it) }
+                timeLast.text = eventLog.secondsPassed?.let { secondsToComponents(it) }
 
 
             }
@@ -62,13 +62,13 @@ class ActivitiesListAdapter(private val onItemClicked: (Activity) -> Unit, priva
 
 
     companion object {
-        private val DiffCallback = object : DiffUtil.ItemCallback<Activity>(){
-            override fun areItemsTheSame(oldItem: Activity, newItem: Activity): Boolean {
+        private val DiffCallback = object : DiffUtil.ItemCallback<EventLog>(){
+            override fun areItemsTheSame(oldItem: EventLog, newItem: EventLog): Boolean {
                 return oldItem === newItem
             }
 
-            override fun areContentsTheSame(oldItem: Activity, newItem: Activity): Boolean {
-                return oldItem.activityId == newItem.activityId
+            override fun areContentsTheSame(oldItem: EventLog, newItem: EventLog): Boolean {
+                return oldItem.eventLogId == newItem.eventLogId
             }
 
         }

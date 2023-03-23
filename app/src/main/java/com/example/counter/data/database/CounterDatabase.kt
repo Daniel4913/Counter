@@ -3,20 +3,20 @@ package com.example.counter.data.database
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
-import com.example.counter.data.ActivityDao
-import com.example.counter.data.OccurrenceDao
-import com.example.counter.data.modelentity.Activity
-import com.example.counter.data.modelentity.Occurrence
+import com.example.counter.data.EventLogDao
+import com.example.counter.data.EventDao
+import com.example.counter.data.modelentity.EventLog
+import com.example.counter.data.modelentity.Event
 
 @Database(
     entities = [
-        Occurrence::class,
-        Activity::class,
+        Event::class,
+        EventLog::class,
         ],
-    version = 13,
+    version = 1,
     exportSchema = false
 )
 abstract class CounterDatabase : RoomDatabase() {
-    abstract fun occurrenceDao(): OccurrenceDao
-    abstract fun activityDao(): ActivityDao
+    abstract fun eventDao(): EventDao
+    abstract fun eventLogDao(): EventLogDao
     }

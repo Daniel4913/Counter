@@ -34,5 +34,6 @@
 
     // change fragment title
     <string name="fragmentTitle">%s</string>
+    <string name="no_logs">Add Log</string>
 
 </resources>

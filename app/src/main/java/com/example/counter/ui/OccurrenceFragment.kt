@@ -1,12 +1,10 @@
 package com.example.counter.ui
 
-import android.content.Context
 import android.os.Bundle
 import android.view.*
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import androidx.core.os.bundleOf
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
@@ -17,22 +15,19 @@ import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.counter.adapters.ActivitiesListAdapter
 import com.example.counter.R.string
-import com.example.counter.data.modelentity.Activity
-import com.example.counter.data.modelentity.Occurrence
+import com.example.counter.data.modelentity.EventLog
+import com.example.counter.data.modelentity.Event
 import com.example.counter.databinding.FragmentOccurenceBinding
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import java.time.*
-import java.time.format.DateTimeFormatter
-import java.time.temporal.ChronoUnit
-import kotlin.time.Duration.Companion.seconds
 import com.example.counter.R
 import com.example.counter.data.modelentity.Category
 import com.example.counter.data.modelentity.CounterStatus
-import com.example.counter.util.Constants
+import com.example.counter.util.TimeCounter
+import com.example.counter.util.TimeCounter.Companion.calculateIntervalToSeconds
 import com.example.counter.viewmodels.CounterViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import timber.log.Timber
+import kotlin.properties.Delegates
 
 @ExperimentalCoroutinesApi
 @AndroidEntryPoint
@@ -41,8 +36,10 @@ class OccurrenceFragment : Fragment() {
     private val navigationArgs: OccurrenceFragmentArgs by navArgs()
 
     private lateinit var viewModel: CounterViewModel
-    private lateinit var occurrence: Occurrence
-    private lateinit var lastActivity: String
+    private lateinit var event: Event
+    private lateinit var lastEventLog: EventLog
+
+    private var intervalSeconds by Delegates.notNull<Long>()
 
     private var _binding: FragmentOccurenceBinding? = null
     private val binding get() = _binding!!
@@ -54,16 +51,17 @@ class OccurrenceFragment : Fragment() {
 
     }
 
-    private fun bind(occurrence: Occurrence) {
+    private fun bind(event: Event) {
         binding.apply {
-            occurenceCreateDate.text = occurrence.createDate
-            occurrencyCategory.text = occurrence.category.name
-            categoryIcon.setImageResource(Category.valueOf(occurrence.category.name).icon)
-            occurrenceIcon.text = occurrence.occurrenceIcon
-            intervalTextView.text = occurrence.intervalFrequency
-            addActivity.setOnClickListener { addNewActivity() }
-            divider.setBackgroundColor(Category.valueOf(occurrence.category.name).underscoreColor)
+            occurenceCreateDate.text = event.createDate
+            occurrencyCategory.text = event.category.name
+            categoryIcon.setImageResource(Category.valueOf(event.category.name).icon)
+            occurrenceIcon.text = event.eventIcon
+            intervalTextView.text = event.intervalFrequency
+            addActivity.setOnClickListener { addNewEventLog() }
+            divider.setBackgroundColor(Category.valueOf(event.category.name).underscoreColor)
         }
+
     }
 
     override fun onCreateView(
@@ -97,30 +95,29 @@ class OccurrenceFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val id = navigationArgs.id
+        val occurrenceId = navigationArgs.id
 
-        viewModel.getOccurrence(id).observe(this.viewLifecycleOwner) { selectedOccurrence ->
-            occurrence = selectedOccurrence
-            bind(selectedOccurrence)
+        viewModel.getOccurrence(occurrenceId)
+            .observe(this.viewLifecycleOwner) { selectedEvent ->
+                event = selectedEvent
+                bind(selectedEvent)
 
-            val fragmentTitle = getString(string.fragmentTitle, occurrence.occurrenceName)
-            (activity as? AppCompatActivity)?.supportActionBar?.title = fragmentTitle
+                val fragmentTitle = getString(string.fragmentTitle, event.eventName)
+                (activity as? AppCompatActivity)?.supportActionBar?.title = fragmentTitle
 
-
-
-        }
+            }
 
 
         val adapter = ActivitiesListAdapter(
             { activity ->
                 val action =
                     OccurrenceFragmentDirections.actionOccurenceFragmentToActivityEditFragment(
-                        activity.activityId,occurrence.occurrenceName
+                        activity.eventLogId, event.eventName
                     )
                 this.findNavController().navigate(action)
             },
             { activity ->
-                viewModel.deleteActivity(activity)
+                viewModel.deleteEventLog(activity)
             }
         )
 
@@ -128,28 +125,33 @@ class OccurrenceFragment : Fragment() {
         binding.occurrenceDetailsRecyclerView.layoutManager =
             LinearLayoutManager(this.context)
 
-        viewModel.getActivities(id).observe(viewLifecycleOwner) { occurrenceActivities ->
+        viewModel.getActivities(occurrenceId).observe(viewLifecycleOwner) { occurrenceActivities ->
             occurrenceActivities.let {
-                adapter.submitList(it as MutableList<Activity>)
+                adapter.submitList(it)
             }
+            if (occurrenceActivities.isEmpty()) {
+                binding.occurrenceTimeFrom.text = ""
+                binding.occurrenceTimeTo.text = ""
+                binding.listSizeTextView.text = "0"
+            }
+
             if (
-                this::occurrence.isInitialized &&
+                this::event.isInitialized &&
                 occurrenceActivities.isNotEmpty()
             ) {
-                lastActivity = occurrenceActivities[0].fullDate
-
-
-                binding.occurrenceTimeFrom.text =
-                    secondsToComponents(getSecondsPassed())
-
-                binding.occurrenceTimeTo.text =
-                    secondsToComponents(getSecondsTo(getIntervalSeconds(occurrence.intervalFrequency)))
+                val countTime = TimeCounter(event, occurrenceActivities.last())
+                intervalSeconds = countTime.getIntervalSeconds!!
+                val timeFrom = countTime.getSecondsPassed()
+                val timeTo = countTime.getSecondsTo(intervalSeconds)
+                binding.occurrenceTimeFrom.text = countTime.secondsToComponents(timeFrom)
+                binding.occurrenceTimeTo.text = countTime.secondsToComponents(timeTo)
 
                 val datesTimesSize = occurrenceActivities.size
                 binding.listSizeTextView.text =
                     datesTimesSize.toString()
 
-                occurrence.status?.let { applyTimeColor(it) }
+                event.status?.let { applyTimeColor(it) }
+                lastEventLog = occurrenceActivities.last()
             } else {
                 binding.progressBar.visibility = View.VISIBLE
                 binding.progressBar2.visibility = View.VISIBLE
@@ -192,82 +194,16 @@ class OccurrenceFragment : Fragment() {
         }
     }
 
-    // CALCULATING BLOK
-
-    fun getIntervalSeconds(interval: String): Long {
-
-        val intervalValue = interval.split(" ")[0].toLong()
-        val intervalFrequency = interval.split(" ")[1]
-        var toSecondsTo: Long = 0
-        when (intervalFrequency) {
-            Constants.MINUTES -> {
-                toSecondsTo = 60 * intervalValue
-            }
-            Constants.HOURS -> {
-                toSecondsTo = 3600 * intervalValue
-            }
-            Constants.DAYS -> {
-                toSecondsTo = 86400 * intervalValue
-
-            }
-            Constants.WEEKS -> {
-                toSecondsTo = 604800 * intervalValue
-            }
-            Constants.MONTHS -> {
-                toSecondsTo = 2629800 * intervalValue
-            }
-        }
-        return toSecondsTo
-    }
-
-
-    fun getSecondsTo(secondsTo: Long): Long {
-        val timeFrom = lastActivity
-        val timeTo = secondsTo
-        val formatter = DateTimeFormatter.ofPattern(Constants.DEFAULT_FORMATTER)
-        val lastDate = LocalDateTime.parse(timeFrom, formatter)
-        val calculatedToDay = lastDate.plusSeconds(timeTo)
-        val secondsTo = ChronoUnit.SECONDS.between(
-            LocalDateTime.now(),
-            calculatedToDay,
-        )
-        return secondsTo
-
-    }
-
-    fun getSecondsPassed(): Long {
-        val today = LocalDateTime.now()
-        val formatter = DateTimeFormatter.ofPattern(Constants.DEFAULT_FORMATTER)
-        val lastDate = LocalDateTime.parse(lastActivity, formatter)
-        val secondsPassed = ChronoUnit.SECONDS.between(
-            lastDate,
-            today
-        )
-        return secondsPassed
-    }
-
-    fun secondsToComponents(secondsPassed: Long): String {
-        secondsPassed.seconds.toComponents { days, hours, minutes, seconds, nanoseconds ->
-            var calculated = ""
-
-            when (days) {
-                0L -> calculated = "${hours}h ${minutes}m ${seconds}s"
-                else -> calculated = "${days}d ${hours}h ${minutes}m ${seconds}s"
-            }
-
-            return calculated
-        }
-    }
-
     // database operations
-    private fun addNewActivity() {
+
+    private fun addNewEventLog() {
         binding.progressBar.visibility = View.INVISIBLE
         binding.progressBar2.visibility = View.INVISIBLE
-        viewModel.addNewActivity(
+        viewModel.addNewEventLog(
             navigationArgs.id,
             getDate(),
             0,
-            getIntervalSeconds(occurrence.intervalFrequency),
+            calculateIntervalToSeconds(event.intervalFrequency),
             0
         )
     }
@@ -277,14 +213,14 @@ class OccurrenceFragment : Fragment() {
     }
 
     private fun deleteOccurrence() {
-        viewModel.deleteOccurrence(occurrence)
+        viewModel.deleteOccurrence(event)
         findNavController().navigateUp()
     }
 
     private fun editOccurrence() {
         val action = OccurrenceFragmentDirections.actionOccurenceFragmentToNewFragment(
-            "Edit Occurrence",
-            occurrence.occurrenceId
+            event.eventId,
+            if (this::lastEventLog.isInitialized) lastEventLog.eventLogId else -1
         )
         this.findNavController().navigate(action)
     }
@@ -305,9 +241,7 @@ class OccurrenceFragment : Fragment() {
     override fun onResume() {
         super.onResume()
 
-
     }
-
 
 
     override fun onDestroyView() {

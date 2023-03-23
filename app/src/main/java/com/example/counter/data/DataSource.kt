@@ -1,79 +1,75 @@
 package com.example.counter.data
 
-import com.example.counter.data.modelentity.Activity
-import com.example.counter.data.modelentity.Occurrence
-import com.example.counter.data.relations.OccurrenceWithActivities
+import com.example.counter.data.modelentity.EventLog
+import com.example.counter.data.modelentity.Event
+import com.example.counter.data.relations.EventWithEventLogs
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class DataSource @Inject constructor(
-    private val occurrenceDao: OccurrenceDao,
-    private val activityDao: ActivityDao,
+    private val eventDao: EventDao,
+    private val eventLogDao: EventLogDao,
     ) {
     // Occurrence access
-    fun getOccurrences(): Flow<List<Occurrence>> {
-        return occurrenceDao.getOccurrences()
+    fun getOccurrences(): Flow<List<Event>> {
+        return eventDao.getAllEvents()
     }
 
-    fun getOccurrence(id: Int): Flow<Occurrence> {
-        return occurrenceDao.getOccurrence(id)
+    fun getOccurrence(id: Int): Flow<Event> {
+        return eventDao.getEvent(id)
     }
 
-    fun getOccurrencesWithActivities(): Flow<List<OccurrenceWithActivities>> {
-        return occurrenceDao.getOccurrencesWithActivities()
+    fun getAllEventsWithEventLogs(): Flow<List<EventWithEventLogs>> {
+        return eventDao.getAllEventsWithEventLogs()
     }
 
-    fun getOccurrencesByCategory(category: String): Flow<List<OccurrenceWithActivities>> {
-        return occurrenceDao.getOccurrencesByCategory(category)
+    fun getEventsByCategory(category: String): Flow<List<EventWithEventLogs>> {
+        return eventDao.getEventsByCategory(category)
     }
 
-    suspend fun insertOccurrence(occurrence: Occurrence) {
-        occurrenceDao.insertOccurrence(occurrence)
+    suspend fun insertEvent(event: Event) {
+        eventDao.insertEvent(event)
     }
 
-    suspend fun updateOccurrence(occurrence: Occurrence) {
-        occurrenceDao.updateOccurrence(occurrence)
+    suspend fun updateEvent(event: Event) {
+        eventDao.updateEvent(event)
     }
 
-    suspend fun deleteOccurrence(occurrence: Occurrence) {
-        occurrenceDao.delete(occurrence)
+    suspend fun deleteEvent(event: Event) {
+        eventDao.delete(event)
     }
 
-    suspend fun deleteAllOccurrences() {
-        occurrenceDao.deleteAll()
+    suspend fun deleteAllEvents() {
+        eventDao.deleteAll()
     }
 
     // Activity access
 
-    fun getAllActivities(): Flow<List<Activity>>{
-      return  activityDao.getAllActivities()
+    fun getEventWithEventLogs(occurrenceId: Int): Flow<List<EventLog>>{
+        return eventLogDao.getEventWithEventLogs(occurrenceId)
     }
 
-    fun getOccurrenceActivities(occurrenceId: Int): Flow<List<Activity>>{
-        return activityDao.getOccurrenceWithActivities(occurrenceId)
+    suspend fun insertEventLog(eventLog: EventLog){
+        eventLogDao.insertEventLog(eventLog)
+    }
+    fun getActivity(id: Int): Flow<EventLog> {
+        return eventLogDao.getEventLog(id)
     }
 
-    suspend fun insertActivity(activity: Activity){
-        activityDao.insertActivity(activity)
-    }
-    fun getActivity(id: Int): Flow<Activity> {
-        return activityDao.getActivity(id)
+    suspend fun updateActivity(eventLog: EventLog){
+        eventLogDao.update(eventLog)
     }
 
-    suspend fun updateSeconds(activityId: Int, secondsFrom: Long, secondsTo: Long){
-        activityDao.updateSeconds(activityId,secondsFrom,secondsTo)
+    suspend fun deleteActivity(eventLog: EventLog){
+        eventLogDao.deleteEventLog(eventLog)
     }
 
-    suspend fun updateActivity(activity: Activity){
-        activityDao.update(activity)
+    suspend fun deleteSingleEventLogs(occurrenceOwnerId: Int){
+        eventLogDao.deleteEventLogs(occurrenceOwnerId)
     }
 
-    suspend fun deleteActivity(activity: Activity){
-        activityDao.deleteAll(activity)
-    }
-
-    suspend fun deleteAllActivities(){
-        activityDao.deleteAll()
+    suspend fun deleteAllEventLogs(){
+        eventLogDao.deleteAllEventLogs()
     }
 
 }

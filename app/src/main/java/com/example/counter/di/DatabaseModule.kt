@@ -29,11 +29,11 @@ object DatabaseModule {
 
     @Singleton
     @Provides
-    fun provideOccurrenceDao(database: CounterDatabase) = database.occurrenceDao()
+    fun provideEventDao(database: CounterDatabase) = database.eventDao()
 
 
     @Singleton
     @Provides
-    fun provideActivityDao(database: CounterDatabase) = database.activityDao()
+    fun provideEventLogDao(database: CounterDatabase) = database.eventLogDao()
 
 }

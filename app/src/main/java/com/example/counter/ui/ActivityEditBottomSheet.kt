@@ -11,17 +11,14 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.counter.R
-import com.example.counter.data.modelentity.Activity
+import com.example.counter.data.modelentity.EventLog
 import com.example.counter.databinding.ActivityEditBottomSheetBinding
 import com.example.counter.util.Constants.Companion.DEFAULT_FORMATTER
 import com.example.counter.viewmodels.CounterViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.delay
 import timber.log.Timber
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -33,7 +30,7 @@ class ActivityEditBottomSheet : BottomSheetDialogFragment() {
     private val navigationArgs: ActivityEditBottomSheetArgs by navArgs()
 
     private lateinit var viewModel: CounterViewModel
-    lateinit var activity: Activity
+    lateinit var eventLog: EventLog
     lateinit var getDate: String
     lateinit var getHour: String
 
@@ -46,7 +43,7 @@ class ActivityEditBottomSheet : BottomSheetDialogFragment() {
         super.onCreate(savedInstanceState)
     }
 
-    private fun bind(activity: Activity) {
+    private fun bind(eventLog: EventLog) {
         binding.apply {
             dateTextInputLayout.hint = splitFullDate()[1]
             dateEditText.setText(splitFullDate()[1])
@@ -69,24 +66,24 @@ class ActivityEditBottomSheet : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val id = navigationArgs.id
-        viewModel.getActivity(id).observe(this.viewLifecycleOwner) { receivedActivity ->
-            activity = receivedActivity
-            bind(activity)
+        viewModel.getEventLog(id).observe(this.viewLifecycleOwner) { receivedActivity ->
+            eventLog = receivedActivity
+            bind(eventLog)
         }
         
         binding.saveButton.setOnClickListener {
             if (validateDateTime()) {
                 viewModel.updateActivity(
-                    Activity(
-                        activity.activityId,
-                        activity.occurrenceOwnerId,
+                    EventLog(
+                        eventLog.eventLogId,
+                        eventLog.eventOwnerId,
                         konkatenacjaFullDate(
                             binding.dateEditText.text.toString(),
                             binding.hourEditText.text.toString()
                         ),
-                        activity.secondsPassed,
-                        activity.intervalSeconds,
-                        activity.secondsToNext,
+                        eventLog.secondsPassed,
+                        eventLog.intervalSeconds,
+                        eventLog.secondsToNext,
                     )
                 )
                 requireActivity().onBackPressedDispatcher.onBackPressed()
@@ -97,14 +94,14 @@ class ActivityEditBottomSheet : BottomSheetDialogFragment() {
 
         binding.deleteButton.setOnClickListener {
             requireActivity().onBackPressedDispatcher.onBackPressed()
-            viewModel.deleteActivity(
-                Activity(
-                    activity.activityId,
-                    activity.occurrenceOwnerId,
-                    activity.fullDate,
-                    activity.secondsPassed,
-                    activity.intervalSeconds,
-                    activity.secondsToNext
+            viewModel.deleteEventLog(
+                EventLog(
+                    eventLog.eventLogId,
+                    eventLog.eventOwnerId,
+                    eventLog.fullDate,
+                    eventLog.secondsPassed,
+                    eventLog.intervalSeconds,
+                    eventLog.secondsToNext
                 )
             )
         }
@@ -132,7 +129,7 @@ class ActivityEditBottomSheet : BottomSheetDialogFragment() {
     }
 
     private fun splitFullDate(): List<String> {
-        val createDate = activity.fullDate
+        val createDate = eventLog.fullDate
         return createDate.split(" ")
     }
 

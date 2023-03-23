@@ -4,16 +4,16 @@ package com.example.counter.data.modelentity
 import android.os.Parcelable
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.example.counter.util.Constants.Companion.OCCURRENCES_TABLE
+import com.example.counter.util.Constants.Companion.EVENTS_TABLE
 import kotlinx.parcelize.Parcelize
 
-@Entity(tableName = OCCURRENCES_TABLE)
+@Entity(tableName = EVENTS_TABLE)
 @Parcelize
-data class Occurrence(
+data class Event(
     @PrimaryKey(autoGenerate = true)
-    val occurrenceId: Int = 0,
-    val occurrenceIcon: String,
-    val occurrenceName: String,
+    val eventId: Int = 0,
+    val eventIcon: String,
+    val eventName: String,
     val createDate: String,
     val category: Category,
     val intervalFrequency: String,

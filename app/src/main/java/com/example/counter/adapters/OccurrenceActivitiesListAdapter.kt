@@ -1,6 +1,6 @@
 package com.example.counter.adapters
 
-import android.util.Log
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
@@ -9,115 +9,53 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.counter.R
 import com.example.counter.data.modelentity.CounterStatus
-import com.example.counter.data.modelentity.Occurrence
-import com.example.counter.data.relations.OccurrenceWithActivities
+import com.example.counter.data.relations.EventWithEventLogs
 import com.example.counter.databinding.OccurenceHomeItemBinding
-import com.example.counter.util.Constants
-import com.example.counter.util.Constants.Companion.DEFAULT_FORMATTER
-import kotlinx.coroutines.coroutineScope
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
-import java.time.temporal.ChronoUnit
-import kotlin.time.Duration.Companion.seconds
+import com.example.counter.util.TimeCounter
 
-class OccurrenceActivitiesListAdapter(private val onItemClicked: (OccurrenceWithActivities) -> Unit) :
-    ListAdapter<OccurrenceWithActivities, OccurrenceActivitiesListAdapter.OccurrenceViewHolder>(
+class OccurrenceActivitiesListAdapter(private val onItemClicked: (EventWithEventLogs) -> Unit) :
+    ListAdapter<EventWithEventLogs, OccurrenceActivitiesListAdapter.OccurrenceViewHolder>(
         DiffCallback
     ) {
 
     class OccurrenceViewHolder(private val binding: OccurenceHomeItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        private lateinit var lastDateTime: String
-        private lateinit var intervalFrequency: String
+        val context: Context = binding.timeToNext.context
 
-        fun bind(occ: OccurrenceWithActivities) {
+        fun bind(occ: EventWithEventLogs) {
             binding.apply {
-                icOccurrence.text = occ.occurrence.occurrenceIcon
-                occurrenceName.text = occ.occurrence.occurrenceName
+                icOccurrence.text = occ.event.eventIcon
+                occurrenceName.text = occ.event.eventName
                 occurrenceName.isSelected = true
                 occurrenceName.setSingleLine()
+                applyUnderscoreColor(occ.event.category.underscoreColor)
 
-                applyUnderscoreColor(occ.occurrence.category.underscoreColor)
+                if (occ.singleEventEventLogs.isNotEmpty()) {
+                    val countTime = TimeCounter( occ.event,occ.singleEventEventLogs.first())
+                    val intervalSeconds = countTime.getIntervalSeconds!!
 
-                if (occ.occurrenceActivities.isNotEmpty()) {
-                    lastDateTime = occ.occurrenceActivities.last().fullDate
-                    intervalFrequency = occ.occurrence.intervalFrequency
-                    timeToNext.text = secondsToComponents(getSecondsTo(getIntervalSeconds()))
-                    timeFromLast.text = secondsToComponents(getSecondsPassed())
-                    if (occ.occurrence.status != null) {
-                        applyTimeColor(occ.occurrence.status!!)
+                    val timeFrom =countTime.getSecondsPassed()
+                    val timeTo =countTime.getSecondsTo(intervalSeconds)
+
+                    timeToNext.text = countTime.secondsToComponents(timeTo)
+                    timeFromLast.text = countTime.secondsToComponents(timeFrom)
+                    if (occ.event.status != null) {
+                        applyTimeColor(occ.event.status!!)
 
                     }
                 } else {
-                    timeFromLast.text = "- -"
-                    timeToNext.text = "- -"
+                    timeFromLast.text = context.getString(R.string.no_logs)
+                    timeToNext.text = context.getString(R.string.no_logs)
                 }
             }
         }
 
 
-        fun getIntervalSeconds(): Long {
-            val interval = intervalFrequency
-            val intervalValue = interval.split(" ")[0].toLong()
-            val intervalFrequency = interval.split(" ")[1]
-            var toSecondsTo: Long = 0
-            when (intervalFrequency) {
-                Constants.MINUTES -> {
-                    toSecondsTo = 60 * intervalValue
-                }
-                Constants.HOURS -> {
-                    toSecondsTo = 3600 * intervalValue
-                }
-                Constants.DAYS -> {
-                    toSecondsTo = 86400 * intervalValue
-                }
-                Constants.WEEKS -> {
-                    toSecondsTo = 604800 * intervalValue
-                }
-                Constants.MONTHS -> {
-                    toSecondsTo = 2629800 * intervalValue
-                }
-            }
-            return toSecondsTo
-        }
 
-
-        private fun getSecondsTo(secondsTo: Long): Long {
-            val timeFrom = lastDateTime
-            val formatter = DateTimeFormatter.ofPattern(DEFAULT_FORMATTER)
-            val lastDate = LocalDateTime.parse(timeFrom, formatter)
-            val calculatedToDay = lastDate.plusSeconds(secondsTo)
-
-            return ChronoUnit.SECONDS.between(
-                LocalDateTime.now(),
-                calculatedToDay,
-            )
-        }
-
-        private fun getSecondsPassed(): Long {
-            val today = LocalDateTime.now()
-            val formatter = DateTimeFormatter.ofPattern(DEFAULT_FORMATTER)
-            val lastDate = LocalDateTime.parse(lastDateTime, formatter)
-
-            return ChronoUnit.SECONDS.between(
-                lastDate,
-                today
-            )
-        }
-
-        private fun secondsToComponents(seconds: Long): String {
-            seconds.seconds.toComponents { days, hours, minutes, seconds, _ ->
-
-                return when (days) {
-                    0L -> "${hours}h ${minutes}m "
-                    else -> "${days}d ${hours}h ${minutes}m"
-                }
-            }
-        }
 
         private fun applyTimeColor(status: CounterStatus) {
-            val context = binding.timeToNext.context
+
             when (status.name) {
                 "Enough" -> {
                     binding.timeToNext.setTextColor(
@@ -175,29 +113,29 @@ class OccurrenceActivitiesListAdapter(private val onItemClicked: (OccurrenceWith
     }
 
     companion object {
-        private val DiffCallback = object : DiffUtil.ItemCallback<OccurrenceWithActivities>() {
+        private val DiffCallback = object : DiffUtil.ItemCallback<EventWithEventLogs>() {
             override fun areItemsTheSame(
-                oldItem: OccurrenceWithActivities,
-                newItem: OccurrenceWithActivities
+                oldItem: EventWithEventLogs,
+                newItem: EventWithEventLogs
             ): Boolean {
                 return oldItem === newItem
             }
 
             override fun areContentsTheSame(
-                oldItem: OccurrenceWithActivities,
-                newItem: OccurrenceWithActivities
+                oldItem: EventWithEventLogs,
+                newItem: EventWithEventLogs
             ): Boolean {
-                return oldItem.occurrence.occurrenceId == newItem.occurrence.occurrenceId
-                        && oldItem.occurrence.occurrenceName == newItem.occurrence.occurrenceName
-                        && oldItem.occurrence.category == newItem.occurrence.category
-                        && oldItem.occurrence.intervalFrequency == newItem.occurrence.intervalFrequency
-                        && oldItem.occurrence.createDate == newItem.occurrence.createDate
-                        && oldItem.occurrenceActivities[0].activityId == newItem.occurrenceActivities[0].activityId
-                        && oldItem.occurrenceActivities[0].occurrenceOwnerId == newItem.occurrenceActivities[0].occurrenceOwnerId
-                        && oldItem.occurrenceActivities[0].fullDate == newItem.occurrenceActivities[0].fullDate
-                        && oldItem.occurrenceActivities[0].intervalSeconds == newItem.occurrenceActivities[0].intervalSeconds
-                        && oldItem.occurrenceActivities[0].secondsPassed == newItem.occurrenceActivities[0].secondsPassed
-                        && oldItem.occurrenceActivities[0].secondsToNext == newItem.occurrenceActivities[0].secondsToNext
+                return oldItem.event.eventId == newItem.event.eventId
+                        && oldItem.event.eventName == newItem.event.eventName
+                        && oldItem.event.category == newItem.event.category
+                        && oldItem.event.intervalFrequency == newItem.event.intervalFrequency
+                        && oldItem.event.createDate == newItem.event.createDate
+                        && oldItem.singleEventEventLogs[0].eventLogId == newItem.singleEventEventLogs[0].eventLogId
+                        && oldItem.singleEventEventLogs[0].eventOwnerId == newItem.singleEventEventLogs[0].eventOwnerId
+                        && oldItem.singleEventEventLogs[0].fullDate == newItem.singleEventEventLogs[0].fullDate
+                        && oldItem.singleEventEventLogs[0].intervalSeconds == newItem.singleEventEventLogs[0].intervalSeconds
+                        && oldItem.singleEventEventLogs[0].secondsPassed == newItem.singleEventEventLogs[0].secondsPassed
+                        && oldItem.singleEventEventLogs[0].secondsToNext == newItem.singleEventEventLogs[0].secondsToNext
             }
         }
     }

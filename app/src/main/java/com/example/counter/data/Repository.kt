@@ -5,7 +5,7 @@ import javax.inject.Inject
 
 @ViewModelScoped
 class Repository @Inject constructor(
-        occurrenceDataSource: DataSource,
+    DataSource: DataSource,
 ) {
-    val dataSource = occurrenceDataSource
+    val dataSource = DataSource
 }

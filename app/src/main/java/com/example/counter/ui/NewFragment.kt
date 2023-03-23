@@ -7,12 +7,13 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.LifecycleCoroutineScope
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.counter.util.Constants.Companion.DEFAULT_HOURS
@@ -22,17 +23,22 @@ import com.example.counter.util.Constants.Companion.MINUTES
 import com.example.counter.R
 import com.example.counter.data.modelentity.Category
 import com.example.counter.data.modelentity.CounterStatus
-import com.example.counter.data.modelentity.Occurrence
+import com.example.counter.data.modelentity.Event
+import com.example.counter.data.modelentity.EventLog
 import com.example.counter.databinding.FragmentNewBinding
 import com.example.counter.pickers.DatePickerFragment
 import com.example.counter.pickers.TimePickerFragment
-import com.example.counter.util.Converter
+import com.example.counter.util.TimeCounter
+import com.example.counter.util.TimeCounter.Companion.calculateIntervalToSeconds
 import com.example.counter.viewmodels.CounterViewModel
 import com.google.android.material.chip.Chip
 import com.vanniktech.emoji.EmojiPopup
 import com.vanniktech.emoji.installDisableKeyboardInput
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.launch
+import timber.log.Timber
 import java.util.*
 
 @ExperimentalCoroutinesApi
@@ -41,15 +47,17 @@ class NewFragment : Fragment() {
     private val navigationArgs: NewFragmentArgs by navArgs()
 
     private lateinit var viewModel: CounterViewModel
-    private lateinit var occurrence: Occurrence
+    private lateinit var event: Event
+    private lateinit var lastEventLog: EventLog
+    private lateinit var emojiPopup: EmojiPopup
 
     private var intervalFrequencyChip = MINUTES
     private var intervalFrequencyChipId = 0
     private var intervalValue = 0
+    private var hasEventLogs: Boolean = true
 
     private var _binding: FragmentNewBinding? = null
     private val binding get() = _binding!!
-    private lateinit var emojiPopup: EmojiPopup
 
     private var defaultCategories = mutableListOf<String>()
 
@@ -58,20 +66,20 @@ class NewFragment : Fragment() {
         viewModel = ViewModelProvider(requireActivity())[CounterViewModel::class.java]
     }
 
-    private fun bind(occurrence: Occurrence) {
+    private fun bind(event: Event) {
         binding.apply {
-            emojiEditText.setText(occurrence.occurrenceIcon)
-            occurrenceName.setText(occurrence.occurrenceName, TextView.BufferType.SPANNABLE)
-            categoryDropdown.setText(occurrence.category.name, TextView.BufferType.SPANNABLE)
+            emojiEditText.setText(event.eventIcon)
+            occurrenceName.setText(event.eventName, TextView.BufferType.SPANNABLE)
+            categoryDropdown.setText(event.category.name, TextView.BufferType.SPANNABLE)
             addOccurrence.setOnClickListener { updateOccurrence() }
             tvDate.setText(splitCreateDate()[0])
             tvTime.setText(splitCreateDate()[1])
             intervalNumberPicker.minValue = DEFAULT_HOURS
             intervalNumberPicker.maxValue = DEFAULT_MAX_HOURS
 
-            if(emojiEditText.text?.isNotEmpty() == true) emojiEditText.isCursorVisible = false
+            if (emojiEditText.text?.isNotEmpty() == true) emojiEditText.isCursorVisible = false
 
-            // populate category list on edit
+            // populate category list on Event edit
             val array: Array<String> = emptyArray()
             val populated = array.plus(defaultCategories.toTypedArray())
             val arrayAdapter = ArrayAdapter(requireContext(), R.layout.category_item, populated)
@@ -102,7 +110,8 @@ class NewFragment : Fragment() {
 
         val emojiContext = binding.emojiEditText.context
         binding.emojiEditText.apply {
-            textCursorDrawable = ContextCompat.getDrawable(emojiContext, R.drawable.ic_emoji_indicator)
+            textCursorDrawable =
+                ContextCompat.getDrawable(emojiContext, R.drawable.ic_emoji_indicator)
             installDisableKeyboardInput(emojiPopup)
             requestFocus()
         }
@@ -144,20 +153,22 @@ class NewFragment : Fragment() {
         addCategoryChip(newCategoryName) */
 
 
-
-
         if (id > 0) {
             viewModel.getOccurrence(id).observe(this.viewLifecycleOwner) { selectedOccurrence ->
-                occurrence = selectedOccurrence
+                event = selectedOccurrence
                 val readFrequency = splitFrequency()
                 updateChipAndValue(readFrequency)
                 intervalValue = readFrequency[0].toInt()
                 intervalFrequencyChip = readFrequency[1]
-                bind(occurrence)
+                bind(event)
             }
         } else {
             binding.addOccurrence.setOnClickListener { addNewOccurrence() }
         }
+
+        if (navigationArgs.currentEventLog != -1) lastEventLog =
+            viewModel.getEventLog(navigationArgs.currentEventLog).value!!
+
     }
 
     private fun updateChipAndValue(intervalValues: List<String>) {
@@ -194,13 +205,13 @@ class NewFragment : Fragment() {
     }
 
     private fun splitCreateDate(): List<String> {
-        val createDate = occurrence.createDate
+        val createDate = event.createDate
 
         return createDate.split(" ")
     }
 
     private fun splitFrequency(): List<String> {
-        val frequency = occurrence.intervalFrequency
+        val frequency = event.intervalFrequency
 
         return frequency.split(" ")
     }
@@ -272,20 +283,36 @@ class NewFragment : Fragment() {
         if (isEntryValid()) {
             val createDate =
                 getNewDateTime(binding.tvDate.text.toString(), binding.tvTime.text.toString())
+            val oldIntervalFrequency = event.intervalFrequency
+            val newIntervalFrequency = getIntervalFrequency(intervalValue, intervalFrequencyChip)
+            val isFrequencyTheSame = newIntervalFrequency == oldIntervalFrequency
 
-            occurrence.status?.let {
-                viewModel.updateOccurrence(
-                    occurrence.occurrenceId,
-                    occurrence.occurrenceIcon,
+            event.status?.let {
+                viewModel.updateEvent(
+                    event.eventId,
+                    event.eventIcon,
                     binding.occurrenceName.text.toString(),
                     createDate,
                     Category.valueOf(binding.categoryDropdown.text.toString()),
-                    getIntervalFrequency(intervalValue, intervalFrequencyChip),
+                    newIntervalFrequency,
                     it
                 )
             }
+            if (!isFrequencyTheSame && navigationArgs.currentEventLog != -1) {
+                updateCurrentEventLogFrequency(newIntervalFrequency)
+            }
             val action = NewFragmentDirections.actionNewFragmentToCounterHomeFragment()
             findNavController().navigate(action)
+        }
+    }
+
+    private fun updateCurrentEventLogFrequency(newFrequency: String) {
+        val currentLog = lastEventLog
+        currentLog?.apply {
+            this.intervalSeconds = calculateIntervalToSeconds(newFrequency)
+        }
+        if (currentLog != null) {
+            viewModel.updateActivity(currentLog)
         }
     }
 

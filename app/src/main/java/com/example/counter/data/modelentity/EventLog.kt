@@ -3,16 +3,16 @@ package com.example.counter.data.modelentity
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.example.counter.util.Constants.Companion.ACTIVITIES_TABLE
+import com.example.counter.util.Constants.Companion.EVENTS_LOGS_TABLE
 
-@Entity(tableName = ACTIVITIES_TABLE)
-data class Activity(
+@Entity(tableName = EVENTS_LOGS_TABLE)
+data class EventLog(
     @PrimaryKey(autoGenerate = true)
-    @ColumnInfo(name="activity_id")
-    val activityId: Int = 0,
+    @ColumnInfo(name="event_log_id")
+    val eventLogId: Int = 0,
 
-    @ColumnInfo(name="occurrence_owner_id")
-    val occurrenceOwnerId: Int =0,
+    @ColumnInfo(name="event_owner_id")
+    val eventOwnerId: Int =0,
 
     @ColumnInfo(name="full_date")
     val fullDate: String,

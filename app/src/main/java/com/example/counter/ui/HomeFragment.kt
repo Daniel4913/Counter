@@ -2,7 +2,6 @@ package com.example.counter.ui
 
 
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import android.widget.Toast
 import androidx.core.view.MenuHost
@@ -14,13 +13,12 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.counter.R
 import com.example.counter.adapters.OccurrenceActivitiesListAdapter
-import com.example.counter.data.modelentity.Activity
-import com.example.counter.data.relations.OccurrenceWithActivities
+import com.example.counter.data.modelentity.EventLog
+import com.example.counter.data.relations.EventWithEventLogs
 import com.example.counter.databinding.FragmentCounterHomeBinding
 import com.example.counter.util.Constants
 import com.example.counter.viewmodels.CounterViewModel
 import com.google.android.material.chip.Chip
-import com.google.android.material.chip.ChipGroup
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import timber.log.Timber
@@ -89,7 +87,7 @@ class HomeFragment : Fragment() {
         val adapter = OccurrenceActivitiesListAdapter {
             val action =
                 HomeFragmentDirections.actionCounterHomeFragmentToOccurenceFragment(
-                    it.occurrence.occurrenceId
+                    it.event.eventId
                 )
             this.findNavController().navigate(action)
         }
@@ -108,7 +106,7 @@ class HomeFragment : Fragment() {
                     try {
                         val listSeconds = makeListOfSecondsTo(occurrencesList)
                         val itemsBySeconds =
-                            occurrencesList.associateBy { it.occurrenceActivities.last().secondsToNext }
+                            occurrencesList.associateBy { it.singleEventEventLogs.last().secondsToNext }
                         val sortedItems = listSeconds.sorted().map { itemsBySeconds[it] }
 
                         adapter.submitList(sortedItems)
@@ -143,7 +141,7 @@ class HomeFragment : Fragment() {
                             try {
                                 val listSeconds = makeListOfSecondsTo(occurrencesList)
                                 val itemsBySeconds =
-                                    occurrencesList.associateBy { it.occurrenceActivities.last().secondsToNext }
+                                    occurrencesList.associateBy { it.singleEventEventLogs.last().secondsToNext }
                                 val sortedItems = listSeconds.sorted().map { itemsBySeconds[it] }
                                 adapter.submitList(sortedItems)
                                 if (refreshedOnce) {
@@ -158,7 +156,6 @@ class HomeFragment : Fragment() {
                                 ).show()
                                 adapter.submitList(occurrencesList)
                             }
-
                         }
                     }
                 }
@@ -169,7 +166,7 @@ class HomeFragment : Fragment() {
                                 try {
                                     val listSeconds = makeListOfSecondsTo(occurrencesList)
                                     val itemsBySeconds =
-                                        occurrencesList.associateBy { it.occurrenceActivities.last().secondsToNext }
+                                        occurrencesList.associateBy { it.singleEventEventLogs.last().secondsToNext }
                                     val sortedItems =
                                         listSeconds.sorted().map { itemsBySeconds[it] }
                                     adapter.submitList(sortedItems)
@@ -193,7 +190,7 @@ class HomeFragment : Fragment() {
 
         binding.newOccurency.setOnClickListener {
             val action =
-                HomeFragmentDirections.actionCounterHomeFragmentToNewFragment("Create new Occurrence")
+                HomeFragmentDirections.actionCounterHomeFragmentToNewFragment()
             this.findNavController().navigate(action)
         }
     }
@@ -202,64 +199,52 @@ class HomeFragment : Fragment() {
         Timber.d("refreshList chip: $selectedCategoryChip")
         val data = viewModel.readAllOccurrencesWithActivities.value
         data?.forEach {
-            val lastActivitySeconds = it.occurrenceActivities.last()
-            val occurrence = it.occurrence
+            val lastActivitySeconds = it.singleEventEventLogs.last()
+            val occurrence = it.event
 
             val secondsPassed: Long? =
-                getSecondsPassed(it.occurrenceActivities.last().fullDate)
-            val id = it.occurrenceActivities.last().activityId
-            val owner = it.occurrenceActivities.last().occurrenceOwnerId
-            val fullDate = it.occurrenceActivities.last().fullDate
+                getSecondsPassed(it.singleEventEventLogs.last().fullDate)
+            val id = it.singleEventEventLogs.last().eventLogId
+            val owner = it.singleEventEventLogs.last().eventOwnerId
+            val fullDate = it.singleEventEventLogs.last().fullDate
 
             val intervalSeconds =
-                it.occurrenceActivities.last().intervalSeconds
+                it.singleEventEventLogs.last().intervalSeconds
 
             val secondsTo = intervalSeconds?.let { it1 ->
                 getSecondsTo(
                     it1,
-                    it.occurrenceActivities.last().fullDate
+                    it.singleEventEventLogs.last().fullDate
                 )
             }
 
-            fun getActivityToUpdate(): Activity {
-                val aktiwiti = Activity(
+            fun getActivityToUpdate(): EventLog {
+                val aktiwiti = EventLog(
                     id,
                     owner,
                     fullDate,
                     secondsPassed,
-                    it.occurrenceActivities.last().intervalSeconds,
+                    it.singleEventEventLogs.last().intervalSeconds,
                     secondsTo
                 )
                 return aktiwiti
             }
             viewModel.updateActivity(getActivityToUpdate())
             lastActivitySeconds.intervalSeconds?.let { it1 ->
-                viewModel.setOccurrenceStatus(
+                viewModel.setEventStatus(
                     lastActivitySeconds.secondsToNext,
-                    it1, occurrence = occurrence
+                    it1, event = occurrence
                 )
             }
         }
 
     }
 
-    private fun updateChip(chipId: Int, chipGroup: ChipGroup) {
-        if (chipId != 0) {
-            try {
-                val targetView = chipGroup.findViewById<Chip>(chipId)
-                targetView.isChecked = true
-                chipGroup.requestChildFocus(targetView, targetView)
-            } catch (e: java.lang.Exception) {
-                Log.d("Home fun updateChip", e.message.toString())
-            }
-        }
-    }
-
-    private fun makeListOfSecondsTo(occurrencesList: List<OccurrenceWithActivities>): MutableList<Long> {
+    private fun makeListOfSecondsTo(occurrencesList: List<EventWithEventLogs>): MutableList<Long> {
         val listOfSeconds = mutableListOf<Long>()
         occurrencesList.forEach {
             listOfSeconds.add(
-                it.occurrenceActivities.last().secondsToNext!!
+                it.singleEventEventLogs.last().secondsToNext!!
             )
         }
 
